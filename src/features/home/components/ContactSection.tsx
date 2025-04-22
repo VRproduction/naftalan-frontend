@@ -7,6 +7,8 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { FaEnvelope, FaPhone, FaUser, FaPaperPlane } from 'react-icons/fa';
 import { motion } from 'framer-motion';
 
+import { ContactSection as ContactSectionType } from '@/lib/types/home.type';
+
 // Define schema for form validation
 const contactSchema = z.object({
   name: z.string().min(2, { message: 'Ad ən azı 2 simvol olmalıdır' }),
@@ -17,7 +19,11 @@ const contactSchema = z.object({
 
 type ContactFormValues = z.infer<typeof contactSchema>;
 
-const ContactSection = () => {
+interface ContactSectionProps {
+  contactSection: ContactSectionType;
+}
+
+const ContactSection = ({ contactSection }: ContactSectionProps) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
   
@@ -66,10 +72,9 @@ const ContactSection = () => {
             >
               <div className="absolute inset-0 bg-gradient-to-r from-blue-800 to-blue-600 opacity-90" />
               <div className="relative z-10 p-10 text-white h-full flex flex-col justify-center">
-                <h3 className="text-3xl font-bold mb-6">Bizimlə əlaqə saxlayın</h3>
+                <h3 className="text-3xl font-bold mb-6">{contactSection.left_section_title}</h3>
                 <p className="mb-8">
-                  Naftalan müalicəsi haqqında suallarınız var? Bizə yazın və ya zəng edin, 
-                  mütəxəssislərimiz sizə ətraflı məlumat verəcəklər.
+                  {contactSection.left_section_description}
                 </p>
                 
                 <div className="space-y-6">
@@ -103,10 +108,9 @@ const ContactSection = () => {
               viewport={{ once: true }}
             >
               <div className="text-center md:text-left mb-8">
-                <h2 className="text-3xl font-bold mb-4">Əlaqə formu</h2>
+                <h2 className="text-3xl font-bold mb-4">{contactSection.right_section_title}</h2>
                 <p className="text-gray-600">
-                  Suallarınızı, şərh və təkliflərinizi bizə göndərin, 
-                  ən qısa zamanda cavablandıraq
+                  {contactSection.right_section_description}
                 </p>
               </div>
               

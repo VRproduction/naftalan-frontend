@@ -3,6 +3,8 @@ import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { FaCalendarAlt, FaUser } from 'react-icons/fa';
 
+import { BlogSection as BlogSectionType } from '@/lib/types/home.type';
+
 // Sample blog posts data
 const blogPosts = [
   {
@@ -81,7 +83,11 @@ const BlogCard = ({ post, index }: { post: typeof blogPosts[0], index: number })
   );
 };
 
-const BlogSection = () => {
+interface BlogSectionProps {
+  blogSection: BlogSectionType;
+}
+
+const BlogSection = ({ blogSection }: BlogSectionProps) => {
   return (
     <section className="py-16 bg-gray-50">
       <div className="container mx-auto px-4">
@@ -93,7 +99,7 @@ const BlogSection = () => {
             transition={{ duration: 0.5 }}
             viewport={{ once: true }}
           >
-            Bloq
+            {blogSection.title}
           </motion.h2>
           <motion.div 
             className="w-20 h-1 bg-blue-600 mx-auto mb-6"
@@ -103,7 +109,7 @@ const BlogSection = () => {
             viewport={{ once: true }}
           />
           <p className="text-gray-600 max-w-2xl mx-auto">
-            Naftalan müalicəsi, sağlamlıq məsləhətləri və yeni trendlər haqqında ən son məqalələr
+            {blogSection.section_description}
           </p>
         </div>
         

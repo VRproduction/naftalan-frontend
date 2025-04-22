@@ -1,6 +1,7 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
+import { TreatmentSection } from '@/lib/types/home.type';
 
 // Sample data for treatments
 const treatments = [
@@ -79,7 +80,7 @@ const TreatmentCard = ({ treatment, index }: { treatment: typeof treatments[0], 
   );
 };
 
-const TreatmentTypesSection = () => {
+const TreatmentTypesSection = ({ treatmentSection }: { treatmentSection: TreatmentSection }) => {
   return (
     <section className="py-16 bg-blue-50">
       <div className="container mx-auto px-4">
@@ -91,7 +92,7 @@ const TreatmentTypesSection = () => {
             transition={{ duration: 0.5 }}
             viewport={{ once: true }}
           >
-            Müalicə növləri
+            {treatmentSection.title}
           </motion.h2>
           <motion.div 
             className="w-20 h-1 bg-blue-600 mx-auto mb-6"
@@ -101,7 +102,7 @@ const TreatmentTypesSection = () => {
             viewport={{ once: true }}
           />
           <p className="text-gray-600 max-w-2xl mx-auto">
-            Naftalanda təklif olunan müxtəlif müalicə növləri ilə tanış olun və sağlamlığınız üçün ən uyğun olanı seçin
+            {treatmentSection.section_description}
           </p>
         </div>
         

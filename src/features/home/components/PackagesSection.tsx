@@ -1,6 +1,8 @@
 import { motion } from 'framer-motion';
 import Link from 'next/link';
-import { FaCalendarAlt, FaHotel, FaSpa, FaUtensils } from 'react-icons/fa';
+import { FaCalendarAlt, FaHotel, FaSpa } from 'react-icons/fa';
+import { PackageSection as PackageSectionType } from '@/lib/types/home.type';
+
 
 // Sample data for packages
 const packages = [
@@ -97,7 +99,7 @@ const PackageCard = ({ pkg, index }: { pkg: typeof packages[0], index: number })
   );
 };
 
-const PackagesSection = () => {
+const PackagesSection = ({ packagesSection }: { packagesSection: PackageSectionType }) => {
   return (
     <section className="py-16">
       <div className="container mx-auto px-4">
@@ -109,7 +111,7 @@ const PackagesSection = () => {
             transition={{ duration: 0.5 }}
             viewport={{ once: true }}
           >
-            Hazır paketlər
+            {packagesSection.title}
           </motion.h2>
           <motion.div 
             className="w-20 h-1 bg-blue-600 mx-auto mb-6"
@@ -119,7 +121,7 @@ const PackagesSection = () => {
             viewport={{ once: true }}
           />
           <p className="text-gray-600 max-w-2xl mx-auto">
-            Müxtəlif müddətli və müalicə növlü hazır paketlərimizdən seçərək rahatlıqla rezervasiya edin
+            {packagesSection.section_description}
           </p>
         </div>
         

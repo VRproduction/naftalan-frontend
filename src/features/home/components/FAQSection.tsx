@@ -1,42 +1,9 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FaChevronDown } from 'react-icons/fa';
+import { FAQSection as FAQSectionType, FAQ as FAQType } from '@/lib/types/home.type';
 
-// Sample FAQ data
-const faqs = [
-  {
-    id: 1,
-    question: 'Naftalan nefti nədir?',
-    answer: 'Naftalan nefti, Azərbaycanın Naftalan şəhərində çıxarılan, tərkibində bioloji aktiv komponentlər olan xüsusi növ neftdir. Bu neft, müalicəvi xüsusiyyətləri ilə tanınır və bir çox xəstəliklərin müalicəsində istifadə olunur.'
-  },
-  {
-    id: 2,
-    question: 'Naftalan müalicəsi hansı xəstəliklərə kömək edir?',
-    answer: 'Naftalan nefti ilə müalicə əsasən dəri xəstəlikləri (psoriaz, ekzema), oynaq xəstəlikləri (artrit, revmatizm), əzələ ağrıları, nevroloji problemlər və qadın xəstəlikləri üçün effektivdir. Həmçinin, ümumi immunitet sistemini gücləndirərək bir çox sağlamlıq problemlərinə müsbət təsir göstərir.'
-  },
-  {
-    id: 3,
-    question: 'Naftalan müalicəsinin yan təsirləri varmı?',
-    answer: 'Peşəkar həkimlərin nəzarəti altında aparılan müalicələr zamanı ciddi yan təsirlər demək olar ki, müşahidə olunmur. Lakin bəzi hallarda dəridə qızartı, qaşınma kimi keçici reaksiyalar ola bilər. Müalicəyə başlamazdan əvvəl həkim məsləhəti almaq vacibdir, çünki bəzi xəstəliklər (məsələn, onkoloji, ağır ürək-damar xəstəlikləri) zamanı Naftalan müalicəsi əks göstəriş ola bilər.'
-  },
-  {
-    id: 4,
-    question: 'Naftalan müalicəsi üçün optimal müddət nə qədərdir?',
-    answer: 'Naftalan müalicəsi üçün optimal müddət xəstəliyin növündən və şiddətindən asılıdır, lakin ümumiyyətlə 7-14 gün arasındadır. Daha ciddi xəstəliklər və xroniki problemlər üçün daha uzun müalicə kursları tövsiyə oluna bilər. Dəqiq müddəti həkim sizin fərdi vəziyyətinizə görə təyin edəcək.'
-  },
-  {
-    id: 5,
-    question: 'Naftalana necə gələ bilərəm?',
-    answer: 'Naftalan şəhəri Bakıdan təxminən 320 km məsafədə, Gəncədən isə 48 km məsafədə yerləşir. Bakıdan Gəncəyə təyyarə və ya avtobusla gəlib, oradan Naftalana taksi və ya ictimai nəqliyyatla getmək mümkündür. Həmçinin, bir çox sanatoriya və otel transfer xidməti də təklif edir.'
-  },
-  {
-    id: 6,
-    question: 'Müalicə qəbulu üçün öncədən rezervasiya etmək lazımdır?',
-    answer: 'Bəli, Naftalan sanatoriyaları və müalicə mərkəzlərində yer təmin etmək üçün öncədən rezervasiya etmək tövsiyə olunur, xüsusilə yay və qış tətil mövsümlərində. Rezervasiya veb saytımız, e-poçt və ya telefon vasitəsilə edilə bilər.'
-  }
-];
-
-const FAQ = ({ faq, isOpen, toggleOpen }: { faq: typeof faqs[0], isOpen: boolean, toggleOpen: () => void }) => {
+const FAQ = ({ faq, isOpen, toggleOpen }: { faq: FAQType, isOpen: boolean, toggleOpen: () => void }) => {
   return (
     <div className="border-b border-gray-200 py-4">
       <button
@@ -63,7 +30,7 @@ const FAQ = ({ faq, isOpen, toggleOpen }: { faq: typeof faqs[0], isOpen: boolean
   );
 };
 
-const FAQSection = () => {
+const FAQSection = ({faqSection, faqs}: {faqSection: FAQSectionType, faqs: FAQType[]}) => {
   const [openFaq, setOpenFaq] = useState<number | null>(null);
 
   const toggleFaq = (id: number) => {
@@ -81,7 +48,7 @@ const FAQSection = () => {
             transition={{ duration: 0.5 }}
             viewport={{ once: true }}
           >
-            Tez-tez verilən suallar
+            {faqSection.title}
           </motion.h2>
           <motion.div 
             className="w-20 h-1 bg-blue-600 mx-auto mb-6"
@@ -91,23 +58,23 @@ const FAQSection = () => {
             viewport={{ once: true }}
           />
           <p className="text-gray-600 max-w-2xl mx-auto">
-            Naftalan və müalicə prosedurları haqqında ən çox verilən suallar və cavablar
+            {faqSection.section_description}
           </p>
         </div>
         
         <div className="max-w-3xl mx-auto">
-          {faqs.map((faq) => (
+          {faqs.map((faq, index) => (
             <motion.div
-              key={faq.id}
+              key={index}
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: faq.id * 0.1 }}
+              transition={{ duration: 0.5, delay: index * 0.1 }}
               viewport={{ once: true }}
             >
               <FAQ 
                 faq={faq} 
-                isOpen={openFaq === faq.id} 
-                toggleOpen={() => toggleFaq(faq.id)} 
+                isOpen={openFaq === index} 
+                toggleOpen={() => toggleFaq(index)} 
               />
             </motion.div>
           ))}

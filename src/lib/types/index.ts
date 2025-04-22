@@ -47,8 +47,9 @@ export interface Sanatorium extends BaseEntity {
   image: string;
   images?: string[];
   facilities?: string[];
-  treatments?: string[];
+  treatments?: Treatment[] | string[];
   reviews?: Review[];
+  roomTypes?: RoomType[];
 }
 
 // Treatment types
@@ -250,4 +251,16 @@ export interface Post {
   author: BlogAuthor | string;
   category: BlogCategory | string;
   tags: string[];
+}
+
+// Room type
+export interface RoomType {
+  id: number;
+  name: string;
+  description: string;
+  price: number;
+  capacity: number;
+  size: string;
+  features: string[];
+  images: string[];
 } 

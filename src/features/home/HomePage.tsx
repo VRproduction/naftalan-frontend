@@ -1,4 +1,4 @@
-'use client'
+"use client";
 
 import HeroSlider from "@/features/home/components/HeroSlider";
 import SearchForm from "@/features/home/components/SearchForm";
@@ -10,41 +10,80 @@ import ContactSection from "@/features/home/components/ContactSection";
 import TestimonialsSection from "@/features/home/components/TestimonialsSection";
 import FAQSection from "@/features/home/components/FAQSection";
 import BlogSection from "@/features/home/components/BlogSection";
+import {
+  HeroSlider as HeroSliderType,
+  AboutSection as AboutSectionType,
+  SanatoriumSection as SanatoriumSectionType,
+  TreatmentSection as TreatmentSectionType,
+  PackageSection as PackageSectionType,
+  Testimonial,
+  TestimonialsSection as TestimonialsSectionType,
+  FAQSection as FAQSectionType,
+  FAQ as FAQType,
+  BlogSection as BlogSectionType,
+  ContactSection as ContactSectionType,
+} from "@/lib/types/home.type";
 
-export default function HomePage() {
+interface Props {
+  heroSliders: HeroSliderType[];
+  aboutSection: AboutSectionType;
+  sanatoriumsSection: SanatoriumSectionType;
+  treatmentSection: TreatmentSectionType;
+  packagesSection: PackageSectionType;
+  testimonials: Testimonial[];
+  testimonialSection: TestimonialsSectionType;
+  faqSection: FAQSectionType;
+  faqs: FAQType[];
+  blogSection: BlogSectionType;
+  contactSection: ContactSectionType;
+}
+
+export default function HomePage({
+  heroSliders,
+  aboutSection,
+  sanatoriumsSection,
+  treatmentSection,
+  packagesSection,
+  testimonials,
+  testimonialSection,
+  faqSection,
+  faqs,
+  blogSection,
+  contactSection,
+}: Props) {
   return (
     <div className="pt-[72px] md:pt-[80px]">
       {/* Hero Section with Slider */}
-      <HeroSlider />
-      
+      <HeroSlider heroSliders={heroSliders} />
+
       {/* Search Form */}
       <div className="container mx-auto relative">
         <SearchForm />
       </div>
-      
+
       {/* About Section */}
-      <AboutSection />
-      
+      <AboutSection aboutSection={aboutSection} />
+
       {/* Sanatoriums Section */}
-      <SanatoriumsSection />
-      
+      <SanatoriumsSection sanatoriums={[]} sanatoriumsSection={sanatoriumsSection} />
+
       {/* Treatment Types Section */}
-      <TreatmentTypesSection />
-      
+      <TreatmentTypesSection treatmentSection={treatmentSection} />
+
       {/* Packages Section */}
-      <PackagesSection />
-      
+      <PackagesSection packagesSection={packagesSection} />
+
       {/* Testimonials Section */}
-      <TestimonialsSection />
-      
+      <TestimonialsSection testimonialSection={testimonialSection} testimonials={testimonials} />
+
       {/* FAQ Section */}
-      <FAQSection />
-      
+      <FAQSection faqSection={faqSection} faqs={faqs} />
+
       {/* Blog Section */}
-      <BlogSection />
-      
+      <BlogSection blogSection={blogSection} />
+
       {/* Contact Section */}
-      <ContactSection />
+      <ContactSection contactSection={contactSection} />
     </div>
   );
 }

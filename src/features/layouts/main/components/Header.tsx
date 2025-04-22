@@ -42,7 +42,7 @@ const Header = () => {
               <FaChevronDown className="text-xs opacity-70 group-hover:rotate-180 transition-transform duration-300" />
             </button>
             <div className="absolute left-0 top-full mt-1 w-64 bg-white shadow-lg rounded-md overflow-hidden opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 transform group-hover:translate-y-0 translate-y-2">
-              <Link href="/about/naftalan" className="block px-4 py-3 hover:bg-blue-50 transition-colors border-l-2 border-transparent hover:border-blue-500">
+              <Link href="/about" className="block px-4 py-3 hover:bg-blue-50 transition-colors border-l-2 border-transparent hover:border-blue-500">
                 Naftalan
               </Link>
               <Link href="/about/history" className="block px-4 py-3 hover:bg-blue-50 transition-colors border-l-2 border-transparent hover:border-blue-500">
