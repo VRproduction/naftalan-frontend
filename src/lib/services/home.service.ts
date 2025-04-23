@@ -11,6 +11,7 @@ import {
   BlogSection,
   ContactSection,
 } from "../types/home.type";
+import { Sanatorium } from "../types/sanatorium.type";
 import api, { SupportedLocale } from "../utils/apiClient";
 
 const DEFAULT_OPTIONS = { revalidate: 1000 };
@@ -74,3 +75,10 @@ export const getContactSection = (locale: SupportedLocale) =>
     ...DEFAULT_OPTIONS,
     locale: locale,
   });
+
+
+export const getSanatoriums = async (locale: SupportedLocale) => {
+    const response = await api.get<Sanatorium []>("/home/sanatoriums/", { locale: locale });
+    return response;
+};
+  

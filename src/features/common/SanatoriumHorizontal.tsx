@@ -5,26 +5,16 @@ import { motion } from 'framer-motion';
 import Image from 'next/image';
 import Link from 'next/link';
 import { FaStar, FaMapMarkerAlt, FaPhoneAlt, FaGlobe, FaWifi, FaSwimmingPool, FaParking, FaUtensils, FaSpa, FaShieldAlt, FaArrowRight } from 'react-icons/fa';
+import { Sanatorium } from '@/lib/types/sanatorium.type';
 
-export type Sanatorium = {
-  id: number;
-  name: string;
-  address: string;
-  phone: string;
-  website: string;
-  rating: number;
-  description: string;
-  images: string[];
-  features: string[];
-  priceRange: string;
-};
+
 
 interface SanatoriumProps {
   sanatorium: Sanatorium;
   index?: number;
 }
 
-export default function Sanatorium({ sanatorium, index = 0 }: SanatoriumProps) {
+export default function SanatoriumHorizontal({ sanatorium, index = 0 }: SanatoriumProps) {
   const [isExpanded, setIsExpanded] = useState(false);
   
   const renderStars = (rating: number) => {
@@ -40,24 +30,6 @@ export default function Sanatorium({ sanatorium, index = 0 }: SanatoriumProps) {
     return stars;
   };
 
-  const renderFeatureIcon = (feature: string) => {
-    switch (feature) {
-      case 'wifi':
-        return <FaWifi className="text-blue-500" title="Wi-Fi" />;
-      case 'pool':
-        return <FaSwimmingPool className="text-blue-500" title="Hovuz" />;
-      case 'parking':
-        return <FaParking className="text-blue-500" title="Dayanacaq" />;
-      case 'restaurant':
-        return <FaUtensils className="text-blue-500" title="Restoran" />;
-      case 'spa':
-        return <FaSpa className="text-blue-500" title="SPA" />;
-      case 'security':
-        return <FaShieldAlt className="text-blue-500" title="Təhlükəsizlik" />;
-      default:
-        return null;
-    }
-  };
 
   const fadeInUpVariant = {
     hidden: { opacity: 0, y: 20 },
@@ -76,7 +48,7 @@ export default function Sanatorium({ sanatorium, index = 0 }: SanatoriumProps) {
       <div className="grid md:grid-cols-3 h-full">
         <div className="relative h-64 md:h-full md:col-span-1">
           <Image 
-            src={sanatorium.images[0]} 
+            src={sanatorium.main_image.image} 
             alt={sanatorium.name} 
             fill
             className="object-cover"
@@ -89,46 +61,42 @@ export default function Sanatorium({ sanatorium, index = 0 }: SanatoriumProps) {
               <h3 className="text-2xl font-bold text-gray-800">{sanatorium.name}</h3>
             </Link>
             <div className="flex items-center mt-1 md:mt-0">
-              <div className="flex mr-2">{renderStars(sanatorium.rating)}</div>
-              <span className="text-lg font-semibold text-gray-700">{sanatorium.rating.toFixed(1)}</span>
+              <div className="flex mr-2">{renderStars(Number(sanatorium.rating))}</div>
+              <span className="text-lg font-semibold text-gray-700">{sanatorium.rating}</span>
             </div>
           </div>
           
           <div className="flex flex-wrap items-center text-sm text-gray-600 mb-4 space-x-4">
             <div className="flex items-center">
               <FaMapMarkerAlt className="mr-1 text-blue-500" />
-              <span>{sanatorium.address}</span>
-            </div>
-            <div className="flex items-center mt-2 md:mt-0">
-              <FaPhoneAlt className="mr-1 text-blue-500" />
-              <span>{sanatorium.phone}</span>
-            </div>
-            <div className="flex items-center mt-2 md:mt-0">
-              <FaGlobe className="mr-1 text-blue-500" />
-              <a href={sanatorium.website} target="_blank" rel="noopener noreferrer" className="text-blue-500 hover:underline">
-                Veb sayt
-              </a>
+              <span>{sanatorium.location.region}, {sanatorium.location.country}</span>
             </div>
           </div>
           
-          <p className="text-gray-600 mb-4">{sanatorium.description}</p>
+          <p className="text-gray-600 mb-4">{sanatorium.short_description}</p>
           
           <div className="flex flex-wrap items-center justify-between">
             <div className="flex items-center space-x-3 mb-4 md:mb-0">
-              {sanatorium.features.map((feature, i) => (
-                <div key={i} className="w-8 h-8 flex items-center justify-center rounded-full bg-blue-50">
-                  {renderFeatureIcon(feature)}
+              {sanatorium.facilities.map((facility, i) => facility.facility.icon && (
+                <div key={i} className="w-8 h-8 flex items-center justify-center rounded-full ">
+                    <Image
+                      src={facility.facility.icon}
+                      alt={facility.facility.name}
+                      width={32}
+                      height={32}
+                      className="object-contain"
+                    />
                 </div>
               ))}
             </div>
             
             <div className="flex flex-col md:flex-row md:items-center space-y-2 md:space-y-0 md:space-x-3">
               <div className="text-sm font-medium text-gray-500">
-                Qiymət: <span className="text-blue-500">{sanatorium.priceRange}</span>
+                Qiymət: <span className="text-blue-500">{sanatorium.price}</span>
               </div>
               
               <Link 
-                href={`/sanatoriums/${sanatorium.id}`}
+                href={`/sanatoriums/${sanatorium.slug}`}
                 className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center justify-center"
               >
                 Ətraflı <FaArrowRight className="ml-1" />
@@ -155,7 +123,7 @@ export default function Sanatorium({ sanatorium, index = 0 }: SanatoriumProps) {
                 {sanatorium.images.map((image, i) => (
                   <div key={i} className="relative h-32 rounded-lg overflow-hidden">
                     <Image 
-                      src={image} 
+                      src={image.image} 
                       alt={`${sanatorium.name} - foto ${i+1}`} 
                       fill
                       className="object-cover"

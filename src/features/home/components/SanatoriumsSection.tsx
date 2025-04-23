@@ -60,7 +60,7 @@ const SanatoriumsSection = ({
 
         <div className="text-center mt-12">
           <Link
-            href="/sanatoriums"
+            href="/reservation"
             className="py-3 px-8 bg-blue-500 text-white rounded-full hover:bg-blue-600 transition-all duration-300 inline-flex items-center justify-center shadow-lg hover:shadow-xl font-medium transform hover:-translate-y-1"
           >
             <span>Bütün sanatoriyalar</span>

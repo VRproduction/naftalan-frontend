@@ -24,8 +24,14 @@ export interface Sanatorium {
     facility: {
       id: number;
       name: string;
-      icon: string;
+      icon: string | null;
     };
+  }[];
+  images: {
+    id: number;
+    image: string;
+    is_main: boolean;
+    priority: number;
   }[];
 }
 
@@ -41,6 +47,8 @@ export interface SanatoriumDetail {
     country: string;
   };
   location_type: "naftalan" | "other_cities";
+  map_iframe: string;
+  address: string;
   price: string;
   rating: string;
   facilities: {
@@ -78,4 +86,31 @@ export interface SanatoriumDetail {
     priority: number;
   }[];
   similar_sanatoriums: Sanatorium[];
+}
+
+
+export interface NaftalanSanatoriumsPage {
+  id: number,
+  hero_section_title: string,
+  hero_section_description: string,
+  main_section_title: string,
+  main_section_description: string,
+  main_section_image: string,
+  sanatoriums_section_title: string,
+  sanatoriums_section_description: string,
+  contact_section_title: string,
+  contact_section_description: string
+}
+
+export interface OtherCitiesSanatoriumsPage {
+  id: number,
+  hero_section_title: string,
+  hero_section_description: string,
+  main_section_title: string,
+  main_section_description: string,
+  main_section_image: string,
+  sanatoriums_section_title: string,
+  sanatoriums_section_description: string,
+  contact_section_title: string,
+  contact_section_description: string
 }

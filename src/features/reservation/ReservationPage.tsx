@@ -218,18 +218,7 @@ export default function ReservationPage({ sanatoriums }: { sanatoriums: Sanatori
               />
             ))}
           </div>
-          
-          <div className="text-center mt-12">
-            <Link
-              href="/sanatoriums"
-              className="py-3 px-8 bg-blue-500 text-white rounded-full hover:bg-blue-600 transition-all duration-300 inline-flex items-center justify-center shadow-lg hover:shadow-xl font-medium transform hover:-translate-y-1"
-            >
-              <span>Daha çox göstər</span>
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
-              </svg>
-            </Link>
-          </div>
+        
         </div>
       </section>
       
