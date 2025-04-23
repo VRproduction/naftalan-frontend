@@ -1,5 +1,5 @@
 // API base URL
-const API_BASE_URL =  process.env.NEXT_PUBLIC_API_BASE_URL ? process.env.NEXT_PUBLIC_API_BASE_URL+'/api' : 'http://75.119.147.165:59/api';
+const API_BASE_URL =  process.env.NEXT_PUBLIC_API_BASE_URL ? process.env.NEXT_PUBLIC_API_BASE_URL+'/api' : 'http://localhost:8000/api';
 
 // HTTP method types
 export type HttpMethod = 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
