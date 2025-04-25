@@ -6,6 +6,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { FaStar, FaMapMarkerAlt, FaPhoneAlt, FaGlobe, FaWifi, FaSwimmingPool, FaParking, FaUtensils, FaSpa, FaShieldAlt, FaArrowRight } from 'react-icons/fa';
 import { Sanatorium } from '@/lib/types/sanatorium.type';
+import { useCurrency } from '@/lib/utils/currency';
 
 
 
@@ -16,7 +17,8 @@ interface SanatoriumProps {
 
 export default function SanatoriumHorizontal({ sanatorium, index = 0 }: SanatoriumProps) {
   const [isExpanded, setIsExpanded] = useState(false);
-  
+  const { formatPrice } = useCurrency();
+
   const renderStars = (rating: number) => {
     const stars = [];
     for (let i = 1; i <= 5; i++) {
@@ -92,7 +94,7 @@ export default function SanatoriumHorizontal({ sanatorium, index = 0 }: Sanatori
             
             <div className="flex flex-col md:flex-row md:items-center space-y-2 md:space-y-0 md:space-x-3">
               <div className="text-sm font-medium text-gray-500">
-                Qiymət: <span className="text-blue-500">{sanatorium.min_price}</span>
+                Qiymət: <span className="text-blue-500">{formatPrice(sanatorium.min_price || 0)}</span>
               </div>
               
               <Link 

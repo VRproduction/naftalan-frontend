@@ -1,3 +1,5 @@
+'use client'
+
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FaBars, FaTimes, FaChevronDown, FaChevronRight, FaGlobe } from 'react-icons/fa';
@@ -5,6 +7,8 @@ import { useUIStore } from '@/store/useUIStore';
 import { useLocale } from 'next-intl';
 import { useRouter, Link as IntlLink, usePathname } from '@/i18n/navigation';
 import { SupportedLocale } from '@/lib/utils/apiClient';
+import CurrencySelector from '@/components/common/CurrencySelector';
+
 
 const Header = () => {
   const { isMenuOpen, toggleMenu, setMenuOpen } = useUIStore();
@@ -142,6 +146,9 @@ const Header = () => {
               </div>
             )}
           </div>
+          
+          {/* Currency Selector - Desktop */}
+          <CurrencySelector  />
         </nav>
         
         {/* Mobile menu button */}
@@ -177,6 +184,11 @@ const Header = () => {
                 </button>
               </div>
             )}
+          </div>
+
+          {/* Currency Selector - Mobile */}
+          <div className="md:hidden">
+            <CurrencySelector />
           </div>
 
           <button 

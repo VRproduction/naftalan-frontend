@@ -6,10 +6,12 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { FaCalendarAlt, FaUser, FaEnvelope, FaPhone, FaInfoCircle, FaCheck, FaHotel } from 'react-icons/fa';
+import { useCurrency } from '@/lib/utils/currency';
 
 // Booking page component
 export default function BookingPage() {
   const router = useRouter();
+  const { formatPrice, currentCurrency } = useCurrency();
   
   // Get URL parameters
   const searchParams = typeof window !== 'undefined' 
@@ -385,7 +387,7 @@ export default function BookingPage() {
                       >
                         <option value="">Otaq seçin</option>
                         {roomTypes.map(room => (
-                          <option key={room.id} value={room.id}>{room.name} - {room.prices[0].price} {room.prices[0].currency}</option>
+                          <option key={room.id} value={room.id}>{room.name} - {formatPrice(room.prices[0].price)}</option>
                         ))}
                       </select>
                       {errors.roomTypeId && <p className="mt-1 text-sm text-red-500">{errors.roomTypeId}</p>}
@@ -417,7 +419,7 @@ export default function BookingPage() {
                             >
                               {treatmentOptions.map(option => (
                                 <option key={option.id} value={option.id}>
-                                  {option.name} - {option.price} AZN / gün
+                                  {option.name} - {formatPrice(option.price)} / gün
                                 </option>
                               ))}
                             </select>
@@ -564,7 +566,7 @@ export default function BookingPage() {
                             const room = roomTypes.find(r => r.id.toString() === formData.roomTypeId.toString());
                             if (!room) return '-';
                             const roomPrice = parseFloat(room.prices[0].price);
-                            return `${roomPrice * nights} ${room.prices[0].currency}`;
+                            return formatPrice(roomPrice * nights);
                           })()}
                         </span>
                       </div>
@@ -577,7 +579,7 @@ export default function BookingPage() {
                               const treatment = treatmentOptions.find(t => t.id.toString() === formData.treatmentOptionId.toString());
                               if (!treatment) return '-';
                               const treatmentPrice = parseFloat(treatment.price);
-                              return `${treatmentPrice * nights} AZN`;
+                              return formatPrice(treatmentPrice * nights);
                             })()}
                           </span>
                         </div>
@@ -600,7 +602,7 @@ export default function BookingPage() {
                             }
                           }
                           
-                          return `${roomPrice + treatmentPrice} AZN`;
+                          return formatPrice(roomPrice + treatmentPrice);
                         })()}
                       </span>
                     </div>

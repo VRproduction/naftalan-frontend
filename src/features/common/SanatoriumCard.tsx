@@ -1,6 +1,7 @@
 'use client';
 
 import { Sanatorium } from '@/lib/types/sanatorium.type';
+import { useCurrency } from '@/lib/utils/currency';
 import { motion } from 'framer-motion';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -23,7 +24,8 @@ export default function SanatoriumCard({
 }: SanatoriumCardProps) {
 
 
- 
+  const { formatPrice } = useCurrency();
+
 
   const renderStars = (rating: number) => {
     const stars = [];
@@ -81,7 +83,7 @@ export default function SanatoriumCard({
               ? "bg-blue-500/90 backdrop-blur-sm text-white px-3 py-1 rounded-full text-sm font-medium shadow-sm"
               : "bg-green-500/90 backdrop-blur-sm text-white px-3 py-1 rounded-full text-sm font-medium shadow-sm"
             }>
-              {sanatorium.min_price} AZN
+              {formatPrice(sanatorium.min_price)}
             </span>
           </div> 
           )

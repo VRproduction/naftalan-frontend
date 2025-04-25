@@ -14,6 +14,7 @@ import {
 } from "react-icons/fa";
 import { SanatoriumDetail } from "@/lib/types/sanatorium.type";
 import SanatoriumCard from "../common/SanatoriumCard";
+import { useCurrency } from "@/lib/utils/currency";
 
 interface PageProps {
   sanatorium: SanatoriumDetail;
@@ -36,6 +37,7 @@ export default function SanatoriumDetailPage({ sanatorium }: PageProps) {
   const [modalImageIndex, setModalImageIndex] = useState(0);
   const [isZoomed, setIsZoomed] = useState(false);
   const [isImageLoading, setIsImageLoading] = useState(true);
+  const { formatPrice } = useCurrency();
 
   // Handle keyboard navigation in modal
   useEffect(() => {
@@ -479,8 +481,7 @@ export default function SanatoriumDetailPage({ sanatorium }: PageProps) {
                                                 )}
                                               </td>
                                               <td className="px-4 py-3 text-sm font-medium text-gray-900">
-                                                {price.price}{" "}
-                                                {price.currency.symbol}
+                                                {formatPrice(price.price)}
                                               </td>
                                             </tr>
                                           ))}
@@ -556,8 +557,7 @@ export default function SanatoriumDetailPage({ sanatorium }: PageProps) {
                                                       )}
                                                     </td>
                                                     <td className="px-4 py-3 text-sm font-medium text-gray-900">
-                                                      {price.price}{" "}
-                                                      {price.currency.symbol}
+                                                      {formatPrice(price.price)}
                                                     </td>
                                                   </tr>
                                                 )
@@ -637,7 +637,7 @@ export default function SanatoriumDetailPage({ sanatorium }: PageProps) {
 
           {/* Right Column - Booking Card */}
           {sanatorium.min_price && (
-            <div>
+            <div >
               <div className="bg-white rounded-xl shadow-md overflow-hidden sticky top-24">
                 <div className="p-6 border-b border-gray-200">
                   <h2 className="text-xl font-bold">Qiymət və rezervasiya</h2>
@@ -647,7 +647,7 @@ export default function SanatoriumDetailPage({ sanatorium }: PageProps) {
                     <div className="flex justify-between items-center mb-2">
                       <span className="text-gray-600">Başlayan qiymət:</span>
                       <span className="text-2xl font-bold text-blue-600">
-                        {sanatorium.min_price} AZN
+                        {formatPrice(sanatorium.min_price)}
                       </span>
                     </div>
                     <div className="text-sm text-gray-500 mb-4">
