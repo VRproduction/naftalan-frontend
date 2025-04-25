@@ -15,9 +15,9 @@ export interface Currency {
 export const currencies: Currency[] = [
   { code: 'AZN', symbol: '₼', name: 'Azərbaycan Manatı', rate: 1 },
   { code: 'USD', symbol: '$', name: 'ABŞ Dolları', rate: 1 },
-  { code: 'EUR', symbol: '€', name: 'Avro', rate: 1 },
+  // { code: 'EUR', symbol: '€', name: 'Avro', rate: 1 },
   { code: 'RUB', symbol: '₽', name: 'Rus Rublu', rate: 1 },
-  { code: 'TRY', symbol: '₺', name: 'Türk Lirəsi', rate: 1 },
+  // { code: 'TRY', symbol: '₺', name: 'Türk Lirəsi', rate: 1 },
 ];
 
 // Cookie name for storing currency preference

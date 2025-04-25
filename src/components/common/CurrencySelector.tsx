@@ -3,15 +3,11 @@
 import { useState, useRef, useEffect } from "react";
 import { useCurrency } from "@/lib/utils/currency";
 import { FaGlobeAmericas, FaChevronDown } from "react-icons/fa";
-import { usePathname, useRouter } from "@/i18n/navigation";
 
 export default function CurrencySelector() {
   const { currentCurrency, setCurrency, currencies, isLoading } = useCurrency();
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
-
-  const router = useRouter()
-  const pathname = usePathname();
 
   // Close dropdown when clicking outside
   useEffect(() => {
@@ -62,7 +58,7 @@ export default function CurrencySelector() {
       </button>
 
       {isOpen && (
-        <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg overflow-hidden z-20">
+        <div className="absolute right-0 mt-2 bg-white rounded-md shadow-lg overflow-hidden z-20">
           <div className="py-1">
             {currencies.map((currency) => (
               <button
@@ -74,8 +70,7 @@ export default function CurrencySelector() {
                     : "text-gray-700 hover:bg-gray-100"
                 }`}
               >
-                <span className="font-medium">{currency.code}</span> -{" "}
-                {currency.name}
+                <span className="font-medium">{currency.code}</span>
               </button>
             ))}
           </div>

@@ -131,12 +131,7 @@ const Header = () => {
                 >
                   Azərbaycan
                 </button>
-                <button 
-                  className={`w-full text-left px-4 py-2 hover:bg-blue-50 transition-colors ${locale === 'en' ? 'bg-blue-50 text-blue-500' : ''}`}
-                  onClick={() => changeLanguage('en')}
-                >
-                  English
-                </button>
+               
                 <button 
                   className={`w-full text-left px-4 py-2 hover:bg-blue-50 transition-colors ${locale === 'ru' ? 'bg-blue-50 text-blue-500' : ''}`}
                   onClick={() => changeLanguage('ru')}
@@ -263,12 +258,7 @@ const Header = () => {
                     >
                       AZ
                     </button>
-                    <button 
-                      className={`px-3 py-1.5 rounded-md transition-colors ${locale === 'en' ? 'bg-blue-100 text-blue-600 font-medium' : 'hover:bg-gray-100'}`}
-                      onClick={() => changeLanguage('en')}
-                    >
-                      EN
-                    </button>
+                  
                     <button 
                       className={`px-3 py-1.5 rounded-md transition-colors ${locale === 'ru' ? 'bg-blue-100 text-blue-600 font-medium' : 'hover:bg-gray-100'}`}
                       onClick={() => changeLanguage('ru')}

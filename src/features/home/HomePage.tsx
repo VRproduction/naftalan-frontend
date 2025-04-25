@@ -71,7 +71,7 @@ export default function HomePage({
       <SanatoriumsSection sanatoriums={sanatoriums} sanatoriumsSection={sanatoriumsSection} />
 
       {/* Treatment Types Section */}
-      <TreatmentTypesSection treatmentSection={treatmentSection} />
+      {/* <TreatmentTypesSection treatmentSection={treatmentSection} /> */}
 
       {/* Packages Section */}
       <PackagesSection packagesSection={packagesSection} />
