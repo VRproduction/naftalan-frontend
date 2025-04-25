@@ -5,7 +5,7 @@ const API_BASE_URL =  process.env.NEXT_PUBLIC_API_BASE_URL ? process.env.NEXT_PU
 export type HttpMethod = 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
 
 // Supported languages
-export const SUPPORTED_LOCALES = ['az', 'en', 'ru'] as const;
+export const SUPPORTED_LOCALES = ['az', 'ru'] as const;
 export type SupportedLocale = typeof SUPPORTED_LOCALES[number];
 export const DEFAULT_LOCALE: SupportedLocale = 'az';
 

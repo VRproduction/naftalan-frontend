@@ -165,12 +165,7 @@ const Header = () => {
                 >
                   Azərbaycan
                 </button>
-                <button 
-                  className={`w-full text-left px-4 py-2 hover:bg-blue-50 transition-colors ${locale === 'en' ? 'bg-blue-50 text-blue-500' : ''}`}
-                  onClick={() => changeLanguage('en')}
-                >
-                  English
-                </button>
+              
                 <button 
                   className={`w-full text-left px-4 py-2 hover:bg-blue-50 transition-colors ${locale === 'ru' ? 'bg-blue-50 text-blue-500' : ''}`}
                   onClick={() => changeLanguage('ru')}
