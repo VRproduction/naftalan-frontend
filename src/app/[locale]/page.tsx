@@ -49,7 +49,7 @@ export default async function Home({ params }: Props) {
     getContactSection(locale),
     getSanatoriums(locale),
   ]);
-
+  // console.log(heroSliders)
   return (
     <HomePage
       heroSliders={heroSliders}

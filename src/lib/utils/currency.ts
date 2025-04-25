@@ -36,10 +36,13 @@ const fetchExchangeRates = async () => {
       // Update currency rates 
       currencies.forEach(currency => {
         if (currency.code !== 'AZN') { // AZN is base currency, rate stays 1
-          currency.rate = 1 / data.rates[currency.code]; // Invert rate since API gives AZN to other currency
+          // API returns AZN to currency rate (how many units of currency per 1 AZN)
+          currency.rate = data.rates[currency.code];
         }
       });
       
+      // Log updated rates for debugging
+      console.log('Updated currency rates:', currencies.map(c => `${c.code}: ${c.rate}`));
       return true;
     }
     return false;
@@ -107,15 +110,26 @@ export function useCurrency() {
   // Convert price from AZN to current currency
   const convertPrice = (priceInAZN: number | string) => {
     const price = typeof priceInAZN === 'string' ? parseFloat(priceInAZN) : priceInAZN;
-    if (isNaN(price)) return 0;
+    if (isNaN(price) || !currentCurrency) return 0;
     
-    return currentCurrency && Number((price * currentCurrency.rate).toFixed(2));
+    // Convert the price using the current exchange rate
+    return Number((price * currentCurrency.rate).toFixed(2));
   };
 
   // Format price with currency symbol
   const formatPrice = (priceInAZN: number | string) => {
+    if (!currentCurrency) return '0';
+    
     const convertedPrice = convertPrice(priceInAZN);
-    return currentCurrency && `${convertedPrice} ${currentCurrency.symbol}`;
+    
+    // Format the price based on the currency (handling symbol position)
+    if (currentCurrency.code === 'AZN') {
+      return `${convertedPrice} ${currentCurrency.symbol}`;
+    } else if (currentCurrency.code === 'USD' || currentCurrency.code === 'EUR') {
+      return `${currentCurrency.symbol}${convertedPrice}`;
+    } else {
+      return `${convertedPrice} ${currentCurrency.symbol}`;
+    }
   };
 
   return {

@@ -1,5 +1,7 @@
+import { Sanatorium } from "./sanatorium.type";
+
 export interface HeroSlider {
-  image: string;
+  sanatorium: Sanatorium;
 }
 
 export interface AboutSection {
