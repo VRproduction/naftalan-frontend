@@ -92,7 +92,7 @@ export interface SanatoriumDetail {
         start_date: string;
         end_date: string;
         is_current: boolean;
-      };
+      } | null;
       occupancy: number;
       with_treatment: boolean;
       treatment_option?: {
@@ -116,7 +116,7 @@ export interface SanatoriumDetail {
         start_date: string;
         end_date: string;
         is_current: boolean;
-      };
+      } | null;
       age_group: {
         id: number;
         name: string;

@@ -449,12 +449,17 @@ export default function SanatoriumDetailPage({ sanatorium }: PageProps) {
                                               }
                                             >
                                               <td className="px-4 py-3 text-sm text-gray-900">
-                                                {price.season.name}
-                                                {price.season.is_current && (
-                                                  <span className="ml-2 inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                                                    Cari
-                                                  </span>
-                                                )}
+                                                {price.season ? (
+                                                  <>
+                                                    {price.season.name}
+                                                    {price.season
+                                                      .is_current && (
+                                                      <span className="ml-2 inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                                        Cari
+                                                      </span>
+                                                    )}
+                                                  </>
+                                                ): 'Ümumi'}
                                               </td>
                                               <td className="px-4 py-3 text-sm text-gray-900">
                                                 {price.occupancy} nəfər
@@ -519,19 +524,20 @@ export default function SanatoriumDetailPage({ sanatorium }: PageProps) {
                                                     }
                                                   >
                                                     <td className="px-4 py-3 text-sm text-gray-900">
-                                                      {price.season.name}
-                                                      {price.season
-                                                        .is_current && (
-                                                        <span className="ml-2 inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                                                          Cari
-                                                        </span>
-                                                      )}
+                                                      {price.season ? (
+                                                        <>
+                                                          {price.season.name}
+                                                          {price.season
+                                                            .is_current && (
+                                                            <span className="ml-2 inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                                              Cari
+                                                            </span>
+                                                          )}
+                                                        </>
+                                                      ): 'Ümumi'}
                                                     </td>
                                                     <td className="px-4 py-3 text-sm text-gray-900">
-                                                      {price.age_group.name} (
-                                                      {price.age_group.min_age}-
-                                                      {price.age_group.max_age}{" "}
-                                                      yaş)
+                                                      {price.age_group.name}
                                                     </td>
                                                     <td className="px-4 py-3 text-sm text-gray-900">
                                                       {price.with_treatment ? (
