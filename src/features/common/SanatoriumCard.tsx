@@ -23,10 +23,7 @@ export default function SanatoriumCard({
 }: SanatoriumCardProps) {
 
 
-  const getPrice = () => {
-    if (sanatorium.price) return `${sanatorium.price} AZN`;
-    return '120-200 AZN';
-  };
+ 
 
   const renderStars = (rating: number) => {
     const stars = [];
@@ -77,14 +74,19 @@ export default function SanatoriumCard({
         </div>
         
         {/* Price Badge */}
-        <div className="absolute bottom-4 left-4">
-          <span className={colorScheme === 'blue' 
-            ? "bg-blue-500/90 backdrop-blur-sm text-white px-3 py-1 rounded-full text-sm font-medium shadow-sm"
-            : "bg-green-500/90 backdrop-blur-sm text-white px-3 py-1 rounded-full text-sm font-medium shadow-sm"
-          }>
-            {getPrice()}
-          </span>
-        </div>
+        {
+          sanatorium.min_price && (
+           <div className="absolute bottom-4 left-4">
+            <span className={colorScheme === 'blue' 
+              ? "bg-blue-500/90 backdrop-blur-sm text-white px-3 py-1 rounded-full text-sm font-medium shadow-sm"
+              : "bg-green-500/90 backdrop-blur-sm text-white px-3 py-1 rounded-full text-sm font-medium shadow-sm"
+            }>
+              {sanatorium.min_price} AZN
+            </span>
+          </div> 
+          )
+        }
+        
       </div>
 
       <div className="p-5">

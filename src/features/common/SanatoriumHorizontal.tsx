@@ -92,7 +92,7 @@ export default function SanatoriumHorizontal({ sanatorium, index = 0 }: Sanatori
             
             <div className="flex flex-col md:flex-row md:items-center space-y-2 md:space-y-0 md:space-x-3">
               <div className="text-sm font-medium text-gray-500">
-                Qiymət: <span className="text-blue-500">{sanatorium.price}</span>
+                Qiymət: <span className="text-blue-500">{sanatorium.min_price}</span>
               </div>
               
               <Link 

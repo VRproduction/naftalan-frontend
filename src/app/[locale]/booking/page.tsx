@@ -11,11 +11,32 @@ import { FaCalendarAlt, FaUser, FaEnvelope, FaPhone, FaInfoCircle, FaCheck, FaHo
 export default function BookingPage() {
   const router = useRouter();
   
-  // Static hotel info (will be made dynamic later)
+  // Get URL parameters
+  const searchParams = typeof window !== 'undefined' 
+    ? new URLSearchParams(window.location.search) 
+    : new URLSearchParams('');
+  
+  const sanatoriumId = searchParams.get('sanatorium_id');
+  const sanatoriumName = searchParams.get('sanatorium_name');
+  
+  // Static hotel info (will be replaced with actual data from API)
   const hotelInfo = {
-    name: "Naftalan Sağlamlıq Mərkəzi",
-    location: "Naftalan, Azərbaycan"
+    name: sanatoriumName || "Naftalan Sağlamlıq Mərkəzi",
+    location: "Naftalan, Azərbaycan",
+    id: sanatoriumId || ""
   };
+  
+  // Room and treatment options (will be fetched from API)
+  const [roomTypes, setRoomTypes] = useState([
+    { id: 1, name: "Standart otaq", prices: [{ price: "120", currency: "AZN" }] },
+    { id: 2, name: "Lüks otaq", prices: [{ price: "180", currency: "AZN" }] },
+    { id: 3, name: "Ailəvi otaq", prices: [{ price: "220", currency: "AZN" }] }
+  ]);
+
+  const [treatmentOptions, setTreatmentOptions] = useState([
+    { id: 1, name: "Standart müalicə", price: "50" },
+    { id: 2, name: "Premium müalicə", price: "90" }
+  ]);
   
   // Form state
   const [formData, setFormData] = useState({
@@ -27,6 +48,9 @@ export default function BookingPage() {
     checkOut: '',
     adults: 1,
     children: 0,
+    roomTypeId: '',
+    withTreatment: true,
+    treatmentOptionId: '1',
     specialRequests: '',
     termsAccepted: false
   });
@@ -77,6 +101,7 @@ export default function BookingPage() {
     if (!formData.phone) newErrors.phone = 'Telefon daxil edilməlidir';
     if (!formData.checkIn) newErrors.checkIn = 'Giriş tarixi seçilməlidir';
     if (!formData.checkOut) newErrors.checkOut = 'Çıxış tarixi seçilməlidir';
+    if (!formData.roomTypeId) newErrors.roomTypeId = 'Otaq növü seçilməlidir';
     
     // Email validation
     if (formData.email && !/\S+@\S+\.\S+/.test(formData.email)) {
@@ -345,6 +370,74 @@ export default function BookingPage() {
                       </select>
                     </div>
                   </div>
+
+                  <h2 className="text-2xl font-bold text-gray-800 mb-6">Otaq və müalicə seçimi</h2>
+                  
+                  <div className="grid grid-cols-1 gap-6 mb-8">
+                    <div>
+                      <label htmlFor="roomTypeId" className="block text-sm font-medium text-gray-700 mb-1">Otaq növü *</label>
+                      <select
+                        id="roomTypeId"
+                        name="roomTypeId"
+                        value={formData.roomTypeId}
+                        onChange={handleInputChange}
+                        className={`w-full px-4 py-3 rounded-lg border ${errors.roomTypeId ? 'border-red-400' : 'border-gray-300'} focus:outline-none focus:ring-2 focus:ring-blue-500`}
+                      >
+                        <option value="">Otaq seçin</option>
+                        {roomTypes.map(room => (
+                          <option key={room.id} value={room.id}>{room.name} - {room.prices[0].price} {room.prices[0].currency}</option>
+                        ))}
+                      </select>
+                      {errors.roomTypeId && <p className="mt-1 text-sm text-red-500">{errors.roomTypeId}</p>}
+                    </div>
+                    
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-3">Müalicə seçimi *</label>
+                      <div className="space-y-3">
+                        <div className="flex items-center">
+                          <input
+                            type="radio"
+                            id="with-treatment"
+                            name="withTreatment"
+                            checked={formData.withTreatment}
+                            onChange={() => setFormData({...formData, withTreatment: true})}
+                            className="h-4 w-4 text-blue-600 focus:ring-blue-500"
+                          />
+                          <label htmlFor="with-treatment" className="ml-2 text-gray-700">Müalicə ilə</label>
+                        </div>
+                        
+                        {formData.withTreatment && (
+                          <div className="ml-6 mt-2">
+                            <select
+                              id="treatmentOptionId"
+                              name="treatmentOptionId"
+                              value={formData.treatmentOptionId}
+                              onChange={handleInputChange}
+                              className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            >
+                              {treatmentOptions.map(option => (
+                                <option key={option.id} value={option.id}>
+                                  {option.name} - {option.price} AZN / gün
+                                </option>
+                              ))}
+                            </select>
+                          </div>
+                        )}
+                        
+                        <div className="flex items-center">
+                          <input
+                            type="radio"
+                            id="without-treatment"
+                            name="withTreatment"
+                            checked={!formData.withTreatment}
+                            onChange={() => setFormData({...formData, withTreatment: false})}
+                            className="h-4 w-4 text-blue-600 focus:ring-blue-500"
+                          />
+                          <label htmlFor="without-treatment" className="ml-2 text-gray-700">Müalicəsiz</label>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
                   
                   <div className="mb-8">
                     <label htmlFor="specialRequests" className="block text-sm font-medium text-gray-700 mb-1">Xüsusi istəklər</label>
@@ -439,9 +532,82 @@ export default function BookingPage() {
                       {formData.adults} böyük{formData.children > 0 ? `, ${formData.children} uşaq` : ''}
                     </span>
                   </div>
+                  
+                  <div className="flex justify-between">
+                    <span className="text-gray-600">Otaq növü:</span>
+                    <span className="font-medium text-gray-800">
+                      {formData.roomTypeId 
+                        ? roomTypes.find(r => r.id.toString() === formData.roomTypeId.toString())?.name || '-'
+                        : '-'}
+                    </span>
+                  </div>
+                  
+                  <div className="flex justify-between">
+                    <span className="text-gray-600">Müalicə:</span>
+                    <span className="font-medium text-gray-800">
+                      {formData.withTreatment 
+                        ? treatmentOptions.find(t => t.id.toString() === formData.treatmentOptionId.toString())?.name || 'Müalicə ilə'
+                        : 'Müalicəsiz'}
+                    </span>
+                  </div>
                 </div>
                 
-                <div className="p-4 bg-blue-50 rounded-lg border border-blue-100">
+                {formData.roomTypeId && nights > 0 && (
+                  <div className="border-t pt-4 mt-4">
+                    <h3 className="font-semibold mb-3 text-gray-800">Təxmini qiymət</h3>
+                    
+                    <div className="space-y-2 text-sm mb-4">
+                      <div className="flex justify-between">
+                        <span>Otaq ({nights} gecə):</span>
+                        <span className="font-medium">
+                          {(() => {
+                            const room = roomTypes.find(r => r.id.toString() === formData.roomTypeId.toString());
+                            if (!room) return '-';
+                            const roomPrice = parseFloat(room.prices[0].price);
+                            return `${roomPrice * nights} ${room.prices[0].currency}`;
+                          })()}
+                        </span>
+                      </div>
+                      
+                      {formData.withTreatment && (
+                        <div className="flex justify-between">
+                          <span>Müalicə ({nights} gün):</span>
+                          <span className="font-medium">
+                            {(() => {
+                              const treatment = treatmentOptions.find(t => t.id.toString() === formData.treatmentOptionId.toString());
+                              if (!treatment) return '-';
+                              const treatmentPrice = parseFloat(treatment.price);
+                              return `${treatmentPrice * nights} AZN`;
+                            })()}
+                          </span>
+                        </div>
+                      )}
+                    </div>
+                    
+                    <div className="flex justify-between font-bold text-gray-800 pt-2 border-t border-dashed">
+                      <span>Cəmi:</span>
+                      <span>
+                        {(() => {
+                          const room = roomTypes.find(r => r.id.toString() === formData.roomTypeId.toString());
+                          if (!room) return '-';
+                          const roomPrice = parseFloat(room.prices[0].price) * nights;
+                          
+                          let treatmentPrice = 0;
+                          if (formData.withTreatment) {
+                            const treatment = treatmentOptions.find(t => t.id.toString() === formData.treatmentOptionId.toString());
+                            if (treatment) {
+                              treatmentPrice = parseFloat(treatment.price) * nights;
+                            }
+                          }
+                          
+                          return `${roomPrice + treatmentPrice} AZN`;
+                        })()}
+                      </span>
+                    </div>
+                  </div>
+                )}
+                
+                <div className="p-4 bg-blue-50 rounded-lg border border-blue-100 mt-4">
                   <p className="text-sm text-gray-700 text-center">
                     Rezervasiyanız qəbul edildikdən sonra sizinlə əlaqə saxlanılacaq
                   </p>
