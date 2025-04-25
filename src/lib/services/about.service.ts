@@ -9,7 +9,7 @@ import {
   TreantmentProcess,
 } from "../types/about.type";
 
-const DEFAULT_OPTIONS = { revalidate: 1000 };
+const DEFAULT_OPTIONS = { revalidate: 0};
 
 export const getAbout = (locale: SupportedLocale) =>
   api.get<About>("/about/", { ...DEFAULT_OPTIONS, locale: locale });
