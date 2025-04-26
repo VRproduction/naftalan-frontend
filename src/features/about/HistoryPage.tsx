@@ -11,68 +11,6 @@ interface Props {
 }
 
 export default function HistoryPage({ history }: Props) {
-  const timelineEvents = [
-    {
-      year: "1873",
-      title: "Naftalan yatağının kəşfi",
-      description:
-        "Alman əczaçı və mühəndis E.I. Yeger tərəfindən Naftalan neftinin tibbi xüsusiyyətləri aşkar edildi və ilk dəfə sənaye miqyasında istifadəyə başlandı.",
-    },
-    {
-      year: "1890",
-      title: "İlk ticarət markası və istehsal",
-      description:
-        'Naftalan nefti əsasında hazırlanan məlhəmlər "Naftalan" ticarət markası altında Almaniyada və Avropada satışa çıxarıldı və bəzi xəstəliklərin müalicəsində uğurla istifadə edildi.',
-    },
-    {
-      year: "1920",
-      title: "Elmi tədqiqatların başlanması",
-      description:
-        "Naftalan neftinin tibbi xüsusiyyətləri elmə cəlb olundu və Azərbaycan alimlərinin tədqiqat obyektinə çevrildi.",
-    },
-    {
-      year: "1926",
-      title: "İlk sanatoriumun açılması",
-      description:
-        "Naftalan şəhərində ilk sanatorium açıldı və sovet dövründə genişlənərək SSRİ-nin hər yerindən xəstələr qəbul etməyə başladı.",
-    },
-    {
-      year: "1938",
-      title: "Naftalan Elmi-Tədqiqat Laboratoriyasının açılması",
-      description:
-        "Xüsusi elmi-tədqiqat laboratoriyası açıldı və burada Naftalan neftinin tibbi xüsusiyyətləri və müalicə üsulları dərindən araşdırıldı.",
-    },
-    {
-      year: "1941-1945",
-      title: "Müharibə dövründə istifadə",
-      description:
-        "İkinci Dünya Müharibəsi zamanı Naftalan nefti əsasında hazırlanan məlhəmlər döyüşçülərin yaralarının sağalmasında geniş istifadə edildi.",
-    },
-    {
-      year: "1960-1980",
-      title: "Qızıl dövr",
-      description:
-        "Naftalan kurortunun çiçəklənmə dövrü. İldə 75,000-dən çox insan müalicə üçün buraya gəlirdi. Bu dövrdə 9 büyük sanatorium fəaliyyət göstərirdi.",
-    },
-    {
-      year: "1990-lar",
-      title: "Tənəzzül dövrü",
-      description:
-        "SSRİ-nin dağılması və Qarabağ münaqişəsi səbəbindən kurort infrastrukturu zərər çəkdi və turist axını kəskin azaldı.",
-    },
-    {
-      year: "2005-sonra",
-      title: "Yenidən dirçəliş",
-      description:
-        "Dövlət səviyyəsində kurortun yenidən canlandırılması üçün investisiyalar qoyuldu, yeni müasir müalicə mərkəzləri tikildi və beynəlxalq standartlara uyğun otellər açıldı.",
-    },
-    {
-      year: "Müasir dövr",
-      title: "Beynəlxalq tanınma",
-      description:
-        "Naftalan bu gün yenidən həm yerli, həm də xarici turistlər üçün populyar müalicə mərkəzi statusunu qazanmışdır. Hər il minlərlə insan burada müalicə alır.",
-    },
-  ];
 
   const fadeInUpVariant = {
     hidden: { opacity: 0, y: 20 },
@@ -80,7 +18,7 @@ export default function HistoryPage({ history }: Props) {
   };
 
   return (
-    <div className="pt-[72px] md:pt-[80px]">
+    <div>
       {/* Hero Section */}
       <div className="bg-gradient-to-r from-blue-800 to-blue-600 text-white">
         <div className="container mx-auto px-4 py-16 md:py-24">

@@ -32,7 +32,7 @@ export default function TreatmentsPage({ treatmentsPage, categories, treatments,
   };
 
   return (
-    <div className="pt-[72px] md:pt-[80px]">
+    <div>
       {/* Hero Section */}
       <div className="bg-gradient-to-r from-blue-800 to-blue-600 text-white">
         <div className="container mx-auto px-4 py-16 md:py-24">

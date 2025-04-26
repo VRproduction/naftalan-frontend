@@ -124,7 +124,7 @@ export default function SanatoriumDetailPage({ sanatorium }: PageProps) {
 
   if (!sanatorium) {
     return (
-      <div className="pt-[72px] md:pt-[80px] container mx-auto px-4 py-16">
+      <div className="container mx-auto px-4 py-16">
         <div className="text-center">
           <h2 className="text-2xl font-bold text-gray-800 mb-4">
             Sanatoriya tapılmadı
@@ -647,7 +647,27 @@ export default function SanatoriumDetailPage({ sanatorium }: PageProps) {
                     <div className="flex justify-between items-center mb-2">
                       <span className="text-gray-600">Başlayan qiymət:</span>
                       <span className="text-2xl font-bold text-blue-600">
-                        {formatPrice(sanatorium.min_price)}
+                        {formatPrice(
+                          sanatorium.room_types.reduce((minPrice, roomType) => {
+                            if (!roomType.prices || roomType.prices.length === 0) {
+                              return minPrice;
+                            }
+                            
+                            const roomMinPrice = roomType.prices.reduce((roomMin, price) => {
+                              // Safely convert price value to number
+                              const priceValue = typeof price.price === 'number' 
+                                ? price.price 
+                                : parseFloat(price.price);
+                              
+                              // Only compare if it's a valid number
+                              return !isNaN(priceValue) && priceValue < roomMin 
+                                ? priceValue 
+                                : roomMin;
+                            }, Infinity);
+                            
+                            return roomMinPrice < minPrice ? roomMinPrice : minPrice;
+                          }, Infinity) || 0
+                        )}
                       </span>
                     </div>
                     <div className="text-sm text-gray-500 mb-4">

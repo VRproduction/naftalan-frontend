@@ -34,6 +34,18 @@ const Header = () => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  // Close language menu when clicking outside
+  useEffect(() => {
+    const handleOutsideClick = (e: MouseEvent) => {
+      if (isLangMenuOpen && !(e.target as Element).closest('.lang-menu-container')) {
+        setIsLangMenuOpen(false);
+      }
+    };
+
+    document.addEventListener('click', handleOutsideClick);
+    return () => document.removeEventListener('click', handleOutsideClick);
+  }, [isLangMenuOpen]);
+
   const toggleSubmenu = (menu: string) => {
     setActiveSubmenu(activeSubmenu === menu ? null : menu);
   };
@@ -44,136 +56,169 @@ const Header = () => {
     setIsLangMenuOpen(false);
     // Get current pathname and replace locale segment
     router.push(pathname, { locale: lang, scroll: false });
-
   };
   
   return (
-    <header className={`fixed top-0 w-full z-[50] transition-all duration-300 ${scrolled ? 'bg-white shadow-md py-3' : 'bg-white/90 shadow-md py-3'}`}>
-      <div className="container mx-auto px-4 flex justify-between items-center">
-        <IntlLink href="/" className="text-2xl font-bold text-blue-500" onClick={() => setMenuOpen(false)}>
+    <header className={`fixed top-0 w-full z-[50] h-[60px] transition-all duration-300 ${
+      scrolled ? 'bg-white/95 backdrop-blur-sm shadow-md py-2' : 'bg-white/90 py-2.5 '
+    }`}>
+      <div className="container mx-auto px-3 md:px-4 flex justify-between items-center">
+        <IntlLink 
+          href="/" 
+          className="text-xl md:text-2xl font-bold text-blue-500 hover:text-blue-600 transition-colors" 
+          onClick={() => setMenuOpen(false)}
+        >
           Naftalan
         </IntlLink>
         
         {/* Desktop Menu */}
-        <nav className="hidden md:flex items-center space-x-6">
+        <nav className="hidden md:flex items-center space-x-2 lg:space-x-4">
           <div className="group relative">
-            <button className="py-2 flex items-center gap-1 hover:text-blue-500 transition-colors font-medium">
+            <button className="py-2 px-2.5 flex items-center gap-1.5 hover:text-blue-500 transition-colors font-medium">
               Haqqımızda
               <FaChevronDown className="text-xs opacity-70 group-hover:rotate-180 transition-transform duration-300" />
             </button>
-            <div className="absolute left-0 top-full mt-1 w-64 bg-white shadow-lg rounded-md overflow-hidden opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 transform group-hover:translate-y-0 translate-y-2">
-              <IntlLink href="/about" className="block px-4 py-3 hover:bg-blue-50 transition-colors border-l-2 border-transparent hover:border-blue-500">
+            <div className="absolute left-0 top-full mt-1 w-64 bg-white/95 backdrop-blur-sm shadow-lg rounded-lg overflow-hidden opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 transform group-hover:translate-y-0 translate-y-2 border border-gray-100">
+              <IntlLink href="/about" className="block px-4 py-2.5 hover:bg-blue-50 transition-colors border-l-2 border-transparent hover:border-blue-500">
                 Naftalan
               </IntlLink>
-              <IntlLink href="/about/history" className="block px-4 py-3 hover:bg-blue-50 transition-colors border-l-2 border-transparent hover:border-blue-500">
+              <IntlLink href="/about/history" className="block px-4 py-2.5 hover:bg-blue-50 transition-colors border-l-2 border-transparent hover:border-blue-500">
                 Naftalan neftinin tarixi
               </IntlLink>
-              <IntlLink href="/about/treatments" className="block px-4 py-3 hover:bg-blue-50 transition-colors border-l-2 border-transparent hover:border-blue-500">
+              <IntlLink href="/about/treatments" className="block px-4 py-2.5 hover:bg-blue-50 transition-colors border-l-2 border-transparent hover:border-blue-500">
                 Müalicə olunan xəstəliklər
               </IntlLink>
             </div>
           </div>
           
           <div className="group relative">
-            <button className="py-2 flex items-center gap-1 hover:text-blue-500 transition-colors font-medium">
+            <button className="py-2 px-2.5 flex items-center gap-1.5 hover:text-blue-500 transition-colors font-medium">
               Sanatoriyalar
               <FaChevronDown className="text-xs opacity-70 group-hover:rotate-180 transition-transform duration-300" />
             </button>
-            <div className="absolute left-0 top-full mt-1 w-64 bg-white shadow-lg rounded-md overflow-hidden opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 transform group-hover:translate-y-0 translate-y-2">
-              <IntlLink href="/sanatoriums/naftalan" className="block px-4 py-3 hover:bg-blue-50 transition-colors border-l-2 border-transparent hover:border-blue-500">
+            <div className="absolute left-0 top-full mt-1 w-64 bg-white/95 backdrop-blur-sm shadow-lg rounded-lg overflow-hidden opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 transform group-hover:translate-y-0 translate-y-2 border border-gray-100">
+              <IntlLink href="/sanatoriums/naftalan" className="block px-4 py-2.5 hover:bg-blue-50 transition-colors border-l-2 border-transparent hover:border-blue-500">
                 Naftalan sanatoriyaları
               </IntlLink>
-              <IntlLink href="/sanatoriums/other" className="block px-4 py-3 hover:bg-blue-50 transition-colors border-l-2 border-transparent hover:border-blue-500">
+              <IntlLink href="/sanatoriums/other" className="block px-4 py-2.5 hover:bg-blue-50 transition-colors border-l-2 border-transparent hover:border-blue-500">
                 Digər şəhərlərdəki sanatoriyalar
               </IntlLink>
             </div>
           </div>
           
-          <IntlLink href="/how-to-come" className="py-2 font-medium hover:text-blue-500 transition-colors">
+          <IntlLink href="/how-to-come" className="py-2 px-2.5 font-medium hover:text-blue-500 transition-colors">
             Necə gəlmək?
           </IntlLink>
           
-          <IntlLink href="/reservation" className="py-2 font-medium hover:text-blue-500 transition-colors">
+          <IntlLink href="/reservation" className="py-2 px-2.5 font-medium hover:text-blue-500 transition-colors">
             Rezervasiya
           </IntlLink>
           
-          <IntlLink href="/blog" className="py-2 font-medium hover:text-blue-500 transition-colors">
+          <IntlLink href="/blog" className="py-2 px-2.5 font-medium hover:text-blue-500 transition-colors">
             Bloq
           </IntlLink>
           
-          <IntlLink href="/contact" className="py-2 font-medium hover:text-blue-500 transition-colors">
+          <IntlLink href="/contact" className="py-2 px-2.5 font-medium hover:text-blue-500 transition-colors">
             Əlaqə
           </IntlLink>
           
-          <IntlLink 
-            href="/ask-doctor" 
-            className="py-2.5 px-5 bg-blue-500 text-white rounded-full hover:bg-blue-600 transition-all duration-300 shadow-md hover:shadow-lg transform hover:-translate-y-0.5"
-          >
-            Həkimə sual verin
-          </IntlLink>
-
+          <div className="h-5 w-px bg-gray-200 mx-1"></div>
+          
           {/* Language Switcher */}
-          <div className="relative">
+          <div className="relative lang-menu-container">
             <button 
-              className="flex items-center gap-1.5 py-2 px-3 rounded-lg hover:bg-gray-100 transition-colors"
-              onClick={() => setIsLangMenuOpen(!isLangMenuOpen)}
+              className="flex items-center gap-1.5 py-1.5 px-2.5 rounded-lg hover:bg-gray-100 transition-colors"
+              onClick={(e) => {
+                e.stopPropagation();
+                setIsLangMenuOpen(!isLangMenuOpen);
+              }}
             >
               <FaGlobe className="text-blue-500" />
               <span className="uppercase font-medium">{locale}</span>
               <FaChevronDown className={`text-xs transition-transform duration-300 ${isLangMenuOpen ? 'rotate-180' : ''}`} />
             </button>
 
-            {isLangMenuOpen && (
-              <div className="absolute right-0 top-full mt-1 bg-white shadow-lg rounded-md overflow-hidden z-50">
-                <button 
-                  className={`w-full text-left px-4 py-2 hover:bg-blue-50 transition-colors ${locale === 'az' ? 'bg-blue-50 text-blue-500' : ''}`}
-                  onClick={() => changeLanguage('az')}
+            <AnimatePresence>
+              {isLangMenuOpen && (
+                <motion.div
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: 10 }}
+                  transition={{ duration: 0.2 }}
+                  className="absolute right-0 top-full mt-1 bg-white/95 backdrop-blur-sm shadow-lg rounded-lg overflow-hidden z-50 border border-gray-100 w-40"
                 >
-                  Azərbaycan
-                </button>
-               
-                <button 
-                  className={`w-full text-left px-4 py-2 hover:bg-blue-50 transition-colors ${locale === 'ru' ? 'bg-blue-50 text-blue-500' : ''}`}
-                  onClick={() => changeLanguage('ru')}
-                >
-                  Русский
-                </button>
-              </div>
-            )}
+                  <button 
+                    className={`w-full text-left px-4 py-2 hover:bg-blue-50 transition-colors flex items-center ${locale === 'az' ? 'bg-blue-50 text-blue-500' : ''}`}
+                    onClick={() => changeLanguage('az')}
+                  >
+                    <span className="w-6 text-center mr-2 uppercase font-bold">Az</span>
+                    <span>Azərbaycan</span>
+                  </button>
+                
+                  <button 
+                    className={`w-full text-left px-4 py-2 hover:bg-blue-50 transition-colors flex items-center ${locale === 'ru' ? 'bg-blue-50 text-blue-500' : ''}`}
+                    onClick={() => changeLanguage('ru')}
+                  >
+                    <span className="w-6 text-center mr-2 uppercase font-bold">Ru</span>
+                    <span>Русский</span>
+                  </button>
+                </motion.div>
+              )}
+            </AnimatePresence>
           </div>
           
           {/* Currency Selector - Desktop */}
-          <CurrencySelector  />
+          <CurrencySelector />
+          
+          <IntlLink 
+            href="/ask-doctor" 
+            className="py-2 px-4 bg-blue-500 text-white rounded-full hover:bg-blue-600 transition-all duration-300 shadow-sm hover:shadow-md transform hover:-translate-y-0.5 text-sm font-medium"
+          >
+            Həkimə sual verin
+          </IntlLink>
         </nav>
         
         {/* Mobile menu button */}
-        <div className="md:hidden flex items-center gap-3">
+        <div className="md:hidden flex items-center gap-2">
           {/* Language switcher for mobile */}
-          <div className="relative">
+          <div className="relative lang-menu-container">
             <button 
-              className="flex items-center justify-center p-2 rounded-full hover:bg-gray-100 transition-colors"
-              onClick={() => setIsLangMenuOpen(!isLangMenuOpen)}
+              className="flex items-center justify-center p-1.5 rounded-full hover:bg-gray-100 transition-colors"
+              onClick={(e) => {
+                e.stopPropagation();
+                setIsLangMenuOpen(!isLangMenuOpen);
+              }}
             >
               <FaGlobe className="text-blue-500" />
             </button>
 
-            {isLangMenuOpen && (
-              <div className="absolute right-0 top-full mt-1 bg-white shadow-lg rounded-md overflow-hidden z-[1001]">
-                <button 
-                  className={`w-full text-left px-4 py-2 hover:bg-blue-50 transition-colors ${locale === 'az' ? 'bg-blue-50 text-blue-500' : ''}`}
-                  onClick={() => changeLanguage('az')}
+            <AnimatePresence>
+              {isLangMenuOpen && (
+                <motion.div
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: 10 }}
+                  transition={{ duration: 0.2 }}
+                  className="absolute right-0 top-full mt-1 bg-white/95 backdrop-blur-sm shadow-xl rounded-lg overflow-hidden z-[1001] border border-gray-100"
                 >
-                  Azərbaycan
-                </button>
-              
-                <button 
-                  className={`w-full text-left px-4 py-2 hover:bg-blue-50 transition-colors ${locale === 'ru' ? 'bg-blue-50 text-blue-500' : ''}`}
-                  onClick={() => changeLanguage('ru')}
-                >
-                  Русский
-                </button>
-              </div>
-            )}
+                  <button 
+                    className={`w-full text-left px-4 py-2 hover:bg-blue-50 transition-colors flex items-center ${locale === 'az' ? 'bg-blue-50 text-blue-500' : ''}`}
+                    onClick={() => changeLanguage('az')}
+                  >
+                    <span className="w-6 text-center mr-2 uppercase font-bold">Az</span>
+                    <span>Azərbaycan</span>
+                  </button>
+                
+                  <button 
+                    className={`w-full text-left px-4 py-2 hover:bg-blue-50 transition-colors flex items-center ${locale === 'ru' ? 'bg-blue-50 text-blue-500' : ''}`}
+                    onClick={() => changeLanguage('ru')}
+                  >
+                    <span className="w-6 text-center mr-2 uppercase font-bold">Ru</span>
+                    <span>Русский</span>
+                  </button>
+                </motion.div>
+              )}
+            </AnimatePresence>
           </div>
 
           {/* Currency Selector - Mobile */}
@@ -182,7 +227,7 @@ const Header = () => {
           </div>
 
           <button 
-            className="text-xl p-2 z-[1000] relative"
+            className="text-lg p-1.5 z-[1000] relative bg-gray-100 rounded-md"
             onClick={toggleMenu}
             aria-label={isMenuOpen ? "Close menu" : "Open menu"}
           >
@@ -223,7 +268,7 @@ const Header = () => {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className="md:hidden fixed inset-0 bg-black/50 z-[900]"
+              className="md:hidden fixed inset-0 bg-black/50 backdrop-blur-sm z-[900]"
               onClick={() => setMenuOpen(false)}
             />
             
@@ -233,42 +278,50 @@ const Header = () => {
               animate={{ x: 0 }}
               exit={{ x: "100%" }}
               transition={{ type: "tween", ease: "easeInOut", duration: 0.3 }}
-              className="md:hidden fixed top-0 right-0 bottom-0 w-5/6 max-w-sm bg-white shadow-2xl z-[999] overflow-y-auto"
+              className="md:hidden fixed top-0 right-0 bottom-0 w-[85%] max-w-sm bg-white shadow-2xl z-[999] overflow-y-auto"
             >
-              <div className="flex flex-col p-6">
-                <div className="flex justify-between items-center mb-8 pb-4 border-b">
+              <div className="flex flex-col p-4">
+                <div className="flex justify-between items-center mb-6 pb-3 border-b">
                   <IntlLink 
                     href="/" 
-                    className="text-2xl font-bold text-blue-500"
+                    className="text-xl font-bold text-blue-500"
                     onClick={() => setMenuOpen(false)}
                   >
                     Naftalan
                   </IntlLink>
 
-                  {/* Language switcher in mobile menu */}
-                  <div className="flex items-center gap-2 text-sm">
-                    <button 
-                      className={`px-3 py-1.5 rounded-md transition-colors ${locale === 'az' ? 'bg-blue-100 text-blue-600 font-medium' : 'hover:bg-gray-100'}`}
-                      onClick={() => changeLanguage('az')}
-                    >
-                      AZ
-                    </button>
-                  
-                    <button 
-                      className={`px-3 py-1.5 rounded-md transition-colors ${locale === 'ru' ? 'bg-blue-100 text-blue-600 font-medium' : 'hover:bg-gray-100'}`}
-                      onClick={() => changeLanguage('ru')}
-                    >
-                      RU
-                    </button>
-                  </div>
+                  {/* Close button */}
+                  <button
+                    onClick={() => setMenuOpen(false)}
+                    className="p-1.5 rounded-full hover:bg-gray-100 transition-colors"
+                  >
+                    <FaTimes />
+                  </button>
+                </div>
+                
+                {/* Language switcher in mobile menu */}
+                <div className="flex items-center justify-center gap-2 text-sm mb-5">
+                  <button 
+                    className={`flex-1 py-2 rounded-md transition-colors ${locale === 'az' ? 'bg-blue-100 text-blue-600 font-medium' : 'bg-gray-100 hover:bg-gray-200'}`}
+                    onClick={() => changeLanguage('az')}
+                  >
+                    Azərbaycan
+                  </button>
+                
+                  <button 
+                    className={`flex-1 py-2 rounded-md transition-colors ${locale === 'ru' ? 'bg-blue-100 text-blue-600 font-medium' : 'bg-gray-100 hover:bg-gray-200'}`}
+                    onClick={() => changeLanguage('ru')}
+                  >
+                    Русский
+                  </button>
                 </div>
                 
                 {/* Menu Items */}
                 <div className="flex flex-col space-y-1">
                   {/* Haqqımızda dropdown */}
-                  <div className="py-2">
+                  <div className="py-1">
                     <button 
-                      className={`w-full flex justify-between items-center py-2 px-3 rounded-lg font-medium ${activeSubmenu === 'about' ? 'bg-blue-50 text-blue-500' : 'hover:bg-gray-50'}`}
+                      className={`w-full flex justify-between items-center py-2.5 px-3 rounded-lg font-medium ${activeSubmenu === 'about' ? 'bg-blue-50 text-blue-500' : 'hover:bg-gray-50'}`}
                       onClick={() => toggleSubmenu('about')}
                     >
                       <span>Haqqımızda</span>
@@ -284,7 +337,7 @@ const Header = () => {
                           transition={{ duration: 0.2 }}
                           className="overflow-hidden"
                         >
-                          <div className="pl-3 py-2 ml-2 border-l-2 border-blue-100 flex flex-col space-y-1 mt-1">
+                          <div className="pl-3 py-1 ml-2 border-l-2 border-blue-100 flex flex-col space-y-0.5 mt-1">
                             <IntlLink 
                               href="/about/naftalan" 
                               className="py-2 px-3 hover:bg-blue-50 hover:text-blue-500 rounded-lg flex items-center transition-colors"
@@ -316,9 +369,9 @@ const Header = () => {
                   </div>
                   
                   {/* Sanatoriyalar dropdown */}
-                  <div className="py-2">
+                  <div className="py-1">
                     <button 
-                      className={`w-full flex justify-between items-center py-2 px-3 rounded-lg font-medium ${activeSubmenu === 'sanatoriums' ? 'bg-blue-50 text-blue-500' : 'hover:bg-gray-50'}`}
+                      className={`w-full flex justify-between items-center py-2.5 px-3 rounded-lg font-medium ${activeSubmenu === 'sanatoriums' ? 'bg-blue-50 text-blue-500' : 'hover:bg-gray-50'}`}
                       onClick={() => toggleSubmenu('sanatoriums')}
                     >
                       <span>Sanatoriyalar</span>
@@ -334,7 +387,7 @@ const Header = () => {
                           transition={{ duration: 0.2 }}
                           className="overflow-hidden"
                         >
-                          <div className="pl-3 py-2 ml-2 border-l-2 border-blue-100 flex flex-col space-y-1 mt-1">
+                          <div className="pl-3 py-1 ml-2 border-l-2 border-blue-100 flex flex-col space-y-0.5 mt-1">
                             <IntlLink 
                               href="/sanatoriums/naftalan" 
                               className="py-2 px-3 hover:bg-blue-50 hover:text-blue-500 rounded-lg flex items-center transition-colors"
@@ -360,7 +413,7 @@ const Header = () => {
                   {/* Regular links */}
                   <IntlLink 
                     href="/how-to-come" 
-                    className="py-2 px-3 hover:bg-blue-50 hover:text-blue-500 rounded-lg font-medium transition-colors"
+                    className="py-2.5 px-3 hover:bg-blue-50 hover:text-blue-500 rounded-lg font-medium transition-colors"
                     onClick={() => setMenuOpen(false)}
                   >
                     Necə gəlmək?
@@ -368,7 +421,7 @@ const Header = () => {
                   
                   <IntlLink 
                     href="/reservation" 
-                    className="py-2 px-3 hover:bg-blue-50 hover:text-blue-500 rounded-lg font-medium transition-colors"
+                    className="py-2.5 px-3 hover:bg-blue-50 hover:text-blue-500 rounded-lg font-medium transition-colors"
                     onClick={() => setMenuOpen(false)}
                   >
                     Rezervasiya
@@ -376,7 +429,7 @@ const Header = () => {
                   
                   <IntlLink 
                     href="/blog" 
-                    className="py-2 px-3 hover:bg-blue-50 hover:text-blue-500 rounded-lg font-medium transition-colors"
+                    className="py-2.5 px-3 hover:bg-blue-50 hover:text-blue-500 rounded-lg font-medium transition-colors"
                     onClick={() => setMenuOpen(false)}
                   >
                     Bloq
@@ -384,17 +437,23 @@ const Header = () => {
                   
                   <IntlLink 
                     href="/contact" 
-                    className="py-2 px-3 hover:bg-blue-50 hover:text-blue-500 rounded-lg font-medium transition-colors"
+                    className="py-2.5 px-3 hover:bg-blue-50 hover:text-blue-500 rounded-lg font-medium transition-colors"
                     onClick={() => setMenuOpen(false)}
                   >
                     Əlaqə
                   </IntlLink>
                 </div>
                 
-                <div className="mt-8 pt-6 border-t">
+                {/* Currency Selector */}
+                <div className="mt-4 mb-4 px-3">
+                  <div className="text-sm font-medium text-gray-600 mb-2">Valyuta</div>
+                  <CurrencySelector />
+                </div>
+                
+                <div className="mt-4 pt-4 border-t">
                   <IntlLink 
                     href="/ask-doctor" 
-                    className="w-full py-3 px-4 bg-blue-500 text-white rounded-lg text-center font-medium hover:bg-blue-600 transition-all duration-300 shadow-md hover:shadow-lg flex items-center justify-center"
+                    className="w-full py-2.5 px-3 bg-blue-500 text-white rounded-lg text-center font-medium hover:bg-blue-600 transition-all duration-300 shadow-md hover:shadow-lg flex items-center justify-center"
                     onClick={() => setMenuOpen(false)}
                   >
                     Həkimə sual verin

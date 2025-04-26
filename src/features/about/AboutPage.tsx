@@ -12,7 +12,7 @@ interface Props {
 
 export default function AboutPage({ about }: Props) {
   return (
-    <div className="pt-[72px] md:pt-[80px]">
+    <div>
       {/* Hero Section */}
       <div className="relative h-[40vh] md:h-[50vh] lg:h-[60vh]">
         <Image

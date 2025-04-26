@@ -9,15 +9,21 @@ interface Props {
     locale: SupportedLocale;
     slug: string;
   }>;
+  searchParams: Promise<{
+    [key: string]: string | string[] | undefined;
+  }>;
 }
 
 
-export default async function BlogDetailPage({ params }: Props) {
+export default async function BlogDetailPage({ params, searchParams }: Props) {
   const { locale } = await params;
-  
+  const { tag, category } = await searchParams;
   try {
     const [posts, categories, tags] = await Promise.all([
-      getBlogPosts(locale),
+      getBlogPosts(locale,{
+        tags: String(tag),
+        category: String(category)
+      }),
       getBlogCategories(locale),
       getBlogTags(locale),    
     ]);

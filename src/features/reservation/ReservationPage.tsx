@@ -2,7 +2,6 @@
 
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import Link from 'next/link';
 import { FaCalendarAlt, FaUserFriends, FaSearch, FaFilter, FaStar, FaMapMarkerAlt } from 'react-icons/fa';
 import SanatoriumCard from '@/features/common/SanatoriumCard';
 import { Sanatorium } from '@/lib/types/sanatorium.type';
@@ -35,7 +34,7 @@ export default function ReservationPage({ sanatoriums }: { sanatoriums: Sanatori
   };
   
   return (
-    <div className="pt-[72px] md:pt-[80px]">
+    <div>
       {/* Hero Section */}
       <div className="bg-blue-50 py-16 md:py-24">
         <div className="container mx-auto px-4">
@@ -222,109 +221,7 @@ export default function ReservationPage({ sanatoriums }: { sanatoriums: Sanatori
         </div>
       </section>
       
-      {/* Why Choose Us Section */}
-      <section className="py-16 bg-white">
-        <div className="container mx-auto px-4">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold mb-4 text-gray-800">Niyə bizi seçməlisiniz?</h2>
-            <div className="w-20 h-1 bg-blue-500 mx-auto mb-6"></div>
-            <p className="max-w-2xl mx-auto text-gray-600">
-              Naftalan müalicəsi üçün ən yaxşı sanatoriyaları təklif edirik
-            </p>
-          </div>
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-            {[
-              {
-                title: "Ən yaxşı qiymət zəmanəti",
-                description: "Biz bazar qiymətlərini daim izləyir və ən əlverişli qiymətləri təklif edirik. Əgər eyni xidməti daha ucuz tapsanız, qiymət fərqini qaytarırıq."
-              },
-              {
-                title: "Professional konsultasiya",
-                description: "Təcrübəli mütəxəssislərimiz sizə ən uyğun sanatoriya və müalicə proqramını seçməkdə kömək edəcəklər."
-              },
-              {
-                title: "Etibarlı partnyor",
-                description: "Biz yalnız yüksək keyfiyyətli xidmət göstərən, lisenziyalı sanatoriyalarla əməkdaşlıq edirik."
-              },
-              {
-                title: "24/7 dəstək",
-                description: "Rezervasiyadan öncə və sonra sizə 24 saat dəstək göstərməyə hazırıq. Suallarınız üçün bizimlə istənilən vaxt əlaqə saxlaya bilərsiniz."
-              }
-            ].map((item, index) => (
-              <motion.div
-                key={index}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: index * 0.1 }}
-                viewport={{ once: true }}
-                className="bg-gray-50 p-6 rounded-xl text-center"
-              >
-                <h3 className="text-xl font-semibold mb-4 text-gray-800">{item.title}</h3>
-                <p className="text-gray-600">{item.description}</p>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
-      
-      {/* FAQ Section */}
-      <section className="py-16 bg-gray-50">
-        <div className="container mx-auto px-4">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold mb-4 text-gray-800">Tez-tez verilən suallar</h2>
-            <div className="w-20 h-1 bg-blue-500 mx-auto mb-6"></div>
-            <p className="max-w-2xl mx-auto text-gray-600">
-              Rezervasiya haqqında ən çox verilən suallar və cavablar
-            </p>
-          </div>
-          
-          <div className="max-w-3xl mx-auto space-y-6">
-            {[
-              {
-                question: "Rezervasiya edərkən ödəniş necə edilir?",
-                answer: "Rezervasiya edərkən ümumi məbləğin 20%-i qədər depozit ödənişi tələb olunur. Qalan məbləğ sanatoriyaya gəldikdə ödənilir. Ödəniş kredit kartı, bank köçürməsi və ya elektron ödəmə sistemləri vasitəsilə edilə bilər."
-              },
-              {
-                question: "Rezervasiyanı ləğv edə bilərəmmi?",
-                answer: "Bəli, rezervasiyanı ləğv edə bilərsiniz. Gəliş tarixindən 7 gün əvvəl edilən ləğvlər üçün tam məbləğ geri qaytarılır. 3-7 gün arasında ləğv edilən rezervasiyalar üçün depozit məbləğinin 50%-i qaytarılır. 3 gündən az qaldıqda edilən ləğvlər üçün depozit məbləği geri qaytarılmır."
-              },
-              {
-                question: "Müalicə paketləri nələri əhatə edir?",
-                answer: "Müalicə paketləri adətən qalma, gündəlik qidalanma, həkim konsultasiyası və təyin edilmiş naftalan müalicə prosedurlarını əhatə edir. Hər bir paketin dəqiq tərkibi sanatoriyadan asılı olaraq dəyişə bilər və rezervasiya zamanı təfərrüatları ilə qeyd olunur."
-              },
-              {
-                question: "Uşaqlar üçün xüsusi endirim varmı?",
-                answer: "Bəli, əksər sanatoriyalar uşaqlar üçün xüsusi endirimlər təklif edir. Adətən 0-6 yaş arası uşaqlar üçün qalma pulsuzdur (əlavə yataq təmin edilir), 7-12 yaş arası uşaqlar üçün isə 30-50% endirim tətbiq olunur. Hər bir sanatoriya üçün dəqiq şərtlər rezervasiya zamanı göstərilir."
-              }
-            ].map((item, index) => (
-              <motion.div
-                key={index}
-                initial={{ opacity: 0, y: 10 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: index * 0.1 }}
-                viewport={{ once: true }}
-                className="bg-white p-6 rounded-xl shadow-sm"
-              >
-                <h3 className="text-xl font-semibold mb-3 text-gray-800">{item.question}</h3>
-                <p className="text-gray-600">{item.answer}</p>
-              </motion.div>
-            ))}
-          </div>
-          
-          <div className="text-center mt-10">
-            <a
-              href="/faq"
-              className="inline-flex items-center text-blue-500 hover:text-blue-700 font-medium"
-            >
-              Bütün sualları görmək üçün
-              <svg className="ml-2 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
-              </svg>
-            </a>
-          </div>
-        </div>
-      </section>
+   
     </div>
   );
 } 

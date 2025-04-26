@@ -1,3 +1,4 @@
+import { BlogPost } from "../types/blog.type";
 import {
   HeroSlider,
   AboutSection,
@@ -16,8 +17,8 @@ import api, { SupportedLocale } from "../utils/apiClient";
 
 const DEFAULT_OPTIONS = { revalidate: 1000 };
 
-export const getHeroSlider = () =>
-  api.get<HeroSlider[]>("/home/hero-slider/", { ...DEFAULT_OPTIONS });
+export const getHeroSlider = (locale: SupportedLocale) =>
+  api.get<HeroSlider[]>("/home/hero-slider/", { ...DEFAULT_OPTIONS, locale: locale });
 
 export const getAboutSection = (locale: SupportedLocale) =>
   api.get<AboutSection>("/home/about-section/", {
@@ -66,6 +67,12 @@ export const getFAQsSection = (locale: SupportedLocale) =>
 
 export const getBlogSection = (locale: SupportedLocale) =>
   api.get<BlogSection>("/home/blog-section/", {
+    ...DEFAULT_OPTIONS,
+    locale: locale,
+  });
+
+export const getBlogs = (locale: SupportedLocale) =>
+  api.get<BlogPost[]>("/home/blogs/", {
     ...DEFAULT_OPTIONS,
     locale: locale,
   });

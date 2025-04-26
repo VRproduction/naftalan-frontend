@@ -68,7 +68,7 @@ export async function apiClient<T>(endpoint: string, options: RequestOptions = {
   // Add query parameters if provided
   if (params) {
     Object.entries(params).forEach(([key, value]) => {
-      if (value !== undefined && value !== null) {
+      if (value !== undefined && value !== 'undefined' && value !== null) {
         url.searchParams.append(key, value);
       }
     });

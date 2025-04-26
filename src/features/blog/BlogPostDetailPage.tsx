@@ -2,7 +2,6 @@
 
 import React from "react";
 import Image from "next/image";
-import { useLocale } from "next-intl";
 import { motion } from "framer-motion";
 import { FaCalendarAlt, FaFacebookF, FaTwitter, FaLinkedinIn, FaTelegramPlane } from 'react-icons/fa';
 import { Link } from "@/i18n/navigation";
@@ -19,7 +18,7 @@ const BlogPostDetailPage: React.FC<BlogPostDetailPageProps> = ({
 
 
   return (
-    <div className="pt-[72px] md:pt-[80px]">
+    <div>
       {/* Hero Section */}
       <div className="relative h-[300px] md:h-[500px]">
         <Image
@@ -64,7 +63,7 @@ const BlogPostDetailPage: React.FC<BlogPostDetailPageProps> = ({
                   {blogPost.tags.map((tag, index) => (
                     <Link 
                       key={index} 
-                      href={`/blog?tag=${tag.title}`}
+                      href={`/blog?tag=${tag.id}`}
                       className="px-3 py-1 bg-gray-100 text-gray-800 rounded-full text-sm hover:bg-blue-50 hover:text-blue-600 transition-colors"
                     >
                       {tag.title}

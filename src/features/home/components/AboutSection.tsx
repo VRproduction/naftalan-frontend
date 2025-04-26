@@ -1,5 +1,5 @@
 import Image from 'next/image';
-import Link from 'next/link';
+import {Link} from '@/i18n/navigation';
 import { motion } from 'framer-motion';
 import { AboutSection as AboutSectionType } from '@/lib/types/home.type';
 
@@ -85,7 +85,7 @@ const AboutSection = ({ aboutSection }: { aboutSection: AboutSectionType }) => {
               viewport={{ once: true }}
             >
               <Link 
-                href="/about/naftalan" 
+                href="/about" 
                 className="py-3 px-8 bg-blue-500 text-white rounded-full hover:bg-blue-600 transition-all duration-300 inline-flex items-center justify-center shadow-lg hover:shadow-xl font-medium transform hover:-translate-y-1"
               >
                 Ətraflı məlumat
@@ -94,7 +94,7 @@ const AboutSection = ({ aboutSection }: { aboutSection: AboutSectionType }) => {
                 </svg>
               </Link>
               <Link
-                href="/treatments"
+                href="/about/treatments"
                 className="py-3 px-8 bg-transparent border-2 border-gray-300 text-gray-700 rounded-full hover:border-blue-500 transition-all duration-300 inline-flex items-center justify-center font-medium hover:text-blue-500"
               >
                 Müalicə növləri

@@ -22,7 +22,7 @@ export default function OtherSanatoriumsPage({ otherCitiesSanatoriumsPage, other
   };
 
   return (
-    <div className="pt-[72px] md:pt-[80px]">
+    <div>
       {/* Custom styles for this page */}
       <style jsx global>{`
         /* Override Sanatorium component styles to match green theme */

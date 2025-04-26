@@ -14,7 +14,9 @@ export default function MainLayout({ children }: MainLayoutProps) {
   return (
     <>
       <Header />
-      {children}
+        <main className='pt-[60px] md:pt-[60px]'>
+        {children}
+        </main>
       <Footer />
     </>
   );

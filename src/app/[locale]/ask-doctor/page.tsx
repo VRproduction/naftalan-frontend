@@ -286,40 +286,7 @@ export default function AskDoctorPage() {
                 )}
               </motion.div>
               
-              {/* FAQs Section */}
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: 0.2 }}
-                viewport={{ once: true }}
-                className="mt-10"
-              >
-                <h2 className="text-2xl font-bold mb-6 text-gray-800">Tez-tez verilən suallar</h2>
-                
-                <div className="space-y-6">
-                  {faqs.map((faq, index) => (
-                    <div 
-                      key={index}
-                      className="bg-gray-50 p-6 rounded-lg shadow-sm"
-                    >
-                      <h3 className="text-lg font-semibold mb-3 text-gray-800">{faq.question}</h3>
-                      <p className="text-gray-600">{faq.answer}</p>
-                    </div>
-                  ))}
-                </div>
-                
-                <div className="mt-6 text-center">
-                  <a 
-                    href="/faq"
-                    className="inline-flex items-center text-blue-500 hover:text-blue-700 font-medium"
-                  >
-                    Bütün sualları görmək üçün
-                    <svg className="ml-2 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
-                    </svg>
-                  </a>
-                </div>
-              </motion.div>
+             
             </div>
             
             {/* Doctors Section */}
@@ -331,50 +298,7 @@ export default function AskDoctorPage() {
                 viewport={{ once: true }}
                 className="sticky top-24 space-y-8"
               >
-                <div>
-                  <h2 className="text-2xl font-bold mb-6 text-gray-800">Bizim həkimlərimiz</h2>
-                  
-                  <div className="space-y-6">
-                    {doctors.map((doctor) => (
-                      <div 
-                        key={doctor.id}
-                        className={`p-4 rounded-xl transition-all cursor-pointer ${
-                          activeDoctor === doctor.id 
-                            ? 'bg-blue-50 border-l-4 border-blue-500 shadow-sm' 
-                            : 'bg-gray-50 hover:bg-blue-50'
-                        }`}
-                        onClick={() => setActiveDoctor(doctor.id)}
-                      >
-                        <div className="flex items-center">
-                          <div className="relative w-16 h-16 rounded-full overflow-hidden mr-4">
-                            <Image
-                              src={doctor.image}
-                              alt={doctor.name}
-                              fill
-                              className="object-cover"
-                            />
-                          </div>
-                          <div>
-                            <h3 className="font-semibold text-gray-800">{doctor.name}</h3>
-                            <p className="text-sm text-gray-600">{doctor.specialty}</p>
-                            <p className="text-sm text-gray-500">{doctor.experience} il təcrübə</p>
-                          </div>
-                        </div>
-                        
-                        {activeDoctor === doctor.id && (
-                          <motion.div
-                            initial={{ opacity: 0, height: 0 }}
-                            animate={{ opacity: 1, height: 'auto' }}
-                            className="mt-4 text-gray-600 text-sm overflow-hidden"
-                          >
-                            <p>{doctor.description}</p>
-                          </motion.div>
-                        )}
-                      </div>
-                    ))}
-                  </div>
-                </div>
-                
+          
                 <div className="bg-blue-500 text-white p-6 rounded-xl shadow-md">
                   <h3 className="text-xl font-semibold mb-3">Niyə onlayn məsləhət almalı?</h3>
                   <ul className="space-y-3">

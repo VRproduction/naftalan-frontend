@@ -24,6 +24,7 @@ import {
   ContactSection as ContactSectionType,
 } from "@/lib/types/home.type";
 import { Sanatorium } from "@/lib/types/sanatorium.type";
+import { BlogPost } from "@/lib/types/blog.type";
 
 interface Props {
   heroSliders: HeroSliderType[];
@@ -36,6 +37,7 @@ interface Props {
   faqSection: FAQSectionType;
   faqs: FAQType[];
   blogSection: BlogSectionType;
+  blogs: BlogPost[];
   contactSection: ContactSectionType;
   sanatoriums: Sanatorium[];
 }
@@ -51,11 +53,12 @@ export default function HomePage({
   faqSection,
   faqs,
   blogSection,
+  blogs,
   contactSection,
   sanatoriums,
 }: Props) {
   return (
-    <div className="pt-[72px] md:pt-[80px]">
+    <>
       {/* Hero Section with Slider */}
       <HeroSlider heroSliders={heroSliders} />
 
@@ -83,10 +86,10 @@ export default function HomePage({
       <FAQSection faqSection={faqSection} faqs={faqs} />
 
       {/* Blog Section */}
-      <BlogSection blogSection={blogSection} />
+      <BlogSection blogs={blogs} blogSection={blogSection} />
 
       {/* Contact Section */}
       <ContactSection contactSection={contactSection} />
-    </div>
+    </>
   );
 }

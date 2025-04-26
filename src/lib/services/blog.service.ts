@@ -9,7 +9,7 @@ export const getBlogPosts = async (
   locale: SupportedLocale,
   params?: {
     category?: string;
-    tag?: string;
+    tags?: string;
     page?: string;
     page_size?: string;
     search?: string;
@@ -21,7 +21,7 @@ export const getBlogPosts = async (
       locale: locale,
       params: {
         category: params?.category || "",
-        tag: params?.tag || "",
+        tags: params?.tags || "",
         page: params?.page || "1",
         page_size: params?.page_size || "10",
         search: params?.search || "",

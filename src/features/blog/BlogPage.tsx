@@ -1,15 +1,12 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { motion } from 'framer-motion';
-import Image from 'next/image';
-import { FaCalendarAlt, FaUser, FaTag, FaSearch, FaLongArrowAltRight } from 'react-icons/fa';
-import { Link, useRouter, usePathname } from '@/i18n/navigation';
-import { useLocale } from 'next-intl';
-import { SupportedLocale } from '@/lib/utils/apiClient';
+import {  useRouter, usePathname } from '@/i18n/navigation';
+
 import { useSearchParams } from 'next/navigation';
 import { BlogCategory, BlogPost, BlogTag } from '@/lib/types/blog.type';
-import { formatDate } from '@/lib/utils/timeUtils';
+import BlogCard from '../common/BlogCard';
 
 interface Props {
   blogs: BlogPost[];
@@ -22,13 +19,11 @@ export default function BlogPage({ blogs, categories, tags }: Props) {
   const [searchQuery, setSearchQuery] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   
-  const locale = useLocale() as SupportedLocale;
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
   
   const activeCategory = searchParams.get('category');
-  const searchParam = searchParams.get('search');
   const activeTag = searchParams.get('tag');
   
   
@@ -93,7 +88,7 @@ export default function BlogPage({ blogs, categories, tags }: Props) {
 
   
   return (
-    <div className="pt-[72px] md:pt-[80px]">
+    <div>
       {/* Hero Section */}
       <div className="bg-blue-50 py-16 md:py-24">
         <div className="container mx-auto px-4">
@@ -115,20 +110,7 @@ export default function BlogPage({ blogs, categories, tags }: Props) {
       {/* Search and Categories */}
       <div className="py-8 bg-white border-b">
         <div className="container mx-auto px-4">
-          <div className="max-w-5xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6">
-            <form onSubmit={handleSearch} className="w-full md:w-auto flex-1 max-w-md">
-              <div className="relative">
-                <input
-                  type="text"
-                  placeholder="Məqalələri axtar..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full pl-10 pr-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                />
-                <FaSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
-              </div>
-            </form>
-            
+          <div className="max-w-5xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6"> 
             <div className="flex flex-wrap gap-2 justify-center md:justify-end">
               {categories.map((category) => (
                 <button
@@ -159,53 +141,8 @@ export default function BlogPage({ blogs, categories, tags }: Props) {
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
               {blogs.length > 0 ? (
-                blogs.map((blog) => (
-                  <motion.article
-                    key={blog.id}
-                    initial={{ opacity: 0, y: 20 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.5 }}
-                    viewport={{ once: true }}
-                    className="bg-white rounded-xl overflow-hidden shadow-md hover:shadow-lg transition-all duration-300"
-                  >
-                    <Link href={`/blog/${blog.slug}`} className="block">
-                      <div className="relative h-56">
-                        <Image
-                          src={blog.image}
-                          alt={blog.title}
-                          fill
-                          style={{ objectFit: 'cover' }}
-                        />
-                      </div>
-                    </Link>
-                    
-                    <div className="p-6">
-                      <div className="flex items-center gap-4 text-sm text-gray-500 mb-3">
-                        <span className="flex items-center">
-                          <FaCalendarAlt className="mr-1" />
-                          {formatDate(blog.date)}
-                        </span>
-                      </div>
-                      
-                      <Link href={`/blog/${blog.slug}`} className="block">
-                        <h2 className="text-xl font-bold text-gray-800 mb-3 hover:text-blue-600 transition-colors line-clamp-2">{blog.title}</h2>
-                      </Link>
-                      
-                      <p className="text-gray-600 mb-4 line-clamp-3">{blog.short_description}</p>
-                      
-                      <div className="flex items-center justify-between">
-                      
-                        
-                        <Link 
-                          href={`/blog/${blog.slug}`}
-                          className="inline-flex items-center text-blue-500 hover:text-blue-700 font-medium"
-                        >
-                          Ətraflı oxu
-                          <FaLongArrowAltRight className="ml-2" />
-                        </Link>
-                      </div>
-                    </div>
-                  </motion.article>
+                blogs.map((blog, index) => (
+                  <BlogCard key={index} blog={blog}/>
                 ))
               ) : (
                 <div className="col-span-full text-center py-12">
@@ -233,11 +170,12 @@ export default function BlogPage({ blogs, categories, tags }: Props) {
             <div className="max-w-5xl mx-auto">
               <h2 className="text-2xl font-bold mb-8 text-center">Populyar teqlər</h2>
               <div className="flex flex-wrap justify-center gap-3">
+    
                 {tags.map((tag, index) => (
                   <button 
                     key={index}
                     onClick={() => handleTagChange(tag.id.toString())}
-                    className={`px-4 py-2 bg-gray-100 hover:bg-blue-50 hover:text-blue-600 rounded-full text-gray-700 transition-colors ${activeTag === tag.id.toString() ? 'bg-blue-50 text-blue-600' : ''}`}
+                    className={`px-4 py-2  rounded-full text-gray-700 transition-colors ${activeTag === tag.id.toString() ? 'bg-blue-200 text-blue-600' : 'bg-gray-100 hover:bg-blue-50 hover:text-blue-600'}`}
                   >
                     {tag.title}
                   </button>

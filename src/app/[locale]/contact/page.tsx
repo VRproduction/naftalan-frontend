@@ -110,6 +110,7 @@ export default function ContactPage() {
                       <input
                         type="text"
                         id="name"
+                        placeholder="Ad və Soyad"
                         name="name"
                         value={formState.name}
                         onChange={handleChange}
@@ -123,6 +124,7 @@ export default function ContactPage() {
                         E-poçt*
                       </label>
                       <input
+                        placeholder="E-poçt"
                         type="email"
                         id="email"
                         name="email"
@@ -140,6 +142,7 @@ export default function ContactPage() {
                         Telefon
                       </label>
                       <input
+                        placeholder="Telefon" 
                         type="tel"
                         id="phone"
                         name="phone"
@@ -175,6 +178,7 @@ export default function ContactPage() {
                       Mesaj*
                     </label>
                     <textarea
+                      placeholder="Mesaj"
                       id="message"
                       name="message"
                       value={formState.message}
@@ -285,33 +289,7 @@ export default function ContactPage() {
                 </div>
               </div>
               
-              <div className="bg-white rounded-xl shadow-md p-6">
-                <h3 className="text-xl font-semibold mb-3">Tez-tez verilən suallar</h3>
-                <p className="text-gray-600 mb-4">
-                  Suallarınız var? Tez-tez verilən suallar bölməsində cavabını tapa bilərsiniz.
-                </p>
-                <a 
-                  href="/faq" 
-                  className="inline-block px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
-                >
-                  FAQ bölməsinə keçid
-                </a>
-              </div>
-              
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: 0.2 }}
-                viewport={{ once: true }}
-                className="border border-gray-200 rounded-lg p-6"
-              >
-                <h3 className="text-xl font-semibold mb-3">Naftalana necə gəlmək olar?</h3>
-                <p className="text-gray-600">
-                  Naftalan şəhərinə Bakıdan və Gəncədən avtobusla və ya taksi ilə gəlmək mümkündür.
-                  Gəncə şəhəri Naftalana ən yaxın hava limanı olan şəhərdir (təxminən 50 km məsafə).
-                  Daha ətraflı məlumat üçün "Necə gəlmək?" bölməsinə baxın.
-                </p>
-              </motion.div>
+            
             </motion.div>
           </div>
         </div>
