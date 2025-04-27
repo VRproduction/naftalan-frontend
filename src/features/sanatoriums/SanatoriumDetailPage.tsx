@@ -144,7 +144,7 @@ export default function SanatoriumDetailPage({ sanatorium }: PageProps) {
   }
 
   return (
-    <div className="pt-[72px] md:pt-[80px]">
+    <div>
       {/* Add custom CSS for hiding scrollbar */}
       <style jsx global>{`
         .no-scrollbar::-webkit-scrollbar {
