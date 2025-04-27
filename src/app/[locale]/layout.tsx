@@ -7,8 +7,8 @@ import { SupportedLocale } from "@/lib/utils/apiClient";
 import { routing } from "@/i18n/routing";
 import { notFound } from "next/navigation";
 import { getMessages, setRequestLocale } from "next-intl/server";
-import { getSiteSettingsData } from "@/lib/utils/siteSettings";
 import Script from "next/script";
+import { getSiteSettings } from "@/lib/services/core.service";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -32,7 +32,7 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
   }
   
   // Get site settings for SEO metadata
-  const siteSettings = await getSiteSettingsData(locale as SupportedLocale);
+  const siteSettings = await getSiteSettings(locale as SupportedLocale);
   
   // Ensure non-null descriptions
   const metaDescription = siteSettings.default_meta_description || siteSettings.site_description || "";
@@ -105,7 +105,7 @@ export default async function RootLayout({
   // Get site settings and messages for the page
   const [messages, siteSettings] = await Promise.all([
     getMessages(),
-    getSiteSettingsData(locale as SupportedLocale)
+    getSiteSettings(locale as SupportedLocale)
   ]);
   
   // Define CSS variables for site colors
