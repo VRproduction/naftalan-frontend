@@ -96,7 +96,7 @@ export default function AskDoctorPage() {
   };
   
   return (
-    <div className="pt-[72px] md:pt-[80px]">
+    <div>
       {/* Hero Section */}
       <div className="relative h-[50vh] md:h-[60vh]">
         <Image

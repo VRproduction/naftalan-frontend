@@ -51,7 +51,6 @@ export default async function Home({ params }: Props) {
     getSanatoriums(locale),
     getBlogs(locale),
   ]);
-  // console.log(heroSliders)
   return (
     <HomePage
       heroSliders={heroSliders}

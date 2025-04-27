@@ -6,15 +6,16 @@ import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { FaEnvelope, FaPhone, FaUser, FaPaperPlane } from 'react-icons/fa';
 import { motion } from 'framer-motion';
+import { useTranslations } from 'next-intl';
 
 import { ContactSection as ContactSectionType } from '@/lib/types/home.type';
 
 // Define schema for form validation
 const contactSchema = z.object({
-  name: z.string().min(2, { message: 'Ad ən azı 2 simvol olmalıdır' }),
-  email: z.string().email({ message: 'Düzgün e-poçt ünvanı daxil edin' }),
-  phone: z.string().min(9, { message: 'Düzgün telefon nömrəsi daxil edin' }),
-  message: z.string().min(10, { message: 'Mesaj ən azı 10 simvol olmalıdır' })
+  name: z.string().min(2, { message: 'name_min_length' }),
+  email: z.string().email({ message: 'email_invalid' }),
+  phone: z.string().min(9, { message: 'phone_invalid' }),
+  message: z.string().min(10, { message: 'message_min_length' })
 });
 
 type ContactFormValues = z.infer<typeof contactSchema>;
@@ -26,6 +27,9 @@ interface ContactSectionProps {
 const ContactSection = ({ contactSection }: ContactSectionProps) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
+  
+  const t = useTranslations('contact');
+  const tValidation = useTranslations('validation');
   
   const { register, handleSubmit, reset, formState: { errors } } = useForm<ContactFormValues>({
     resolver: zodResolver(contactSchema),
@@ -83,7 +87,7 @@ const ContactSection = ({ contactSection }: ContactSectionProps) => {
                       <FaPhone className="text-white" />
                     </div>
                     <div>
-                      <h4 className="font-medium text-white/80">Telefon</h4>
+                      <h4 className="font-medium text-white/80">{t('phone_label')}</h4>
                       <p className="text-lg">+994 12 345 67 89</p>
                     </div>
                   </div>
@@ -93,7 +97,7 @@ const ContactSection = ({ contactSection }: ContactSectionProps) => {
                       <FaEnvelope className="text-white" />
                     </div>
                     <div>
-                      <h4 className="font-medium text-white/80">E-poçt</h4>
+                      <h4 className="font-medium text-white/80">{t('email_label')}</h4>
                       <p className="text-lg">info@naftalan.az</p>
                     </div>
                   </div>
@@ -119,7 +123,7 @@ const ContactSection = ({ contactSection }: ContactSectionProps) => {
                   <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path>
                   </svg>
-                  <span>Mesajınız uğurla göndərildi. Tezliklə sizinlə əlaqə saxlanılacaq.</span>
+                  <span>{t('success_message')}</span>
                 </div>
               )}
               
@@ -132,12 +136,12 @@ const ContactSection = ({ contactSection }: ContactSectionProps) => {
                     <input
                       type="text"
                       {...register('name')}
-                      placeholder="Adınız və soyadınız"
+                      placeholder={t('name_placeholder')}
                       className="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                     />
                   </div>
-                  {errors.name && (
-                    <p className="text-red-500 text-sm mt-1">{errors.name.message}</p>
+                  {errors.name && errors.name.message && (
+                    <p className="text-red-500 text-sm mt-1">{tValidation(errors.name.message as string)}</p>
                   )}
                 </div>
                 
@@ -149,12 +153,12 @@ const ContactSection = ({ contactSection }: ContactSectionProps) => {
                     <input
                       type="email"
                       {...register('email')}
-                      placeholder="E-poçt ünvanınız"
+                      placeholder={t('email_placeholder')}
                       className="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                     />
                   </div>
-                  {errors.email && (
-                    <p className="text-red-500 text-sm mt-1">{errors.email.message}</p>
+                  {errors.email && errors.email.message && (
+                    <p className="text-red-500 text-sm mt-1">{tValidation(errors.email.message as string)}</p>
                   )}
                 </div>
                 
@@ -166,24 +170,24 @@ const ContactSection = ({ contactSection }: ContactSectionProps) => {
                     <input
                       type="tel"
                       {...register('phone')}
-                      placeholder="Telefon nömrəniz"
+                      placeholder={t('phone_placeholder')}
                       className="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                     />
                   </div>
-                  {errors.phone && (
-                    <p className="text-red-500 text-sm mt-1">{errors.phone.message}</p>
+                  {errors.phone && errors.phone.message && (
+                    <p className="text-red-500 text-sm mt-1">{tValidation(errors.phone.message as string)}</p>
                   )}
                 </div>
                 
                 <div>
                   <textarea
                     {...register('message')}
-                    placeholder="Mesajınız"
+                    placeholder={t('message_placeholder')}
                     rows={4}
                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
-                  {errors.message && (
-                    <p className="text-red-500 text-sm mt-1">{errors.message.message}</p>
+                  {errors.message && errors.message.message && (
+                    <p className="text-red-500 text-sm mt-1">{tValidation(errors.message.message as string)}</p>
                   )}
                 </div>
                 
@@ -198,12 +202,12 @@ const ContactSection = ({ contactSection }: ContactSectionProps) => {
                         <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                         <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                       </svg>
-                      Göndərilir...
+                      {t('sending')}
                     </>
                   ) : (
                     <>
                       <FaPaperPlane />
-                      Göndər
+                      {t('submit_button')}
                     </>
                   )}
                 </button>

@@ -1,28 +1,43 @@
 import Link from 'next/link';
 import { FaFacebook, FaInstagram, FaTwitter, FaYoutube, FaPhoneAlt, FaEnvelope, FaMapMarkerAlt } from 'react-icons/fa';
+import { SiteSettings } from '@/lib/types/core.type';
 
-const Footer = () => {
+interface FooterProps {
+  siteSettings: SiteSettings;
+}
+
+const Footer = ({ siteSettings }: FooterProps) => {
   return (
     <footer className="bg-gray-900 text-white">
       <div className="container mx-auto px-4 py-12">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
           <div>
-            <h3 className="text-xl font-bold mb-4">Naftalan</h3>
-            <p className="mb-4">Naftalan şəhəri müalicəvi neft ilə tanınan, qədim tarixi olan bir sağlamlıq mərkəzidir.</p>
-            <div className="flex space-x-4">
-              <a href="#" className="text-white hover:text-blue-400 transition-colors">
-                <FaFacebook size={20} />
-              </a>
-              <a href="#" className="text-white hover:text-pink-400 transition-colors">
-                <FaInstagram size={20} />
-              </a>
-              <a href="#" className="text-white hover:text-blue-400 transition-colors">
-                <FaTwitter size={20} />
-              </a>
-              <a href="#" className="text-white hover:text-red-500 transition-colors">
-                <FaYoutube size={20} />
-              </a>
-            </div>
+            <h3 className="text-xl font-bold mb-4">{siteSettings.site_name}</h3>
+            <p className="mb-4">{siteSettings.about_short || 'Naftalan şəhəri müalicəvi neft ilə tanınan, qədim tarixi olan bir sağlamlıq mərkəzidir.'}</p>
+            {siteSettings.show_social_in_footer && (
+              <div className="flex space-x-4">
+                {siteSettings.social_facebook && (
+                  <a href={siteSettings.social_facebook} className="text-white hover:text-blue-400 transition-colors">
+                    <FaFacebook size={20} />
+                  </a>
+                )}
+                {siteSettings.social_instagram && (
+                  <a href={siteSettings.social_instagram} className="text-white hover:text-pink-400 transition-colors">
+                    <FaInstagram size={20} />
+                  </a>
+                )}
+                {siteSettings.social_twitter && (
+                  <a href={siteSettings.social_twitter} className="text-white hover:text-blue-400 transition-colors">
+                    <FaTwitter size={20} />
+                  </a>
+                )}
+                {siteSettings.social_youtube && (
+                  <a href={siteSettings.social_youtube} className="text-white hover:text-red-500 transition-colors">
+                    <FaYoutube size={20} />
+                  </a>
+                )}
+              </div>
+            )}
           </div>
           
           <div>
@@ -87,18 +102,18 @@ const Footer = () => {
             <ul className="space-y-4">
               <li className="flex items-center">
                 <FaMapMarkerAlt className="mr-2" />
-                <span>Naftalan şəhəri, Azərbaycan</span>
+                <span>{siteSettings.address || 'Naftalan şəhəri, Azərbaycan'}</span>
               </li>
               <li className="flex items-center">
                 <FaPhoneAlt className="mr-2" />
-                <a href="tel:+994123456789" className="hover:text-blue-400 transition-colors">
-                  +994 12 345 67 89
+                <a href={`tel:${siteSettings.contact_phone}`} className="hover:text-blue-400 transition-colors">
+                  {siteSettings.contact_phone}
                 </a>
               </li>
               <li className="flex items-center">
                 <FaEnvelope className="mr-2" />
-                <a href="mailto:info@naftalan.az" className="hover:text-blue-400 transition-colors">
-                  info@naftalan.az
+                <a href={`mailto:${siteSettings.contact_email}`} className="hover:text-blue-400 transition-colors">
+                  {siteSettings.contact_email}
                 </a>
               </li>
             </ul>
@@ -106,7 +121,7 @@ const Footer = () => {
         </div>
         
         <div className="border-t border-gray-800 mt-8 pt-8 text-center text-sm">
-          <p>&copy; {new Date().getFullYear()} Naftalan. Bütün hüquqlar qorunur.</p>
+          <p>{siteSettings.copyright_text || `© ${new Date().getFullYear()} ${siteSettings.company_name || siteSettings.site_name}. Bütün hüquqlar qorunur.`}</p>
         </div>
       </div>
     </footer>

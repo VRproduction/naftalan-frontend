@@ -3,28 +3,33 @@ import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { FaCalendarAlt, FaSearch, FaUsers, FaMapMarkerAlt } from 'react-icons/fa';
-import Link from 'next/link';
+import { useTranslations } from 'next-intl';
+import { Link as IntlLink } from '@/i18n/navigation';
 import { motion } from 'framer-motion';
 
 // Define schema for form validation
 const searchSchema = z.object({
-  checkIn: z.string().min(1, { message: 'Gediş tarixi tələb olunur' }),
-  checkOut: z.string().min(1, { message: 'Dönüş tarixi tələb olunur' }),
-  adults: z.number().min(1, { message: 'Ən azı 1 böyük olmalıdır' }),
+  checkIn: z.string().min(1, { message: 'check_in_required' }),
+  checkOut: z.string().min(1, { message: 'check_out_required' }),
+  adults: z.number().min(1, { message: 'min_adults' }),
   children: z.number().min(0),
-  location: z.string().min(1, { message: 'Şəhər seçilməlidir' })
+  location: z.string().min(1, { message: 'city_required' })
 });
 
 type SearchFormValues = z.infer<typeof searchSchema>;
 
-const locations = [
-  { id: 'naftalan', name: 'Naftalan' },
-  { id: 'baku', name: 'Bakı' },
-  { id: 'ganja', name: 'Gəncə' },
-  { id: 'gabala', name: 'Qəbələ' }
-];
-
 const SearchForm = () => {
+  const t = useTranslations('search');
+  const tValidation = useTranslations('validation');
+  const tCities = useTranslations('cities');
+  
+  const locations = [
+    { id: 'naftalan', name: tCities('naftalan') },
+    { id: 'baku', name: tCities('baku') },
+    { id: 'ganja', name: tCities('ganja') },
+    { id: 'gabala', name: tCities('gabala') }
+  ];
+
   const { register, handleSubmit, formState: { errors } } = useForm<SearchFormValues>({
     resolver: zodResolver(searchSchema),
     defaultValues: {
@@ -49,13 +54,13 @@ const SearchForm = () => {
       className="bg-white rounded-xl shadow-xl p-6 lg:p-8 mx-4 -mt-16 md:-mt-22 lg:-mt-32 relative z-30 backdrop-blur-sm bg-opacity-95 border border-gray-100"
     >
       <h2 className="text-2xl font-bold text-center mb-6 text-gray-800">
-        Sizin Sağlamlıq Səyahətiniz Başlayır
+        {t('title')}
       </h2>
       
       <form onSubmit={handleSubmit(onSubmit)}>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-10 gap-5">
           <div className="w-full lg:col-span-2">
-            <label className="block text-gray-700 mb-2 font-medium">Gediş tarixi</label>
+            <label className="block text-gray-700 mb-2 font-medium">{t('check_in')}</label>
             <div className="relative group">
               <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-gray-500 group-hover:text-blue-500 transition-colors">
                 <FaCalendarAlt />
@@ -66,13 +71,13 @@ const SearchForm = () => {
                 className="w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white text-gray-800 transition-all duration-200"
               />
             </div>
-            {errors.checkIn && (
-              <p className="text-red-500 text-sm mt-1">{errors.checkIn.message}</p>
+            {errors.checkIn && errors.checkIn.message && (
+              <p className="text-red-500 text-sm mt-1">{tValidation(errors.checkIn.message as string)}</p>
             )}
           </div>
 
           <div className="w-full lg:col-span-2">
-            <label className="block text-gray-700 mb-2 font-medium">Dönüş tarixi</label>
+            <label className="block text-gray-700 mb-2 font-medium">{t('check_out')}</label>
             <div className="relative group">
               <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-gray-500 group-hover:text-blue-500 transition-colors">
                 <FaCalendarAlt />
@@ -83,13 +88,13 @@ const SearchForm = () => {
                 className="w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white text-gray-800 transition-all duration-200"
               />
             </div>
-            {errors.checkOut && (
-              <p className="text-red-500 text-sm mt-1">{errors.checkOut.message}</p>
+            {errors.checkOut && errors.checkOut.message && (
+              <p className="text-red-500 text-sm mt-1">{tValidation(errors.checkOut.message as string)}</p>
             )}
           </div>
 
           <div className="w-full lg:col-span-2">
-            <label className="block text-gray-700 mb-2 font-medium">Şəxs sayı</label>
+            <label className="block text-gray-700 mb-2 font-medium">{t('guests')}</label>
             <div className="relative group">
               <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-gray-500 group-hover:text-blue-500 transition-colors">
                 <FaUsers />
@@ -101,7 +106,7 @@ const SearchForm = () => {
                     className="w-full pl-10 pr-3 py-3 border border-gray-300 rounded-l-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white text-gray-800 transition-all duration-200"
                   >
                     {[1, 2, 3, 4, 5].map(num => (
-                      <option key={num} value={num}>{num} böyük</option>
+                      <option key={num} value={num}>{num} {t('adults')}</option>
                     ))}
                   </select>
                 </div>
@@ -111,7 +116,7 @@ const SearchForm = () => {
                     className="w-full px-3 py-3 border border-gray-300 border-l-0 rounded-r-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white text-gray-800 transition-all duration-200"
                   >
                     {[0, 1, 2, 3, 4].map(num => (
-                      <option key={num} value={num}>{num} uşaq</option>
+                      <option key={num} value={num}>{num} {t('children')}</option>
                     ))}
                   </select>
                 </div>
@@ -120,7 +125,7 @@ const SearchForm = () => {
           </div>
 
           <div className="w-full lg:col-span-2">
-            <label className="block text-gray-700 mb-2 font-medium">Şəhər</label>
+            <label className="block text-gray-700 mb-2 font-medium">{t('city')}</label>
             <div className="relative group">
               <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-gray-500 group-hover:text-blue-500 transition-colors">
                 <FaMapMarkerAlt />
@@ -129,14 +134,14 @@ const SearchForm = () => {
                 {...register('location')}
                 className="w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white text-gray-800 transition-all duration-200"
               >
-                <option value="">Şəhər seçin</option>
+                <option value="">{t('select_city')}</option>
                 {locations.map(location => (
                   <option key={location.id} value={location.id}>{location.name}</option>
                 ))}
               </select>
             </div>
-            {errors.location && (
-              <p className="text-red-500 text-sm mt-1">{errors.location.message}</p>
+            {errors.location && errors.location.message && (
+              <p className="text-red-500 text-sm mt-1">{tValidation(errors.location.message as string)}</p>
             )}
           </div>
 
@@ -147,19 +152,19 @@ const SearchForm = () => {
               className="w-full py-3 px-6 bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition-all duration-300 flex items-center justify-center gap-2 font-medium shadow-md hover:shadow-lg transform hover:-translate-y-1"
             >
               <FaSearch />
-              <span>Axtar</span>
+              <span>{t('search_button')}</span>
             </button>
           </div>
         </div>
       </form>
       
       <div className="mt-6 text-center">
-        <Link href="/all-offers" className="text-blue-500 hover:text-blue-700 font-medium inline-flex items-center gap-1 transition-colors">
-          <span>Bütün təkliflərə baxın</span>
+        <IntlLink href="/all-offers" className="text-blue-500 hover:text-blue-700 font-medium inline-flex items-center gap-1 transition-colors">
+          <span>{t('view_all_offers')}</span>
           <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
           </svg>
-        </Link>
+        </IntlLink>
       </div>
     </motion.div>
   );

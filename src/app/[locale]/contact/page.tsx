@@ -50,7 +50,7 @@ export default function ContactPage() {
   };
 
   return (
-    <div className="pt-[72px] md:pt-[80px]">
+    <div>
       {/* Hero Section */}
       <div className="bg-blue-50 py-16 md:py-24">
         <div className="container mx-auto px-4">

@@ -18,16 +18,17 @@ export interface BookingRequestData {
   guests: {
     first_name: string;
     last_name: string;
-    gender: string;
-    date_of_birth: string;
-    age_category: string;
+    gender: 'male' | 'female' | null;
+    date_of_birth: string | null;
+    age_category: "adult" | "child";
     is_main_guest: boolean;
   }[];
   extra_beds: {
+    extra_bed_price: number;
     quantity: number;
     for_adult: boolean;
     with_treatment: boolean;
-    treatment_option: number;
+    treatment_option: number | null;
     price_per_night: string;
   }[];
 }

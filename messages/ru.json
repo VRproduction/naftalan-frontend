@@ -1,1 +1,69 @@
-{}
+{
+  "header": {
+    "home": "Главная",
+    "about": "О нас",
+    "about_naftalan": "Нафталан",
+    "naftalan_history": "История нафталанской нефти",
+    "treated_conditions": "Лечимые заболевания",
+    "sanatoriums": "Санатории",
+    "naftalan_sanatoriums": "Санатории Нафталана",
+    "other_sanatoriums": "Санатории в других городах",
+    "how_to_come": "Как приехать?",
+    "reservation": "Бронирование",
+    "blog": "Блог",
+    "contact": "Контакты",
+    "ask_doctor": "Задать вопрос врачу"
+  },
+  "languages": {
+    "az": "Azərbaycan",
+    "ru": "Русский"
+  },
+  "form": {
+    "name": "Имя",
+    "email": "Эл. почта",
+    "phone": "Телефон",
+    "subject": "Тема",
+    "message": "Сообщение",
+    "required_fields": "* Поля, отмеченные звездочкой, обязательны для заполнения",
+    "submit": "Отправить"
+  },
+  "search": {
+    "title": "Ваше оздоровительное путешествие начинается здесь",
+    "check_in": "Дата заезда",
+    "check_out": "Дата выезда",
+    "guests": "Количество гостей",
+    "adults": "взрослых",
+    "children": "детей",
+    "city": "Город",
+    "select_city": "Выберите город",
+    "search_button": "Поиск",
+    "view_all_offers": "Посмотреть все предложения"
+  },
+  "validation": {
+    "check_in_required": "Дата заезда обязательна",
+    "check_out_required": "Дата выезда обязательна",
+    "min_adults": "Должен быть как минимум 1 взрослый",
+    "city_required": "Необходимо выбрать город",
+    "name_min_length": "Имя должно содержать не менее 2 символов",
+    "email_invalid": "Введите корректный адрес эл. почты",
+    "phone_invalid": "Введите корректный номер телефона",
+    "message_min_length": "Сообщение должно содержать не менее 10 символов"
+  },
+  "cities": {
+    "naftalan": "Нафталан",
+    "baku": "Баку",
+    "ganja": "Гянджа",
+    "gabala": "Габала"
+  },
+  "contact": {
+    "phone_label": "Телефон",
+    "email_label": "Эл. почта",
+    "name_placeholder": "Ваше имя и фамилия",
+    "email_placeholder": "Ваш адрес эл. почты",
+    "phone_placeholder": "Ваш номер телефона",
+    "message_placeholder": "Ваше сообщение",
+    "submit_button": "Отправить",
+    "sending": "Отправка...",
+    "success_message": "Ваше сообщение успешно отправлено. Мы свяжемся с вами в ближайшее время."
+  }
+}

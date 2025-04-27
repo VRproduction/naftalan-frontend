@@ -1,1 +1,69 @@
-{}
+{
+  "header": {
+    "home": "Ana səhifə",
+    "about": "Haqqımızda",
+    "about_naftalan": "Naftalan",
+    "naftalan_history": "Naftalan neftinin tarixi",
+    "treated_conditions": "Müalicə olunan xəstəliklər",
+    "sanatoriums": "Sanatoriyalar",
+    "naftalan_sanatoriums": "Naftalan sanatoriyaları",
+    "other_sanatoriums": "Digər şəhərlərdəki sanatoriyalar",
+    "how_to_come": "Necə gəlmək?",
+    "reservation": "Rezervasiya",
+    "blog": "Bloq",
+    "contact": "Əlaqə",
+    "ask_doctor": "Həkimə sual verin"
+  },
+  "languages": {
+    "az": "Azərbaycan",
+    "ru": "Русский"
+  },
+  "form": {
+    "name": "Ad",
+    "email": "E-poçt",
+    "phone": "Telefon",
+    "subject": "Mövzu",
+    "message": "Mesaj",
+    "required_fields": "* işarəli xanalar mütləq doldurulmalıdır",
+    "submit": "Göndər"
+  },
+  "search": {
+    "title": "Sizin Sağlamlıq Səyahətiniz Başlayır",
+    "check_in": "Gediş tarixi",
+    "check_out": "Dönüş tarixi",
+    "guests": "Şəxs sayı",
+    "adults": "böyük",
+    "children": "uşaq",
+    "city": "Şəhər",
+    "select_city": "Şəhər seçin",
+    "search_button": "Axtar",
+    "view_all_offers": "Bütün təkliflərə baxın"
+  },
+  "validation": {
+    "check_in_required": "Gediş tarixi tələb olunur",
+    "check_out_required": "Dönüş tarixi tələb olunur",
+    "min_adults": "Ən azı 1 böyük olmalıdır",
+    "city_required": "Şəhər seçilməlidir",
+    "name_min_length": "Ad ən azı 2 simvol olmalıdır",
+    "email_invalid": "Düzgün e-poçt ünvanı daxil edin",
+    "phone_invalid": "Düzgün telefon nömrəsi daxil edin",
+    "message_min_length": "Mesaj ən azı 10 simvol olmalıdır"
+  },
+  "cities": {
+    "naftalan": "Naftalan",
+    "baku": "Bakı",
+    "ganja": "Gəncə",
+    "gabala": "Qəbələ"
+  },
+  "contact": {
+    "phone_label": "Telefon",
+    "email_label": "E-poçt",
+    "name_placeholder": "Adınız və soyadınız",
+    "email_placeholder": "E-poçt ünvanınız",
+    "phone_placeholder": "Telefon nömrəniz",
+    "message_placeholder": "Mesajınız",
+    "submit_button": "Göndər",
+    "sending": "Göndərilir...",
+    "success_message": "Mesajınız uğurla göndərildi. Tezliklə sizinlə əlaqə saxlanılacaq."
+  }
+}
