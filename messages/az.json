@@ -4,6 +4,14 @@
       "AZN": "Azərbaycan Manatı",
       "USD": "ABŞ Dolları",
       "RUB": "Rus Rublu"
+    },
+    "loading": {
+      "default": "Yüklənir...",
+      "searching": "Axtarılır...",
+      "saving": "Yadda saxlanılır...",
+      "submitting": "Göndərilir...",
+      "processing": "İşlənir...",
+      "please_wait": "Zəhmət olmasa, gözləyin..."
     }
   },
   "header": {
@@ -237,7 +245,13 @@
         "search_button": "Axtar"
       },
       "results": {
-        "title": "Mövcud sanatoriyalar"
+        "title": "Mövcud sanatoriyalar",
+        "no_results": {
+          "title": "Nəticə tapılmadı",
+          "description": "Seçdiyiniz kriteriyalara uyğun sanatoriya tapılmadı. Zəhmət olmasa, filterləri dəyişdirin və ya bütün filterləri təmizləyin.",
+          "clear_filters": "Filterləri təmizlə",
+          "adjust_filters": "Filterləri dəyişdir"
+        }
       }
     },
     "how_to_come": {
@@ -408,5 +422,16 @@
       "room_type_required": "Otaq növü seçilməlidir",
       "terms_required": "Şərtləri qəbul etməlisiniz"
     }
+  },
+  "not_found": {
+    "title": "Səhifə tapılmadı",
+    "description": "Axtardığınız səhifə tapılmadı. Səhifə silinmiş, adı dəyişdirilmiş və ya müvəqqəti olaraq əlçatan deyil.",
+    "back_to_home": "Ana səhifəyə qayıt"
+  },
+  "error": {
+    "title": "Xəta baş verdi",
+    "description": "Təəssüf ki, bir xəta baş verdi. Zəhmət olmasa, bir az sonra yenidən cəhd edin.",
+    "try_again": "Yenidən cəhd et",
+    "back_to_home": "Ana səhifəyə qayıt"
   }
 }

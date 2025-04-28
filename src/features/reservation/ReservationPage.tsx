@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { FaCalendarAlt, FaUserFriends, FaSearch, FaFilter, FaMapMarkerAlt } from 'react-icons/fa';
+import { FaCalendarAlt, FaUserFriends, FaSearch, FaFilter, FaMapMarkerAlt, FaInfoCircle } from 'react-icons/fa';
 import SanatoriumCard from '@/features/common/SanatoriumCard';
 import { Sanatorium } from '@/lib/types/sanatorium.type';
 import { useTranslations } from 'next-intl';
@@ -211,17 +211,54 @@ export default function ReservationPage({ sanatoriums }: { sanatoriums: Sanatori
         <div className="container mx-auto px-4">
           <h2 className="text-2xl font-bold mb-8 text-gray-800">{t('results.title')}</h2>
           
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
-            {sanatoriums.map((sanatorium, index) => (
-              <SanatoriumCard 
-                key={sanatorium.id}
-                sanatorium={sanatorium}
-                index={index}
-                variant="full"
-                colorScheme="blue"
-              />
-            ))}
-          </div>
+          {sanatoriums.length === 0 ? (
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5 }}
+              className="bg-white rounded-xl p-8 text-center shadow-sm border border-gray-200"
+            >
+              <div className="w-16 h-16 bg-blue-50 rounded-full flex items-center justify-center mx-auto mb-4">
+                <FaInfoCircle className="text-blue-500 text-2xl" />
+              </div>
+              <h3 className="text-xl font-semibold text-gray-800 mb-2">{t('results.no_results.title')}</h3>
+              <p className="text-gray-600 mb-6">{t('results.no_results.description')}</p>
+              <div className="flex flex-col md:flex-row gap-4 justify-center">
+                <button
+                  onClick={() => {
+                    setSearchParams({
+                      location: "",
+                      checkIn: "",
+                      checkOut: "",
+                      guests: 1,
+                    });
+                    setPriceRange([0, 200]);
+                  }}
+                  className="px-6 py-3 bg-blue-500 text-white rounded-lg shadow-md hover:bg-blue-600 transition-all"
+                >
+                  {t('results.no_results.clear_filters')}
+                </button>
+                <button
+                  onClick={() => setShowFilters(true)}
+                  className="px-6 py-3 bg-gray-100 text-gray-700 rounded-lg shadow-sm hover:bg-gray-200 transition-all"
+                >
+                  {t('results.no_results.adjust_filters')}
+                </button>
+              </div>
+            </motion.div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
+              {sanatoriums.map((sanatorium, index) => (
+                <SanatoriumCard 
+                  key={sanatorium.id}
+                  sanatorium={sanatorium}
+                  index={index}
+                  variant="full"
+                  colorScheme="blue"
+                />
+              ))}
+            </div>
+          )}
         </div>
       </section>
     </div>

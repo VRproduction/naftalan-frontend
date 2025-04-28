@@ -3,9 +3,10 @@ import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { FaCalendarAlt, FaSearch, FaUsers, FaMapMarkerAlt } from 'react-icons/fa';
 import { useTranslations } from 'next-intl';
-import { Link as IntlLink } from '@/i18n/navigation';
+import { Link as IntlLink, useRouter } from '@/i18n/navigation';
 import { motion } from 'framer-motion';
 import { City } from '@/lib/types/sanatorium.type';
+import { useLoadingStore } from '@/store/useLoadingStore';
 
 // Define schema for form validation
 const searchSchema = z.object({
@@ -27,7 +28,9 @@ interface Props {
 const SearchForm = ({locations}: Props) => {
   const t = useTranslations('search');
   const tValidation = useTranslations('validation');
- 
+  
+  const router = useRouter();
+  const {setLoading} = useLoadingStore();
 
   const { register, handleSubmit, formState: { errors } } = useForm<SearchFormValues>({
     resolver: zodResolver(searchSchema),
@@ -41,7 +44,10 @@ const SearchForm = ({locations}: Props) => {
   });
 
   const onSubmit = (data: SearchFormValues) => {
-    console.log(data);
+    setLoading(true)
+    router.push(`/reservation/?city=${data.location}`)
+    setLoading(false)
+
     // Here we would redirect to search results with these parameters
   };
 
