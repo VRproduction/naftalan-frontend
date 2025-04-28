@@ -95,6 +95,9 @@
     "copyright": "© {year} {name}. Все права защищены."
   },
   "home": {
+    "hero": {
+      "learn_more": "Подробнее"
+    },
     "about": {
       "learn_more": "Подробнее",
       "treatment_types": "Виды лечения"

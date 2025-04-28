@@ -22,6 +22,11 @@ const nextConfig: NextConfig = {
         port: "59",
         pathname: "/**",
       },
+      {
+        protocol: "https",
+        hostname: "naftalan-admin.mediamarketinq.az",
+        pathname: "/**",
+      },
     ],
   },
 };

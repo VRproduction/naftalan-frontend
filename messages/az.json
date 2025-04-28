@@ -95,6 +95,9 @@
     "copyright": "© {year} {name}. Bütün hüquqlar qorunur."
   },
   "home": {
+    "hero": {
+      "learn_more": "Ətraflı məlumat"
+    },
     "about": {
       "learn_more": "Ətraflı məlumat",
       "treatment_types": "Müalicə növləri"

@@ -7,6 +7,7 @@ import 'swiper/css/pagination';
 import 'swiper/css/effect-fade';
 
 import { HeroSlider as HeroSliderType } from "@/lib/types/home.type";
+import { useTranslations } from 'next-intl';
 
 // Images will be replaced with actual Naftalan-related images
 interface Props {
@@ -14,6 +15,8 @@ interface Props {
 }
 
 const HeroSlider = ({ heroSliders }: Props) => {
+  const t = useTranslations('home.hero');
+
   return (
     <section className="relative z-0">
       <Swiper
@@ -66,14 +69,14 @@ const HeroSlider = ({ heroSliders }: Props) => {
                   </div>
                   
                   <p className="text-xs sm:text-sm md:text-base max-w-full sm:max-w-2xl mb-3 sm:mb-4 md:mb-6 line-clamp-2 sm:line-clamp-3 text-white font-medium drop-shadow-lg">
-                    {slide.sanatorium.name} - müalicəvi sanatoriya Naftalanın şəfa xüsusiyyətlərindən faydalanmaq üçün ideal seçim.
+                    {slide.sanatorium.short_description}
                   </p>
                   
                   <Link 
                     href={`/sanatoriums/${slide.sanatorium.slug}`} 
                     className="inline-flex items-center bg-blue-600 hover:bg-blue-700 text-white text-xs sm:text-sm md:text-base py-2 px-4 sm:py-2.5 sm:px-6 md:py-3 md:px-7 rounded-full transition-all duration-300 shadow-lg hover:shadow-xl hover:scale-105"
                   >
-                    <span className="font-medium">Ətraflı məlumat</span>
+                    <span className="font-medium">{t('learn_more')}</span>
                     <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 sm:h-5 sm:w-5 ml-1.5 sm:ml-2" viewBox="0 0 20 20" fill="currentColor">
                       <path fillRule="evenodd" d="M12.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-2.293-2.293a1 1 0 010-1.414z" clipRule="evenodd" />
                     </svg>
