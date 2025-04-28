@@ -1,4 +1,11 @@
 {
+  "common": {
+    "currency": {
+      "AZN": "Azərbaycan Manatı",
+      "USD": "ABŞ Dolları",
+      "RUB": "Rus Rublu"
+    }
+  },
   "header": {
     "home": "Ana səhifə",
     "about": "Haqqımızda",
@@ -183,7 +190,55 @@
       "title": "Bloq"
     },
     "reservation": {
-      "title": "Rezervasiya"
+      "title": "Rezervasiya",
+      "subtitle": "Uyğun sanatoriyaları tapın və sağlamlığınızı bərpa edin",
+      "search": {
+        "location": {
+          "label": "Məkan",
+          "placeholder": "Bütün məkanlar",
+          "options": {
+            "all": "Bütün məkanlar",
+            "naftalan": "Naftalan",
+            "ganja": "Gəncə",
+            "baku": "Bakı"
+          }
+        },
+        "check_in": {
+          "label": "Giriş tarixi"
+        },
+        "check_out": {
+          "label": "Çıxış tarixi"
+        },
+        "guests": {
+          "label": "Qonaqlar",
+          "person": "qonaq"
+        },
+        "filters": {
+          "show": "Daha çox filter",
+          "hide": "Filterləri gizlət",
+          "price_range": "Qiymət aralığı (AZN)",
+          "features": {
+            "title": "İmkanlar",
+            "wifi": "Wi-Fi",
+            "pool": "Hovuz",
+            "spa": "Spa",
+            "fitness": "Fitness",
+            "restaurant": "Restoran"
+          },
+          "treatments": {
+            "title": "Müalicə növləri",
+            "naftalan_baths": "Naftalan vannaları",
+            "physiotherapy": "Fizioterapiya",
+            "massage": "Masaj",
+            "balneology": "Balneologiya",
+            "mud_therapy": "Palçıq müalicəsi"
+          }
+        },
+        "search_button": "Axtar"
+      },
+      "results": {
+        "title": "Mövcud sanatoriyalar"
+      }
     },
     "how_to_come": {
       "title": "Necə gəlmək olar?"
@@ -234,13 +289,124 @@
     "max": "maksimum"
   },
   "sanatorium": {
-  "price": "Qiymət",
-  "details": "Ətraflı məlumat",
-  "show_more": "Daha çox",
-  "close": "Bağla",
-  "photos": "Fotolar",
-  "book_now": "Rezervasiya et"
-},"blog": {
-  "read_more": "Ətraflı oxu"
-}
+    "price": "Qiymət",
+    "details": "Ətraflı məlumat",
+    "show_more": "Daha çox",
+    "close": "Bağla",
+    "photos": "Fotolar",
+    "book_now": "Rezervasiya et"
+  },
+  "blog": {
+    "read_more": "Ətraflı oxu"
+  },
+  "booking": {
+    "title": "Rezervasiya",
+    "subtitle": "Sanatoriyamızda qalacağınız müddəti rezervasiya edin və sağlamlığınıza qovuşun",
+    "success": {
+      "title": "Rezervasiyanız qəbul edildi!",
+      "message": "Rezervasiya sorğunuz uğurla göndərildi. Qısa müddət ərzində rezervasiya təsdiqiniz {email} e-poçt ünvanına göndəriləcək. Təşəkkür edirik!",
+      "details": "Rezervasiya məlumatları:",
+      "sanatorium": "Sanatoriya:",
+      "dates": "Tarix:",
+      "guests": "Qonaqlar:",
+      "children_ages": "Uşaqların yaşları:",
+      "room": "Otaq:",
+      "back_to_home": "Ana səhifəyə qayıt"
+    },
+    "form": {
+      "room_guest_selection": "Otaq və qonaq seçimi",
+      "room_type": "Otaq növü *",
+      "select_room": "Otaq seçin",
+      "adults": "Böyüklər *",
+      "adult": "böyük",
+      "adults_plural": "böyük",
+      "children": "Uşaqlar (17 yaşa qədər)",
+      "child": "uşaq",
+      "children_plural": "uşaq",
+      "children_ages": "Uşaqların yaşları",
+      "child_age_info": "Hər uşaq üçün əlavə çarpayı qiyməti yaşa görə təyin olunur.",
+      "extra_bed_not_available": "Bu otaqda əlavə çarpayı mövcud deyil",
+      "extra_bed_limit": "Bu otaqda maksimum {count} əlavə çarpayı var",
+      "extra_bed_limit_exceeded": "Diqqət: Bu otaqda yalnız {count} əlavə çarpayı var, amma {selected} uşaq seçilmişdir",
+      "unlimited_extra_beds": "Uşaqlar üçün əlavə çarpayı limiti yoxdur",
+      "child_age": "{index}-ci uşağın yaşı",
+      "years": "yaş",
+      "date_selection": "Tarix seçimi",
+      "check_in": "Giriş tarixi *",
+      "check_out": "Çıxış tarixi *",
+      "treatment_selection": "Müalicə seçimi",
+      "with_treatment": "Müalicə ilə",
+      "without_treatment": "Müalicəsiz",
+      "personal_info": "Şəxsi məlumatlar",
+      "first_name": "Ad *",
+      "last_name": "Soyad *",
+      "email": "E-poçt *",
+      "phone": "Telefon *",
+      "special_requests": "Xüsusi istəklər",
+      "special_requests_placeholder": "Xüsusi istəkləriniz varsa, qeyd edin",
+      "terms_acceptance": "Şərtləri və qaydaları qəbul edirəm *",
+      "terms_description": "Rezervasiya şərtləri və qaydaları ilə tanış oldum və qəbul edirəm.",
+      "booking_info": "Rezervasiya haqqında",
+      "booking_info_message": "Rezervasiya sorğunuzu göndərdikdən sonra sizinlə tezliklə əlaqə saxlanılacaq və təsdiqlənəcək.",
+      "submit": "Rezervasiya sorğusu göndər",
+      "sending": "Göndərilir...",
+      "error": "Rezervasiya yaradılarkən xəta baş verdi. Yenidən cəhd edin."
+    },
+    "summary": {
+      "title": "Rezervasiya məlumatları",
+      "sanatorium": "Sanatoriya:",
+      "check_in": "Giriş tarixi:",
+      "check_out": "Çıxış tarixi:",
+      "nights": "Gecələmə:",
+      "night": "gecə",
+      "nights_plural": "gecə",
+      "guests": "Qonaqlar:",
+      "children_ages": "Uşaqların yaşları:",
+      "room_type": "Otaq növü:",
+      "treatment": "Müalicə:",
+      "estimated_price": "Təxmini qiymət",
+      "room_price": "Otaq ({nights} gecə, {adults} nəfər):",
+      "extra_beds": "Əlavə çarpayılar ({nights} gecə, {children} uşaq):",
+      "total": "Cəmi:",
+      "price_info": "Qiymət məlumatı",
+      "nightly_price": "Gecəlik qiymət ({adults} nəfər üçün):",
+      "price_not_available": "Seçilmiş otaqda bu nəfər sayı üçün qiymət mövcud deyil",
+      "child_price_not_found": "Bu yaş üçün qiymət tapılmadı",
+      "total_nightly": "Gecəlik cəmi:",
+      "price_will_be_shown": "Tam qiymət tarixlər seçildikdən sonra göstəriləcək.",
+      "contact_after_booking": "Rezervasiyanız qəbul edildikdən sonra sizinlə əlaqə saxlanılacaq"
+    },
+    "why_choose_us": {
+      "title": "Niyə bizimlə rezervasiya etməlisiniz?",
+      "subtitle": "Rezervasiya sistemimizdə yer ayırmaq sadə, sürətli və rahatdır",
+      "items": {
+        "simple": {
+          "title": "Sadə və sürətli",
+          "description": "Cəmi bir neçə dəqiqə ərzində rezervasiya sorğusu göndərin və tezliklə cavab alın."
+        },
+        "personal": {
+          "title": "Şəxsi yanaşma",
+          "description": "Bütün xüsusi istəklər və tələblər birbaşa müzakirə edilir."
+        },
+        "flexible": {
+          "title": "Çevik dəyişiklik imkanı",
+          "description": "Gəliş tarixindən 7 gün əvvələ qədər rezervasiyanızı pulsuz dəyişdirə bilərsiniz."
+        }
+      }
+    },
+    "validation": {
+      "first_name_required": "Ad daxil edilməlidir",
+      "last_name_required": "Soyad daxil edilməlidir",
+      "email_required": "E-poçt daxil edilməlidir",
+      "email_invalid": "Düzgün e-poçt daxil edin",
+      "phone_required": "Telefon daxil edilməlidir",
+      "phone_invalid": "Düzgün telefon nömrəsi daxil edin",
+      "check_in_required": "Giriş tarixi seçilməlidir",
+      "check_out_required": "Çıxış tarixi seçilməlidir",
+      "check_out_after_check_in": "Çıxış tarixi giriş tarixindən sonra olmalıdır",
+      "check_in_not_past": "Giriş tarixi bugünkü tarixdən əvvəl ola bilməz",
+      "room_type_required": "Otaq növü seçilməlidir",
+      "terms_required": "Şərtləri qəbul etməlisiniz"
+    }
+  }
 }

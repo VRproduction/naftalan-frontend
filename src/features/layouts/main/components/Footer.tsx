@@ -18,28 +18,28 @@ const Footer = ({ siteSettings }: FooterProps) => {
             <h3 className="text-xl font-bold mb-4">{siteSettings.site_name}</h3>
             <p className="mb-4">{siteSettings.about_short || t('about_short_default')}</p>
             {siteSettings.show_social_in_footer && (
-              <div className="flex space-x-4">
+            <div className="flex space-x-4">
                 {siteSettings.social_facebook && (
                   <a href={siteSettings.social_facebook} className="text-white hover:text-blue-400 transition-colors">
-                    <FaFacebook size={20} />
-                  </a>
+                <FaFacebook size={20} />
+              </a>
                 )}
                 {siteSettings.social_instagram && (
                   <a href={siteSettings.social_instagram} className="text-white hover:text-pink-400 transition-colors">
-                    <FaInstagram size={20} />
-                  </a>
+                <FaInstagram size={20} />
+              </a>
                 )}
                 {siteSettings.social_twitter && (
                   <a href={siteSettings.social_twitter} className="text-white hover:text-blue-400 transition-colors">
-                    <FaTwitter size={20} />
-                  </a>
+                <FaTwitter size={20} />
+              </a>
                 )}
                 {siteSettings.social_youtube && (
                   <a href={siteSettings.social_youtube} className="text-white hover:text-red-500 transition-colors">
-                    <FaYoutube size={20} />
-                  </a>
+                <FaYoutube size={20} />
+              </a>
                 )}
-              </div>
+            </div>
             )}
           </div>
           

@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FaBars, FaTimes, FaChevronDown, FaChevronRight, FaGlobe } from 'react-icons/fa';
 import { useUIStore } from '@/store/useUIStore';
@@ -22,7 +22,7 @@ const Header = ({ siteSettings }: HeaderProps) => {
   const [isLangMenuOpen, setIsLangMenuOpen] = useState(false);
   const pathname = usePathname();
 
-  const locale = useLocale() as 'az' | 'en' | 'ru';
+  const locale = useLocale() as SupportedLocale;
   const router = useRouter();
   const t = useTranslations('header');
   const tLang = useTranslations('languages');
@@ -62,7 +62,10 @@ const Header = ({ siteSettings }: HeaderProps) => {
     
     setIsLangMenuOpen(false);
     // Get current pathname and replace locale segment
-    router.push(pathname, { locale: lang, scroll: false });
+    const params = new URLSearchParams(window.location.search);
+    const searchParams = params.toString();
+    const newPath = searchParams ? `${pathname}?${searchParams}` : pathname;
+    router.push(newPath, { locale: lang, scroll: false });
   };
   
   return (

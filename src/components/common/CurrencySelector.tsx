@@ -1,14 +1,32 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
-import { useCurrency } from "@/lib/utils/currency";
+import { useCurrencyStore } from "@/store/useCurrencyStore";
 import { FaGlobeAmericas, FaChevronDown, FaTimes } from "react-icons/fa";
 import { motion, AnimatePresence } from "framer-motion";
+import { usePathname, useRouter } from "@/i18n/navigation";
 
 export default function CurrencySelector() {
-  const { currentCurrency, setCurrency, currencies, isLoading } = useCurrency();
+  const router = useRouter();
+  const pathname = usePathname();
+  const { currentCurrency, currencies, setCurrency, isLoading, isInitialized, initializeFromCookie, fetchExchangeRates } = useCurrencyStore();
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    // Initialize currency from cookie on client-side
+    if (!isInitialized) {
+      initializeFromCookie();
+    }
+    
+    // Fetch exchange rates on mount
+    fetchExchangeRates();
+    
+    // Set up interval to fetch rates every hour
+    const interval = setInterval(fetchExchangeRates, 60 * 60 * 1000);
+    
+    return () => clearInterval(interval);
+  }, [isInitialized, initializeFromCookie, fetchExchangeRates]);
 
   // Close dropdown when clicking outside
   useEffect(() => {
@@ -31,17 +49,13 @@ export default function CurrencySelector() {
   const handleCurrencySelect = (currencyCode: string) => {
     setCurrency(currencyCode);
     setIsOpen(false);
-    window.location.reload()
+    
+    // Update URL with new currency
+    const params = new URLSearchParams(window.location.search);
+    const searchParams = params.toString();
+    const newPath = searchParams ? `${pathname}?${searchParams}` : pathname;
+     router.push(newPath, {scroll: false});
   };
-
-  if (isLoading) {
-    return (
-      <div className="flex items-center px-3 py-2 space-x-2">
-        <div className="w-5 h-5 bg-gray-200 rounded-full animate-pulse" />
-        <div className="w-12 h-4 bg-gray-200 rounded animate-pulse" />
-      </div>
-    );
-  }
 
   return (
     <div className="relative" ref={dropdownRef}>
@@ -53,13 +67,15 @@ export default function CurrencySelector() {
       > 
         <div className="flex items-center space-x-1.5">
           <FaGlobeAmericas className="text-blue-500" />
-          <span>{currentCurrency?.code}</span>
+          {
+            !isLoading ? (
+              <span>{currentCurrency?.code}</span>
+            ): (
+              <span className="inline-block w-8 h-4 bg-gray-200 rounded animate-pulse" aria-hidden="true" />
+            )
+          }
         </div>
-        <FaChevronDown
-          className={`transform transition-transform duration-200 text-xs ${
-            isOpen ? "rotate-180" : ""
-          }`}
-        />
+        <FaChevronDown className="w-4 h-4" />
       </button>
 
       <AnimatePresence>

@@ -2,29 +2,21 @@
 
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import Image from 'next/image';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
 import { FaCalendarAlt, FaUser, FaEnvelope, FaPhone, FaInfoCircle, FaCheck, FaHotel } from 'react-icons/fa';
-import { useCurrency } from '@/lib/utils/currency';
 import { createBooking } from '@/lib/services/booking.service';
 import { BookingRequestData } from '@/lib/types/booking.type';
 import { SanatoriumDetail } from '@/lib/types/sanatorium.type';
+import { useCurrencyStore } from '@/store/useCurrencyStore';
+import { useTranslations } from 'next-intl';
 
 interface Props {
   sanatorium: SanatoriumDetail
 }
 
 export default function BookingPage({ sanatorium }: Props) {
-  const router = useRouter();
-  const { formatPrice, currentCurrency } = useCurrency();
-  
-  // Get URL parameters
-  const searchParams = typeof window !== 'undefined' 
-    ? new URLSearchParams(window.location.search) 
-    : new URLSearchParams('');
-  
-
+  const { formatPrice } = useCurrencyStore();
+  const t = useTranslations('booking');
 
   // Form state
   const [formData, setFormData] = useState({
@@ -298,22 +290,22 @@ export default function BookingPage({ sanatorium }: Props) {
     const newErrors: Record<string, string> = {};
     
     // Required fields
-    if (!formData.firstName) newErrors.firstName = 'Ad daxil edilməlidir';
-    if (!formData.lastName) newErrors.lastName = 'Soyad daxil edilməlidir';
-    if (!formData.email) newErrors.email = 'E-poçt daxil edilməlidir';
-    if (!formData.phone) newErrors.phone = 'Telefon daxil edilməlidir';
-    if (!formData.checkIn) newErrors.checkIn = 'Giriş tarixi seçilməlidir';
-    if (!formData.checkOut) newErrors.checkOut = 'Çıxış tarixi seçilməlidir';
-    if (!formData.roomTypeId) newErrors.roomTypeId = 'Otaq növü seçilməlidir';
+    if (!formData.firstName) newErrors.firstName = t('validation.first_name_required');
+    if (!formData.lastName) newErrors.lastName = t('validation.last_name_required');
+    if (!formData.email) newErrors.email = t('validation.email_required');
+    if (!formData.phone) newErrors.phone = t('validation.phone_required');
+    if (!formData.checkIn) newErrors.checkIn = t('validation.check_in_required');
+    if (!formData.checkOut) newErrors.checkOut = t('validation.check_out_required');
+    if (!formData.roomTypeId) newErrors.roomTypeId = t('validation.room_type_required');
     
     // Email validation
     if (formData.email && !/\S+@\S+\.\S+/.test(formData.email)) {
-      newErrors.email = 'Düzgün e-poçt daxil edin';
+      newErrors.email = t('validation.email_invalid');
     }
     
     // Phone validation
     if (formData.phone && !/^\+?[0-9\s-]{10,15}$/.test(formData.phone)) {
-      newErrors.phone = 'Düzgün telefon nömrəsi daxil edin';
+      newErrors.phone = t('validation.phone_invalid');
     }
     
     // Date validation
@@ -322,7 +314,7 @@ export default function BookingPage({ sanatorium }: Props) {
       const checkOut = new Date(formData.checkOut);
       
       if (checkIn >= checkOut) {
-        newErrors.checkOut = 'Çıxış tarixi giriş tarixindən sonra olmalıdır';
+        newErrors.checkOut = t('validation.check_out_after_check_in');
       }
       
       // Check if check-in date is in the past
@@ -330,13 +322,13 @@ export default function BookingPage({ sanatorium }: Props) {
       today.setHours(0, 0, 0, 0);
       
       if (checkIn < today) {
-        newErrors.checkIn = 'Giriş tarixi bugünkü tarixdən əvvəl ola bilməz';
+        newErrors.checkIn = t('validation.check_in_not_past');
       }
     }
     
     // Terms acceptance
     if (!formData.termsAccepted) {
-      newErrors.termsAccepted = 'Şərtləri qəbul etməlisiniz';
+      newErrors.termsAccepted = t('validation.terms_required');
     }
     
     setErrors(newErrors);
@@ -761,10 +753,10 @@ export default function BookingPage({ sanatorium }: Props) {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
           >
-            <h1 className="text-3xl md:text-4xl font-bold mb-4 text-gray-800">Rezervasiya</h1>
+            <h1 className="text-3xl md:text-4xl font-bold mb-4 text-gray-800">{t('title')}</h1>
             <div className="w-20 h-1 bg-blue-500 mx-auto mb-6"></div>
             <p className="max-w-2xl mx-auto text-lg text-gray-600">
-              Sanatoriyamızda qalacağınız müddəti rezervasiya edin və sağlamlığınıza qovuşun
+              {t('subtitle')}
             </p>
           </motion.div>
         </div>
@@ -785,22 +777,20 @@ export default function BookingPage({ sanatorium }: Props) {
                   <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
                     <FaCheck className="text-green-500 text-2xl" />
                   </div>
-                  <h2 className="text-2xl font-bold text-gray-800 mb-4">Rezervasiyanız qəbul edildi!</h2>
+                  <h2 className="text-2xl font-bold text-gray-800 mb-4">{t('success.title')}</h2>
                   <p className="text-gray-600 mb-6">
-                    Rezervasiya sorğunuz uğurla göndərildi. Qısa müddət ərzində rezervasiya təsdiqiniz 
-                    <strong> {formData.email}</strong> e-poçt ünvanına göndəriləcək. 
-                    Təşəkkür edirik!
+                    {t('success.message', { email: formData.email })}
                   </p>
                   <div className="bg-white p-4 rounded-lg border border-gray-200 mb-6 text-left">
-                    <h3 className="font-bold text-gray-800 mb-2">Rezervasiya məlumatları:</h3>
+                    <h3 className="font-bold text-gray-800 mb-2">{t('success.details')}</h3>
                     <ul className="space-y-1 text-gray-600">
-                      <li><strong>Sanatoriya:</strong> {sanatorium.name}</li>
-                      <li><strong>Tarix:</strong> {new Date(formData.checkIn).toLocaleDateString('az-AZ')} — {new Date(formData.checkOut).toLocaleDateString('az-AZ')}</li>
-                      <li><strong>Qonaqlar:</strong> {formData.adults} böyük{formData.children > 0 ? `, ${formData.children} uşaq` : ''}</li>
+                      <li><strong>{t('success.sanatorium')}</strong> {sanatorium.name}</li>
+                      <li><strong>{t('success.dates')}</strong> {new Date(formData.checkIn).toLocaleDateString()} — {new Date(formData.checkOut).toLocaleDateString()}</li>
+                      <li><strong>{t('success.guests')}</strong> {formData.adults} {formData.adults === 1 ? t('form.adult') : t('form.adults_plural')}{formData.children > 0 ? `, ${formData.children} ${formData.children === 1 ? t('form.child') : t('form.children_plural')}` : ''}</li>
                       {formData.children > 0 && (
-                        <li><strong>Uşaqların yaşları:</strong> {formData.childrenAges.join(', ')} yaş</li>
+                        <li><strong>{t('success.children_ages')}</strong> {formData.childrenAges.join(', ')} {t('form.years')}</li>
                       )}
-                      <li><strong>Otaq:</strong> {sanatorium.room_types.find(r => r.id.toString() === formData.roomTypeId.toString())?.name}</li>
+                      <li><strong>{t('success.room')}</strong> {sanatorium.room_types.find(r => r.id.toString() === formData.roomTypeId.toString())?.name}</li>
                     </ul>
                   </div>
                   <div className="flex justify-center gap-4">
@@ -808,7 +798,7 @@ export default function BookingPage({ sanatorium }: Props) {
                       href="/"
                       className="px-6 py-3 bg-blue-500 text-white rounded-lg shadow-md hover:bg-blue-600 transition-all inline-block"
                     >
-                      Ana səhifəyə qayıt
+                      {t('success.back_to_home')}
                     </Link>
                   </div>
                 </motion.div>
@@ -823,11 +813,11 @@ export default function BookingPage({ sanatorium }: Props) {
                     </div>
                   </div>
                   
-                  <h2 className="text-2xl font-bold text-gray-800 mb-6">Otaq və qonaq seçimi</h2>
+                  <h2 className="text-2xl font-bold text-gray-800 mb-6">{t('form.room_guest_selection')}</h2>
                   
                   <div className="grid grid-cols-1 gap-6 mb-8">
                     <div>
-                      <label htmlFor="roomTypeId" className="block text-sm font-medium text-gray-700 mb-1">Otaq növü *</label>
+                      <label htmlFor="roomTypeId" className="block text-sm font-medium text-gray-700 mb-1">{t('form.room_type')}</label>
                       <select
                         id="roomTypeId"
                         name="roomTypeId"
@@ -835,10 +825,10 @@ export default function BookingPage({ sanatorium }: Props) {
                         onChange={handleInputChange}
                         className={`w-full px-4 py-3 rounded-lg border ${errors.roomTypeId ? 'border-red-400' : 'border-gray-300'} focus:outline-none focus:ring-2 focus:ring-blue-500`}
                       >
-                        <option value="">Otaq seçin</option>
+                        <option value="">{t('form.select_room')}</option>
                         {sanatorium.room_types.map(room => (
                           <option key={room.id} value={room.id}>
-                            {room.name} {room.max_extra_beds ? `(${room.max_extra_beds} əlavə çarpayı)` : ''}
+                            {room.name} {room.max_extra_beds ? `(${room.max_extra_beds} ${t('form.extra_beds')})` : ''}
                           </option>
                         ))}
                       </select>
@@ -851,7 +841,7 @@ export default function BookingPage({ sanatorium }: Props) {
                           return (
                             <p className="mt-1 text-xs text-amber-600">
                               <FaInfoCircle className="inline mr-1" />
-                              Bu otaqda uşaqlar üçün əlavə çarpayı mövcud deyil
+                              {t('form.extra_bed_not_available')}
                             </p>
                           );
                         }
@@ -859,7 +849,7 @@ export default function BookingPage({ sanatorium }: Props) {
                           return (
                             <p className="mt-1 text-xs text-amber-600">
                               <FaInfoCircle className="inline mr-1" />
-                              Diqqət: Bu otaqda yalnız {room.max_extra_beds} əlavə çarpayı var, amma {formData.children} uşaq seçilmişdir
+                              {t('form.extra_bed_limit_exceeded', { count: room.max_extra_beds, selected: formData.children })}
                             </p>
                           );
                         }
@@ -869,7 +859,7 @@ export default function BookingPage({ sanatorium }: Props) {
                     
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                       <div>
-                        <label htmlFor="adults" className="block text-sm font-medium text-gray-700 mb-1">Böyüklər *</label>
+                        <label htmlFor="adults" className="block text-sm font-medium text-gray-700 mb-1">{t('form.adults')}</label>
                         <select
                           id="adults"
                           name="adults"
@@ -878,36 +868,33 @@ export default function BookingPage({ sanatorium }: Props) {
                           className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
                         >
                           {(() => {
-                            // If a room is selected, show only the occupancy options for that room
                             if (formData.roomTypeId) {
                               const selectedRoom = sanatorium.room_types.find(r => r.id.toString() === formData.roomTypeId.toString());
                               if (selectedRoom && selectedRoom.prices && selectedRoom.prices.length > 0) {
-                                // Get unique occupancy values from room prices
                                 const occupancyOptions = [...new Set(selectedRoom.prices.map(price => price.occupancy))];
                                 return occupancyOptions.map(occupancy => (
                                   <option key={occupancy} value={occupancy}>
-                                    {occupancy} {occupancy === 1 ? 'böyük' : 'böyük'}
+                                    {occupancy} {occupancy === 1 ? t('form.adult') : t('form.adults_plural')}
                                   </option>
                                 ));
                               }
                             }
                             
-                            // Default options if no room selected
                             return [1, 2, 3, 4].map(num => (
-                              <option key={num} value={num}>{num} {num === 1 ? 'böyük' : 'böyük'}</option>
+                              <option key={num} value={num}>{num} {num === 1 ? t('form.adult') : t('form.adults_plural')}</option>
                             ));
                           })()}
                         </select>
                         {formData.roomTypeId && (
                           <p className="mt-1 text-xs text-gray-500">
                             <FaInfoCircle className="inline mr-1" />
-                            Qiymət seçilən nəfər sayına görə dəyişir
+                            {t('summary.price_info')}
                           </p>
                         )}
                       </div>
                       
                       <div>
-                        <label htmlFor="children" className="block text-sm font-medium text-gray-700 mb-1">Uşaqlar (17 yaşa qədər)</label>
+                        <label htmlFor="children" className="block text-sm font-medium text-gray-700 mb-1">{t('form.children')}</label>
                         <select
                           id="children"
                           name="children"
@@ -916,17 +903,14 @@ export default function BookingPage({ sanatorium }: Props) {
                           className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
                         >
                           {(() => {
-                            // Get max allowed children based on selected room
-                            let maxAllowedChildren = 10; // Default max children if no room selected or unlimited
+                            let maxAllowedChildren = 10;
                             let isUnlimitedExtraBeds = false;
                             
                             if (formData.roomTypeId) {
                               const selectedRoom = sanatorium.room_types.find(r => r.id.toString() === formData.roomTypeId.toString());
                               if (selectedRoom) {
                                 if (selectedRoom.max_extra_beds === null) {
-                                  // Null değeri sınırsız yatak anlamına gelir
                                   isUnlimitedExtraBeds = true;
-                                  // Dinamik olarak daha fazla çocuk ekleyebilmelerini sağla
                                   maxAllowedChildren = Math.max(20, formData.children);
                                 } else if (selectedRoom.max_extra_beds !== undefined) {
                                   maxAllowedChildren = selectedRoom.max_extra_beds;
@@ -934,11 +918,10 @@ export default function BookingPage({ sanatorium }: Props) {
                               }
                             }
                             
-                            // Create options from 0 to maxAllowedChildren
                             const options = [];
                             for (let i = 0; i <= maxAllowedChildren; i++) {
                               options.push(
-                                <option key={i} value={i}>{i} {i === 1 ? 'uşaq' : 'uşaq'}</option>
+                                <option key={i} value={i}>{i} {i === 1 ? t('form.child') : t('form.children_plural')}</option>
                               );
                             }
                             return options;
@@ -948,17 +931,16 @@ export default function BookingPage({ sanatorium }: Props) {
                           <p className="mt-1 text-xs text-gray-500">
                             <FaInfoCircle className="inline mr-1" />
                             {(() => {
-                              // Show appropriate message based on room selection
                               if (formData.roomTypeId) {
                                 const selectedRoom = sanatorium.room_types.find(r => r.id.toString() === formData.roomTypeId.toString());
                                 if (selectedRoom) {
                                   if (selectedRoom.max_extra_beds === null) {
-                                    return 'Uşaqlar üçün əlavə çarpayı limiti yoxdur';
+                                    return t('form.unlimited_extra_beds');
                                   } else if (selectedRoom.max_extra_beds !== undefined) {
                                     if (selectedRoom.max_extra_beds === 0) {
-                                      return 'Bu otaqda əlavə çarpayı mövcud deyil';
+                                      return t('form.extra_bed_not_available');
                                     }
-                                    return `Bu otaqda maksimum ${selectedRoom.max_extra_beds} əlavə çarpayı var`;
+                                    return t('form.extra_bed_limit', { count: selectedRoom.max_extra_beds });
                                   }
                                 }
                               }
@@ -972,21 +954,21 @@ export default function BookingPage({ sanatorium }: Props) {
                   
                   {formData.children > 0 && (
                     <div className="mb-8">
-                      <h3 className="text-lg font-medium text-gray-800 mb-3">Uşaqların yaşları</h3>
+                      <h3 className="text-lg font-medium text-gray-800 mb-3">{t('form.children_ages')}</h3>
                       <div className="bg-blue-50 p-3 rounded-md mb-4">
                         <p className="text-sm text-gray-700">
                           <FaInfoCircle className="inline mr-1 text-blue-500" />
-                          Hər uşaq üçün əlavə çarpayı qiyməti yaşa görə təyin olunur. 
+                          {t('form.child_age_info')}
                           {formData.roomTypeId && (() => {
                             const selectedRoom = sanatorium.room_types.find(r => r.id.toString() === formData.roomTypeId.toString());
                             if (selectedRoom) {
                               if (selectedRoom.max_extra_beds !== null && selectedRoom.max_extra_beds !== undefined) {
                                 const maxExtraBeds = selectedRoom.max_extra_beds;
-                                if (maxExtraBeds === 0) return " Bu otaqda əlavə çarpayı mövcud deyil.";
+                                if (maxExtraBeds === 0) return ` ${t('form.extra_bed_not_available')}`;
                                 if (maxExtraBeds < formData.children) {
-                                  return ` Bu otaqda yalnız ${maxExtraBeds} əlavə çarpayı var, bütün ${formData.children} uşaq üçün çarpayı olmaya bilər.`;
+                                  return ` ${t('form.extra_bed_limit_exceeded', { count: maxExtraBeds, selected: formData.children })}`;
                                 }
-                                return ` Bu otaqda maksimum ${maxExtraBeds} əlavə çarpayı var.`;
+                                return ` ${t('form.extra_bed_limit', { count: maxExtraBeds })}`;
                               } else {
                                 return " Uşaqlar üçün əlavə çarpayı limiti yoxdur.";
                               }
@@ -1000,7 +982,7 @@ export default function BookingPage({ sanatorium }: Props) {
                         {formData.childrenAges.map((age, index) => (
                           <div key={index}>
                             <label htmlFor={`childAge_${index}`} className="block text-sm font-medium text-gray-700 mb-1">
-                              {index + 1}-ci uşağın yaşı
+                              {t('form.child_age', { index: index + 1 })}
                             </label>
                             <select
                               id={`childAge_${index}`}
@@ -1010,7 +992,7 @@ export default function BookingPage({ sanatorium }: Props) {
                               className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
                             >
                               {[...Array(17)].map((_, i) => (
-                                <option key={i} value={i + 1}>{i + 1} yaş</option>
+                                <option key={i} value={i + 1}>{i + 1} {t('form.years')}</option>
                               ))}
                             </select>
                           </div>
@@ -1019,11 +1001,11 @@ export default function BookingPage({ sanatorium }: Props) {
                     </div>
                   )}
                   
-                  <h2 className="text-2xl font-bold text-gray-800 mb-6">Tarix seçimi</h2>
+                  <h2 className="text-2xl font-bold text-gray-800 mb-6">{t('form.date_selection')}</h2>
                   
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
                     <div>
-                      <label htmlFor="checkIn" className="block text-sm font-medium text-gray-700 mb-1">Giriş tarixi *</label>
+                      <label htmlFor="checkIn" className="block text-sm font-medium text-gray-700 mb-1">{t('form.check_in')}</label>
                       <div className="relative">
                         <span className="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-400">
                           <FaCalendarAlt />
@@ -1042,7 +1024,7 @@ export default function BookingPage({ sanatorium }: Props) {
                     </div>
                     
                     <div>
-                      <label htmlFor="checkOut" className="block text-sm font-medium text-gray-700 mb-1">Çıxış tarixi *</label>
+                      <label htmlFor="checkOut" className="block text-sm font-medium text-gray-700 mb-1">{t('form.check_out')}</label>
                       <div className="relative">
                         <span className="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-400">
                           <FaCalendarAlt />
@@ -1062,7 +1044,7 @@ export default function BookingPage({ sanatorium }: Props) {
                   </div>
                   
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-3">Müalicə seçimi</label>
+                    <label className="block text-sm font-medium text-gray-700 mb-3">{t('form.treatment_selection')}</label>
                     <div className="space-y-3">
                       <div className="flex items-center">
                         <input
@@ -1072,12 +1054,11 @@ export default function BookingPage({ sanatorium }: Props) {
                           checked={formData.withTreatment}
                           onChange={() => {
                             setFormData({...formData, withTreatment: true});
-                            // Force a price recalculation when treatment option changes
                             setPriceUpdateTrigger(prev => prev + 1);
                           }}
                           className="h-4 w-4 text-blue-600 focus:ring-blue-500"
                         />
-                        <label htmlFor="with-treatment" className="ml-2 text-gray-700">Müalicə ilə</label>
+                        <label htmlFor="with-treatment" className="ml-2 text-gray-700">{t('form.with_treatment')}</label>
                       </div>
                       
                       <div className="flex items-center">
@@ -1088,21 +1069,20 @@ export default function BookingPage({ sanatorium }: Props) {
                           checked={!formData.withTreatment}
                           onChange={() => {
                             setFormData({...formData, withTreatment: false});
-                            // Force a price recalculation when treatment option changes
                             setPriceUpdateTrigger(prev => prev + 1);
                           }}
                           className="h-4 w-4 text-blue-600 focus:ring-blue-500"
                         />
-                        <label htmlFor="without-treatment" className="ml-2 text-gray-700">Müalicəsiz</label>
+                        <label htmlFor="without-treatment" className="ml-2 text-gray-700">{t('form.without_treatment')}</label>
                       </div>
                     </div>
                   </div>
 
-                  <h2 className="text-2xl font-bold text-gray-800 mb-6 mt-8">Şəxsi məlumatlar</h2>
+                  <h2 className="text-2xl font-bold text-gray-800 mb-6 mt-8">{t('form.personal_info')}</h2>
                   
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
                     <div>
-                      <label htmlFor="firstName" className="block text-sm font-medium text-gray-700 mb-1">Ad *</label>
+                      <label htmlFor="firstName" className="block text-sm font-medium text-gray-700 mb-1">{t('form.first_name')}</label>
                       <div className="relative">
                         <span className="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-400">
                           <FaUser />
@@ -1114,14 +1094,14 @@ export default function BookingPage({ sanatorium }: Props) {
                           value={formData.firstName}
                           onChange={handleInputChange}
                           className={`pl-10 w-full px-4 py-3 rounded-lg border ${errors.firstName ? 'border-red-400' : 'border-gray-300'} focus:outline-none focus:ring-2 focus:ring-blue-500`}
-                          placeholder="Adınız"
+                          placeholder={t('form.first_name')}
                         />
                       </div>
                       {errors.firstName && <p className="mt-1 text-sm text-red-500">{errors.firstName}</p>}
                     </div>
                     
                     <div>
-                      <label htmlFor="lastName" className="block text-sm font-medium text-gray-700 mb-1">Soyad *</label>
+                      <label htmlFor="lastName" className="block text-sm font-medium text-gray-700 mb-1">{t('form.last_name')}</label>
                       <div className="relative">
                         <span className="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-400">
                           <FaUser />
@@ -1133,14 +1113,14 @@ export default function BookingPage({ sanatorium }: Props) {
                           value={formData.lastName}
                           onChange={handleInputChange}
                           className={`pl-10 w-full px-4 py-3 rounded-lg border ${errors.lastName ? 'border-red-400' : 'border-gray-300'} focus:outline-none focus:ring-2 focus:ring-blue-500`}
-                          placeholder="Soyadınız"
+                          placeholder={t('form.last_name')}
                         />
                       </div>
                       {errors.lastName && <p className="mt-1 text-sm text-red-500">{errors.lastName}</p>}
                     </div>
                     
                     <div>
-                      <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">E-poçt *</label>
+                      <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">{t('form.email')}</label>
                       <div className="relative">
                         <span className="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-400">
                           <FaEnvelope />
@@ -1159,7 +1139,7 @@ export default function BookingPage({ sanatorium }: Props) {
                     </div>
                     
                     <div>
-                      <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-1">Telefon *</label>
+                      <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-1">{t('form.phone')}</label>
                       <div className="relative">
                         <span className="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-400">
                           <FaPhone />
@@ -1179,7 +1159,7 @@ export default function BookingPage({ sanatorium }: Props) {
                   </div>
                   
                   <div className="mb-8">
-                    <label htmlFor="specialRequests" className="block text-sm font-medium text-gray-700 mb-1">Xüsusi istəklər</label>
+                    <label htmlFor="specialRequests" className="block text-sm font-medium text-gray-700 mb-1">{t('form.special_requests')}</label>
                     <textarea
                       id="specialRequests"
                       name="specialRequests"
@@ -1187,7 +1167,7 @@ export default function BookingPage({ sanatorium }: Props) {
                       value={formData.specialRequests}
                       onChange={handleInputChange}
                       className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                      placeholder="Xüsusi istəkləriniz varsa, qeyd edin"
+                      placeholder={t('form.special_requests_placeholder')}
                     ></textarea>
                   </div>
                   
@@ -1205,9 +1185,9 @@ export default function BookingPage({ sanatorium }: Props) {
                       </div>
                       <div className="ml-3 text-sm">
                         <label htmlFor="termsAccepted" className="font-medium text-gray-700">
-                          Şərtləri və qaydaları qəbul edirəm *
+                          {t('form.terms_acceptance')}
                         </label>
-                        <p className="text-gray-500">Rezervasiya şərtləri və qaydaları ilə tanış oldum və qəbul edirəm.</p>
+                        <p className="text-gray-500">{t('form.terms_description')}</p>
                         {errors.termsAccepted && <p className="mt-1 text-sm text-red-500">{errors.termsAccepted}</p>}
                       </div>
                     </div>
@@ -1217,9 +1197,9 @@ export default function BookingPage({ sanatorium }: Props) {
                     <div className="flex items-start">
                       <FaInfoCircle className="text-blue-500 mt-1 mr-3 flex-shrink-0" />
                       <div>
-                        <h3 className="font-medium text-gray-800 mb-1">Rezervasiya haqqında</h3>
+                        <h3 className="font-medium text-gray-800 mb-1">{t('form.booking_info')}</h3>
                         <p className="text-sm text-gray-600">
-                          Rezervasiya sorğunuzu göndərdikdən sonra sizinlə tezliklə əlaqə saxlanılacaq və təsdiqlənəcək.
+                          {t('form.booking_info_message')}
                         </p>
                       </div>
                     </div>
@@ -1236,10 +1216,10 @@ export default function BookingPage({ sanatorium }: Props) {
                           <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                           <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                         </svg>
-                        Göndərilir...
+                        {t('form.sending')}
                       </span>
                     ) : (
-                      "Rezervasiya sorğusu göndər"
+                      t('form.submit')
                     )}
                   </button>
                   
@@ -1253,51 +1233,51 @@ export default function BookingPage({ sanatorium }: Props) {
             {/* Booking Summary */}
             <div className="lg:col-span-1">
               <div className="bg-gray-50 rounded-xl shadow-sm border border-gray-200 p-6 sticky top-24">
-                <h2 className="text-xl font-bold text-gray-800 mb-4">Rezervasiya məlumatları</h2>
+                <h2 className="text-xl font-bold text-gray-800 mb-4">{t('summary.title')}</h2>
                 
                 <div className="space-y-3 mb-6">
                   <div className="flex justify-between">
-                    <span className="text-gray-600">Sanatoriya:</span>
+                    <span className="text-gray-600">{t('summary.sanatorium')}</span>
                     <span className="font-medium text-gray-800">{sanatorium.name}</span>
                   </div>
                   
                   <div className="flex justify-between">
-                    <span className="text-gray-600">Giriş tarixi:</span>
+                    <span className="text-gray-600">{t('summary.check_in')}</span>
                     <span className="font-medium text-gray-800">
-                      {formData.checkIn ? new Date(formData.checkIn).toLocaleDateString('az-AZ') : '-'}
+                      {formData.checkIn ? new Date(formData.checkIn).toLocaleDateString() : '-'}
                     </span>
                   </div>
                   
                   <div className="flex justify-between">
-                    <span className="text-gray-600">Çıxış tarixi:</span>
+                    <span className="text-gray-600">{t('summary.check_out')}</span>
                     <span className="font-medium text-gray-800">
-                      {formData.checkOut ? new Date(formData.checkOut).toLocaleDateString('az-AZ') : '-'}
+                      {formData.checkOut ? new Date(formData.checkOut).toLocaleDateString() : '-'}
                     </span>
                   </div>
                   
                   <div className="flex justify-between">
-                    <span className="text-gray-600">Gecələmə:</span>
-                    <span className="font-medium text-gray-800">{nights > 0 ? `${nights} gecə` : '-'}</span>
+                    <span className="text-gray-600">{t('summary.nights')}</span>
+                    <span className="font-medium text-gray-800">{nights > 0 ? `${nights} ${nights === 1 ? t('summary.night') : t('summary.nights_plural')}` : '-'}</span>
                   </div>
                   
                   <div className="flex justify-between">
-                    <span className="text-gray-600">Qonaqlar:</span>
+                    <span className="text-gray-600">{t('summary.guests')}</span>
                     <span className="font-medium text-gray-800">
-                      {formData.adults} böyük{formData.children > 0 ? `, ${formData.children} uşaq` : ''}
+                      {formData.adults} {formData.adults === 1 ? t('form.adult') : t('form.adults_plural')}{formData.children > 0 ? `, ${formData.children} ${formData.children === 1 ? t('form.child') : t('form.children_plural')}` : ''}
                     </span>
                   </div>
                   
                   {formData.children > 0 && (
                     <div className="flex justify-between">
-                      <span className="text-gray-600">Uşaqların yaşları:</span>
+                      <span className="text-gray-600">{t('summary.children_ages')}</span>
                       <span className="font-medium text-gray-800">
-                        {formData.childrenAges.join(', ')} yaş
+                        {formData.childrenAges.join(', ')} {t('form.years')}
                       </span>
                     </div>
                   )}
                   
                   <div className="flex justify-between">
-                    <span className="text-gray-600">Otaq növü:</span>
+                    <span className="text-gray-600">{t('summary.room_type')}</span>
                     <span className="font-medium text-gray-800">
                       {formData.roomTypeId 
                         ? sanatorium.room_types.find(r => r.id.toString() === formData.roomTypeId.toString())?.name || '-'
@@ -1306,20 +1286,20 @@ export default function BookingPage({ sanatorium }: Props) {
                   </div>
                   
                   <div className="flex justify-between">
-                    <span className="text-gray-600">Müalicə:</span>
+                    <span className="text-gray-600">{t('summary.treatment')}</span>
                     <span className="font-medium text-gray-800">
-                      {formData.withTreatment ? 'Müalicə ilə' : 'Müalicəsiz'}
+                      {formData.withTreatment ? t('form.with_treatment') : t('form.without_treatment')}
                     </span>
                   </div>
                 </div>
                 
                 {formData.roomTypeId && nights > 0 && (
                   <div className="border-t pt-4 mt-4" key={`total-${formData.adults}-${formData.roomTypeId}-${nights}-${priceUpdateTrigger}`}>
-                    <h3 className="font-semibold mb-3 text-gray-800">Təxmini qiymət</h3>
+                    <h3 className="font-semibold mb-3 text-gray-800">{t('summary.estimated_price')}</h3>
                     
                     <div className="space-y-2 text-sm mb-4">
                       <div className="flex justify-between">
-                        <span>Otaq ({nights} gecə, {formData.adults} nəfər):</span>
+                        <span>{t('summary.room_price', { nights, adults: formData.adults })}</span>
                         <span className="font-medium">
                           {(() => {
                             const room = sanatorium.room_types.find(r => r.id.toString() === formData.roomTypeId.toString());
@@ -1327,7 +1307,7 @@ export default function BookingPage({ sanatorium }: Props) {
                             
                             const roomPricePerNight = getRoomPrice(room);
                             if (roomPricePerNight === null) {
-                              return <span className="text-red-500">Yanlış seçim</span>;
+                              return <span className="text-red-500">{t('summary.price_not_available')}</span>;
                             }
                             
                             const totalPrice = roomPricePerNight * nights;
@@ -1336,7 +1316,6 @@ export default function BookingPage({ sanatorium }: Props) {
                         </span>
                       </div>
                       
-                      {/* Extra beds for children */}
                       {formData.children > 0 && (() => {
                         const room = sanatorium.room_types.find(r => r.id.toString() === formData.roomTypeId.toString());
                         if (!room) return null;
@@ -1346,7 +1325,7 @@ export default function BookingPage({ sanatorium }: Props) {
                         
                         return (
                           <div className="flex justify-between">
-                            <span>Əlavə çarpayılar ({nights} gecə, {formData.children} uşaq):</span>
+                            <span>{t('summary.extra_beds', { nights, children: formData.children })}</span>
                             <span className="font-medium">
                               {formatPrice((extraBedCost * nights).toString())}
                             </span>
@@ -1356,7 +1335,7 @@ export default function BookingPage({ sanatorium }: Props) {
                     </div>
                     
                     <div className="flex justify-between font-bold text-gray-800 pt-2 border-t border-dashed">
-                      <span>Cəmi:</span>
+                      <span>{t('summary.total')}</span>
                       <span>
                         {(() => {
                           const room = sanatorium.room_types.find(r => r.id.toString() === formData.roomTypeId.toString());
@@ -1365,10 +1344,7 @@ export default function BookingPage({ sanatorium }: Props) {
                           const roomPricePerNight = getRoomPrice(room);
                           if (roomPricePerNight === null) return '-';
                           
-                          // Get extra bed prices
                           const extraBedCost = calculateExtraBedPrices(room);
-                          
-                          // Calculate total with extra beds
                           const totalPrice = (roomPricePerNight * nights) + (extraBedCost * nights);
                           
                           return formatPrice(totalPrice.toString());
@@ -1380,28 +1356,25 @@ export default function BookingPage({ sanatorium }: Props) {
                 
                 {formData.roomTypeId && !formData.checkIn && !formData.checkOut && (
                   <div className="border-t pt-4 mt-4" key={`price-${formData.adults}-${formData.roomTypeId}-${priceUpdateTrigger}`}>
-                    <h3 className="font-semibold mb-3 text-gray-800">Qiymət məlumatı</h3>
+                    <h3 className="font-semibold mb-3 text-gray-800">{t('summary.price_info')}</h3>
                     <div className="text-sm text-gray-700 mb-2">
-                      <span className="font-medium">Gecəlik qiymət ({formData.adults} nəfər üçün):</span> {(() => {
+                      <span className="font-medium">{t('summary.nightly_price', { adults: formData.adults })}</span> {(() => {
                         const room = sanatorium.room_types.find(r => r.id.toString() === formData.roomTypeId.toString());
                         const price = room ? getRoomPrice(room) : null;
                         
                         if (price === null) {
-                          return <span className="text-red-500">Seçilmiş otaqda bu nəfər sayı üçün qiymət mövcud deyil</span>;
+                          return <span className="text-red-500">{t('summary.price_not_available')}</span>;
                         }
                         
                         return formatPrice(price.toString());
                       })()}
                     </div>
                     
-                    {/* Extra bed prices */}
                     {formData.children > 0 && (() => {
                       const room = sanatorium.room_types.find(r => r.id.toString() === formData.roomTypeId.toString());
                       if (!room) return null;
                       
                       const extraBedCost = calculateExtraBedPrices(room);
-                      
-                      // Uygun yatak fiyatı olmayan çocukları sayalım
                       const childrenWithoutBed = formData.childrenAges.filter(age => {
                         const extraBedPrice = getExtraBedPrice(room, age);
                         return extraBedPrice === null;
@@ -1411,13 +1384,13 @@ export default function BookingPage({ sanatorium }: Props) {
                       
                       return (
                         <div className="text-sm text-gray-700 mb-2">
-                          <span className="font-medium">Əlavə çarpayılar ({formData.children} uşaq):</span> {formatPrice(extraBedCost.toString())}
+                          <span className="font-medium">{t('summary.extra_beds', { children: formData.children })}</span> {formatPrice(extraBedCost.toString())}
                           {childrenWithoutBed.length > 0 && (
                             <div className="text-xs text-amber-600 mt-1">
                               <FaInfoCircle className="inline mr-1" />
                               {childrenWithoutBed.length === formData.children 
-                                ? 'Seçilən uşaq yaşları üçün əlavə çarpayı qiyməti tapılmadı.' 
-                                : `${childrenWithoutBed.length} uşaq üçün yaş qrupuna uyğun əlavə çarpayı qiyməti olmadığından hesablanmayıb.`}
+                                ? t('summary.child_price_not_found')
+                                : t('summary.child_price_not_found')}
                             </div>
                           )}
                           <div className="text-xs text-gray-500 mt-1">
@@ -1426,13 +1399,13 @@ export default function BookingPage({ sanatorium }: Props) {
                                 const extraBedPrice = getExtraBedPrice(room, age);
                                 if (extraBedPrice === null) return (
                                   <div key={index} className="flex justify-between">
-                                    <span>Uşaq {index + 1} ({age} yaş):</span>
-                                    <span className="text-amber-600">Bu yaş üçün qiymət tapılmadı</span>
+                                    <span>{t('form.child_age', { index: index + 1 })} ({age} {t('form.years')}):</span>
+                                    <span className="text-amber-600">{t('summary.child_price_not_found')}</span>
                                   </div>
                                 );
                                 return (
                                   <div key={index} className="flex justify-between">
-                                    <span>Uşaq {index + 1} ({age} yaş):</span>
+                                    <span>{t('form.child_age', { index: index + 1 })} ({age} {t('form.years')}):</span>
                                     <span>{formatPrice(extraBedPrice.price.toString())}</span>
                                   </div>
                                 );
@@ -1443,7 +1416,6 @@ export default function BookingPage({ sanatorium }: Props) {
                       );
                     })()}
                     
-                    {/* Total nightly price */}
                     {(() => {
                       const room = sanatorium.room_types.find(r => r.id.toString() === formData.roomTypeId.toString());
                       if (!room) return null;
@@ -1457,7 +1429,7 @@ export default function BookingPage({ sanatorium }: Props) {
                       return (
                         <div className="text-sm font-semibold text-gray-800 mt-2 pt-2 border-t border-dashed">
                           <div className="flex justify-between">
-                            <span>Gecəlik cəmi:</span>
+                            <span>{t('summary.total_nightly')}</span>
                             <span>{formatPrice((roomPrice + extraBedCost).toString())}</span>
                           </div>
                         </div>
@@ -1465,14 +1437,14 @@ export default function BookingPage({ sanatorium }: Props) {
                     })()}
                     
                     <p className="text-sm text-gray-600 mt-2">
-                      Tam qiymət tarixlər seçildikdən sonra göstəriləcək.
+                      {t('summary.price_will_be_shown')}
                     </p>
                   </div>
                 )}
                 
                 <div className="p-4 bg-blue-50 rounded-lg border border-blue-100 mt-4">
                   <p className="text-sm text-gray-700 text-center">
-                    Rezervasiyanız qəbul edildikdən sonra sizinlə əlaqə saxlanılacaq
+                    {t('summary.contact_after_booking')}
                   </p>
                 </div>
               </div>
@@ -1485,26 +1457,26 @@ export default function BookingPage({ sanatorium }: Props) {
       <section className="py-12 bg-gray-50">
         <div className="container mx-auto px-4">
           <div className="text-center mb-10">
-            <h2 className="text-2xl font-bold mb-4 text-gray-800">Niyə bizimlə rezervasiya etməlisiniz?</h2>
+            <h2 className="text-2xl font-bold mb-4 text-gray-800">{t('why_choose_us.title')}</h2>
             <div className="w-20 h-1 bg-blue-500 mx-auto mb-6"></div>
             <p className="max-w-2xl mx-auto text-gray-600">
-              Rezervasiya sistemimizdə yer ayırmaq sadə, sürətli və rahatdır
+              {t('why_choose_us.subtitle')}
             </p>
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {[
               {
-                title: "Sadə və sürətli",
-                description: "Cəmi bir neçə dəqiqə ərzində rezervasiya sorğusu göndərin və tezliklə cavab alın."
+                title: t('why_choose_us.items.simple.title'),
+                description: t('why_choose_us.items.simple.description')
               },
               {
-                title: "Şəxsi yanaşma",
-                description: "Bütün xüsusi istəklər və tələblər birbaşa müzakirə edilir."
+                title: t('why_choose_us.items.personal.title'),
+                description: t('why_choose_us.items.personal.description')
               },
               {
-                title: "Çevik dəyişiklik imkanı",
-                description: "Gəliş tarixindən 7 gün əvvələ qədər rezervasiyanızı pulsuz dəyişdirə bilərsiniz."
+                title: t('why_choose_us.items.flexible.title'),
+                description: t('why_choose_us.items.flexible.description')
               }
             ].map((item, index) => (
               <motion.div

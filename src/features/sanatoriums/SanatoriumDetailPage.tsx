@@ -14,8 +14,8 @@ import {
 } from "react-icons/fa";
 import { SanatoriumDetail } from "@/lib/types/sanatorium.type";
 import SanatoriumCard from "../common/SanatoriumCard";
-import { useCurrency } from "@/lib/utils/currency";
 import { useTranslations } from "next-intl";
+import { useCurrencyStore } from "@/store/useCurrencyStore";
 
 interface PageProps {
   sanatorium: SanatoriumDetail;
@@ -39,7 +39,7 @@ export default function SanatoriumDetailPage({ sanatorium }: PageProps) {
   const [modalImageIndex, setModalImageIndex] = useState(0);
   const [isZoomed, setIsZoomed] = useState(false);
   const [isImageLoading, setIsImageLoading] = useState(true);
-  const { formatPrice } = useCurrency();
+  const { formatPrice } = useCurrencyStore();
 
   // Handle keyboard navigation in modal
   useEffect(() => {

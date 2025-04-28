@@ -1,14 +1,12 @@
 'use client';
 
 import { Sanatorium } from '@/lib/types/sanatorium.type';
-import { useCurrency } from '@/lib/utils/currency';
+import { useCurrencyStore } from '@/store/useCurrencyStore';
 import { motion } from 'framer-motion';
 import Image from 'next/image';
 import { Link } from '@/i18n/navigation';
 import { FaStar, FaMapMarkerAlt, FaArrowRight, FaCheck } from 'react-icons/fa';
 import { useTranslations } from 'next-intl';
-
-
 
 interface SanatoriumCardProps {
   sanatorium: Sanatorium;
@@ -23,11 +21,8 @@ export default function SanatoriumCard({
   variant = 'full',
   colorScheme = 'blue' 
 }: SanatoriumCardProps) {
-
-
   const t = useTranslations('sanatorium');
-  const { formatPrice } = useCurrency();
-
+  const { formatPrice } = useCurrencyStore();
 
   const renderStars = (rating: number) => {
     const stars = [];

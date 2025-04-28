@@ -5,10 +5,10 @@ import { motion } from 'framer-motion';
 import { FaCalendarAlt, FaUserFriends, FaSearch, FaFilter, FaMapMarkerAlt } from 'react-icons/fa';
 import SanatoriumCard from '@/features/common/SanatoriumCard';
 import { Sanatorium } from '@/lib/types/sanatorium.type';
-
-
+import { useTranslations } from 'next-intl';
 
 export default function ReservationPage({ sanatoriums }: { sanatoriums: Sanatorium[] }) {
+  const t = useTranslations('pages.reservation');
   const [searchParams, setSearchParams] = useState({
     location: "",
     checkIn: "",
@@ -39,13 +39,13 @@ export default function ReservationPage({ sanatoriums }: { sanatoriums: Sanatori
       <div className="pt-12 pb-16 bg-gradient-to-b from-blue-50 to-white relative">
         <div className="container mx-auto px-4">
           <div className="max-w-5xl mx-auto mb-8 text-center">
-            <h1 className="text-3xl font-bold text-gray-800 mb-3">Rezervasiya</h1>
+            <h1 className="text-3xl font-bold text-gray-800 mb-3">{t('title')}</h1>
             <p className="text-gray-600 max-w-2xl mx-auto">
-              Ən uyğun sanatoriyaları tapın və sağlamlığınıza qovuşun
+              {t('subtitle')}
             </p>
           </div>
           
-          <motion.div
+          <motion.div 
             initial={{ y: 20, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             transition={{ duration: 0.5 }}
@@ -55,7 +55,7 @@ export default function ReservationPage({ sanatoriums }: { sanatoriums: Sanatori
               <div className="p-6 md:p-8">
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-5">
                   <div className="relative">
-                    <label htmlFor="location" className="block text-sm font-medium text-gray-700 mb-2">Yer</label>
+                    <label htmlFor="location" className="block text-sm font-medium text-gray-700 mb-2">{t('search.location.label')}</label>
                     <div className="relative group">
                       <select
                         id="location"
@@ -64,17 +64,17 @@ export default function ReservationPage({ sanatoriums }: { sanatoriums: Sanatori
                         onChange={handleInputChange}
                         className="pl-10 w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all bg-white hover:border-blue-300"
                       >
-                        <option value="">Bütün məkanlar</option>
-                        <option value="naftalan">Naftalan</option>
-                        <option value="ganja">Gəncə</option>
-                        <option value="baku">Bakı</option>
+                        <option value="">{t('search.location.options.all')}</option>
+                        <option value="naftalan">{t('search.location.options.naftalan')}</option>
+                        <option value="ganja">{t('search.location.options.ganja')}</option>
+                        <option value="baku">{t('search.location.options.baku')}</option>
                       </select>
                       <FaMapMarkerAlt className="absolute left-3 top-1/2 transform -translate-y-1/2 text-blue-500" />
                     </div>
                   </div>
-                  
+              
                   <div>
-                    <label htmlFor="checkIn" className="block text-sm font-medium text-gray-700 mb-2">Giriş tarixi</label>
+                    <label htmlFor="checkIn" className="block text-sm font-medium text-gray-700 mb-2">{t('search.check_in.label')}</label>
                     <div className="relative group">
                       <input
                         type="date"
@@ -87,9 +87,9 @@ export default function ReservationPage({ sanatoriums }: { sanatoriums: Sanatori
                       <FaCalendarAlt className="absolute left-3 top-1/2 transform -translate-y-1/2 text-blue-500" />
                     </div>
                   </div>
-                  
+              
                   <div>
-                    <label htmlFor="checkOut" className="block text-sm font-medium text-gray-700 mb-2">Çıxış tarixi</label>
+                    <label htmlFor="checkOut" className="block text-sm font-medium text-gray-700 mb-2">{t('search.check_out.label')}</label>
                     <div className="relative group">
                       <input
                         type="date"
@@ -102,9 +102,9 @@ export default function ReservationPage({ sanatoriums }: { sanatoriums: Sanatori
                       <FaCalendarAlt className="absolute left-3 top-1/2 transform -translate-y-1/2 text-blue-500" />
                     </div>
                   </div>
-                  
+              
                   <div>
-                    <label htmlFor="guests" className="block text-sm font-medium text-gray-700 mb-2">Qonaqlar</label>
+                    <label htmlFor="guests" className="block text-sm font-medium text-gray-700 mb-2">{t('search.guests.label')}</label>
                     <div className="relative group">
                       <select
                         id="guests"
@@ -114,14 +114,14 @@ export default function ReservationPage({ sanatoriums }: { sanatoriums: Sanatori
                         className="pl-10 w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all bg-white hover:border-blue-300"
                       >
                         {[1, 2, 3, 4, 5, 6].map(num => (
-                          <option key={num} value={num}>{num} {num === 1 ? 'qonaq' : 'qonaq'}</option>
+                          <option key={num} value={num}>{num} {t('search.guests.person')}</option>
                         ))}
                       </select>
                       <FaUserFriends className="absolute left-3 top-1/2 transform -translate-y-1/2 text-blue-500" />
                     </div>
                   </div>
                 </div>
-                
+            
                 <div className="mt-6 flex flex-col md:flex-row items-center justify-between gap-4">
                   <button
                     type="button"
@@ -129,19 +129,19 @@ export default function ReservationPage({ sanatoriums }: { sanatoriums: Sanatori
                     className="flex items-center text-blue-600 hover:text-blue-800 font-medium transition-colors"
                   >
                     <FaFilter className="mr-2" />
-                    <span>{showFilters ? 'Filtrləri gizlət' : 'Daha çox filtr'}</span>
+                    <span>{showFilters ? t('search.filters.hide') : t('search.filters.show')}</span>
                   </button>
-                  
+              
                   <button
                     type="submit"
                     className="w-full md:w-auto px-8 py-3 bg-blue-600 text-white rounded-lg shadow-md hover:bg-blue-700 transition-all flex items-center justify-center gap-2 font-medium transform hover:-translate-y-0.5"
                   >
                     <FaSearch className="mr-1" />
-                    <span>Axtar</span>
+                    <span>{t('search.search_button')}</span>
                   </button>
                 </div>
               </div>
-              
+            
               {showFilters && (
                 <motion.div
                   initial={{ height: 0, opacity: 0 }}
@@ -152,7 +152,7 @@ export default function ReservationPage({ sanatoriums }: { sanatoriums: Sanatori
                 >
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                     <div>
-                      <h3 className="text-sm font-semibold text-gray-700 mb-3">Qiymət aralığı (AZN)</h3>
+                      <h3 className="text-sm font-semibold text-gray-700 mb-3">{t('search.filters.price_range')}</h3>
                       <div className="flex flex-col space-y-2">
                         <input
                           type="range"
@@ -168,26 +168,26 @@ export default function ReservationPage({ sanatoriums }: { sanatoriums: Sanatori
                         </div>
                       </div>
                     </div>
-                    
+                  
                     <div>
-                      <h3 className="text-sm font-semibold text-gray-700 mb-3">Xüsusiyyətlər</h3>
+                      <h3 className="text-sm font-semibold text-gray-700 mb-3">{t('search.filters.features.title')}</h3>
                       <div className="space-y-2 grid grid-cols-1 md:grid-cols-2">
-                        {['Wi-Fi', 'Hovuz', 'Spa', 'Fitness', 'Restoran'].map((feature) => (
+                        {['wifi', 'pool', 'spa', 'fitness', 'restaurant'].map((feature) => (
                           <label key={feature} className="flex items-center hover:bg-gray-100 p-1.5 rounded-md transition-colors">
                             <input type="checkbox" className="rounded text-blue-500 mr-2 focus:ring-blue-400" />
-                            <span className="text-gray-700">{feature}</span>
+                            <span className="text-gray-700">{t(`search.filters.features.${feature}`)}</span>
                           </label>
                         ))}
                       </div>
                     </div>
-                    
+                  
                     <div>
-                      <h3 className="text-sm font-semibold text-gray-700 mb-3">Müalicə növləri</h3>
+                      <h3 className="text-sm font-semibold text-gray-700 mb-3">{t('search.filters.treatments.title')}</h3>
                       <div className="space-y-2 grid grid-cols-1">
-                        {['Naftalan vannaları', 'Fizioterapiya', 'Masaj', 'Balneologiya', 'Palçıq müalicəsi'].map((treatment) => (
+                        {['naftalan_baths', 'physiotherapy', 'massage', 'balneology', 'mud_therapy'].map((treatment) => (
                           <label key={treatment} className="flex items-center hover:bg-gray-100 p-1.5 rounded-md transition-colors">
                             <input type="checkbox" className="rounded text-blue-500 mr-2 focus:ring-blue-400" />
-                            <span className="text-gray-700">{treatment}</span>
+                            <span className="text-gray-700">{t(`search.filters.treatments.${treatment}`)}</span>
                           </label>
                         ))}
                       </div>
@@ -209,7 +209,7 @@ export default function ReservationPage({ sanatoriums }: { sanatoriums: Sanatori
       {/* Results Section */}
       <section className="py-16 bg-gray-50">
         <div className="container mx-auto px-4">
-          <h2 className="text-2xl font-bold mb-8 text-gray-800">Mövcud sanatoriyalar</h2>
+          <h2 className="text-2xl font-bold mb-8 text-gray-800">{t('results.title')}</h2>
           
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
             {sanatoriums.map((sanatorium, index) => (
@@ -222,7 +222,6 @@ export default function ReservationPage({ sanatoriums }: { sanatoriums: Sanatori
               />
             ))}
           </div>
-        
         </div>
       </section>
     </div>

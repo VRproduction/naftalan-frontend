@@ -46,7 +46,7 @@ async function fetchAllPaginatedData<T>(
   let allItems: T[] = [];
   let currentPage = 1;
   let hasMorePages = true;
-  
+
   // Büyük bir sayfa boyutu kullanarak tek seferde mümkün olduğunca çok veri alalım
   const pageSize = 100;
   
@@ -137,7 +137,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       staticPages.forEach(page => {
         entries.push({
           url: `${SITE_URL}/${locale}${page}`,
-          lastModified: new Date().toISOString(),
+        lastModified: new Date().toISOString(),
           changeFrequency: page === "" ? "daily" : "weekly",
           priority: page === "" ? 1.0 : 0.8,
         });
@@ -164,7 +164,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
                 ? blog.seo.og_image 
                 : `${SITE_URL}${blog.seo.og_image}`)
             : imageUrl;
-            
+
           // Resim nesnelerini oluştur
           const imageObjects = [];
           

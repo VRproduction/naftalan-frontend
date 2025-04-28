@@ -6,8 +6,8 @@ import Image from 'next/image';
 import { Link } from '@/i18n/navigation';
 import { FaStar, FaMapMarkerAlt, FaArrowRight } from 'react-icons/fa';
 import { Sanatorium } from '@/lib/types/sanatorium.type';
-import { useCurrency } from '@/lib/utils/currency';
 import { useTranslations } from 'next-intl';
+import { useCurrencyStore } from '@/store/useCurrencyStore';
 
 
 
@@ -18,7 +18,7 @@ interface SanatoriumProps {
 
 export default function SanatoriumHorizontal({ sanatorium, index = 0 }: SanatoriumProps) {
   const [isExpanded, setIsExpanded] = useState(false);
-  const { formatPrice } = useCurrency();
+  const { formatPrice } = useCurrencyStore();
   const t = useTranslations('sanatorium');
 
   const renderStars = (rating: number) => {
