@@ -2,10 +2,11 @@
 
 import { motion } from 'framer-motion';
 import Image from 'next/image';
-import Link from 'next/link';
+import { Link } from '@/i18n/navigation';
 import SanatoriumHorizontal from '../common/SanatoriumHorizontal';
 import { OtherCitiesSanatoriumsPage as OtherCitiesSanatoriumsPageType, Sanatorium as SanatoriumType } from '@/lib/types/sanatorium.type';
 import { FaArrowRight } from 'react-icons/fa';
+import { useTranslations } from 'next-intl';
 
 interface Props {
   otherCitiesSanatoriumsPage: OtherCitiesSanatoriumsPageType;
@@ -13,8 +14,7 @@ interface Props {
 }
 
 export default function OtherSanatoriumsPage({ otherCitiesSanatoriumsPage, otherCitiesSanatoriums }: Props) {
-
-
+  const t = useTranslations('sanatoriums');
 
   const fadeInUpVariant = {
     hidden: { opacity: 0, y: 20 },
@@ -200,10 +200,10 @@ export default function OtherSanatoriumsPage({ otherCitiesSanatoriumsPage, other
               </p>
               <div className="flex flex-wrap justify-center gap-4">
                 <Link href="/contact" className="px-8 py-3 bg-white text-green-600 rounded-lg font-medium hover:bg-green-50 transition-colors flex items-center">
-                  Ətraflı məlumat almaq <FaArrowRight className="ml-2" />
+                  {t('get_detailed_info')} <FaArrowRight className="ml-2" />
                 </Link>
                 <Link href="/sanatoriums/naftalan" className="px-8 py-3 bg-transparent border-2 border-white text-white rounded-lg font-medium hover:bg-white hover:text-green-600 transition-colors">
-                  Naftalan sanatoriumları
+                  {t('naftalan_sanatoriums')}
                 </Link>
               </div>
             </motion.div>

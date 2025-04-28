@@ -5,12 +5,15 @@ import { FaCalendarAlt, FaLongArrowAltRight } from 'react-icons/fa';
 import { Link } from '@/i18n/navigation';
 import { formatDate } from '@/lib/utils/timeUtils';
 import { BlogPost } from "@/lib/types/blog.type";
+import { useTranslations } from "next-intl";
 
 interface Props {
     blog: BlogPost
 }
 
 const BlogCard = ({blog}: Props) => {
+  const t = useTranslations('blog');
+
   return (
     <motion.article
       key={blog.id}
@@ -54,7 +57,7 @@ const BlogCard = ({blog}: Props) => {
             href={`/blog/${blog.slug}`}
             className="inline-flex items-center text-blue-500 hover:text-blue-700 font-medium"
           >
-            Ətraflı oxu
+            {t('read_more')}
             <FaLongArrowAltRight className="ml-2" />
           </Link>
         </div>

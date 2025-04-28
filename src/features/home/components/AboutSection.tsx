@@ -2,8 +2,11 @@ import Image from 'next/image';
 import {Link} from '@/i18n/navigation';
 import { motion } from 'framer-motion';
 import { AboutSection as AboutSectionType } from '@/lib/types/home.type';
+import { useTranslations } from 'next-intl';
 
 const AboutSection = ({ aboutSection }: { aboutSection: AboutSectionType }) => {
+  const t = useTranslations('home.about');
+  
   return (
     <section className="py-20 bg-gradient-to-b from-white to-blue-50">
       <div className="container mx-auto px-4 overflow-hidden">
@@ -88,7 +91,7 @@ const AboutSection = ({ aboutSection }: { aboutSection: AboutSectionType }) => {
                 href="/about" 
                 className="py-3 px-8 bg-blue-500 text-white rounded-full hover:bg-blue-600 transition-all duration-300 inline-flex items-center justify-center shadow-lg hover:shadow-xl font-medium transform hover:-translate-y-1"
               >
-                Ətraflı məlumat
+                {t('learn_more')}
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
                 </svg>
@@ -97,7 +100,7 @@ const AboutSection = ({ aboutSection }: { aboutSection: AboutSectionType }) => {
                 href="/about/treatments"
                 className="py-3 px-8 bg-transparent border-2 border-gray-300 text-gray-700 rounded-full hover:border-blue-500 transition-all duration-300 inline-flex items-center justify-center font-medium hover:text-blue-500"
               >
-                Müalicə növləri
+                {t('treatment_types')}
               </Link>
             </motion.div>
           </motion.div>

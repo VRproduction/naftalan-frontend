@@ -12,6 +12,7 @@ import {
   getBlogSection,
   getContactSection,
 } from "@/lib/services/home.service";
+import { getLocations } from "@/lib/services/sanatorium.service";
 
 import { SupportedLocale } from "@/lib/utils/apiClient";
 
@@ -36,6 +37,7 @@ export default async function Home({ params }: Props) {
     contactSection,
     sanatoriums,
     blogs,
+    locations
   ] = await Promise.all([
     getHeroSlider(locale),
     getAboutSection(locale),
@@ -50,6 +52,7 @@ export default async function Home({ params }: Props) {
     getContactSection(locale),
     getSanatoriums(locale),
     getBlogs(locale),
+    getLocations(locale)
   ]);
   return (
     <HomePage
@@ -66,6 +69,7 @@ export default async function Home({ params }: Props) {
       blogSection={blogSection}
       blogs={blogs}
       contactSection={contactSection}
+      locations={locations}
     />
   );
 }

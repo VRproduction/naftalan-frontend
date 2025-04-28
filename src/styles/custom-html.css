@@ -36,7 +36,7 @@
 }
 
 .custom-html-content p {
-  @apply text-base leading-relaxed mb-6;
+  @apply text-base leading-relaxed;
 }
 
 .custom-html-content em {
@@ -125,6 +125,11 @@
 
 .custom-html-content .highlight {
   @apply bg-yellow-100 text-yellow-700 font-semibold p-2 rounded-md;
+}
+
+.custom-html-content li::before {
+  margin-right: calc(var(--spacing) * 2);
+  content: "";
 }
 
 @media (min-width: 768px) {

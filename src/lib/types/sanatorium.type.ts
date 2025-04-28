@@ -194,3 +194,9 @@ export interface OtherCitiesSanatoriumsPage {
   contact_section_title: string;
   contact_section_description: string;
 }
+
+export interface City {
+  id: number;
+  region: string;
+  country: string;
+}

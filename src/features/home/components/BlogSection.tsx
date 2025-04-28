@@ -1,12 +1,10 @@
-import Link from 'next/link';
+import { Link } from '@/i18n/navigation';
 import { motion } from 'framer-motion';
 
 import { BlogSection as BlogSectionType } from '@/lib/types/home.type';
 import { BlogPost } from '@/lib/types/blog.type';
 import BlogCard from '@/features/common/BlogCard';
-
-
-
+import { useTranslations } from 'next-intl';
 
 interface BlogSectionProps {
   blogSection: BlogSectionType;
@@ -14,6 +12,8 @@ interface BlogSectionProps {
 }
 
 const BlogSection = ({ blogSection, blogs }: BlogSectionProps) => {
+  const t = useTranslations('home.blog');
+  
   return (
     <section className="py-16 bg-gray-50">
       <div className="container mx-auto px-4">
@@ -50,7 +50,7 @@ const BlogSection = ({ blogSection, blogs }: BlogSectionProps) => {
             href="/blog"
             className="py-2 px-6 bg-blue-600 text-white rounded-full hover:bg-blue-700 transition-colors inline-block"
           >
-            Bütün bloq yazıları
+            {t('view_all')}
           </Link>
         </div>
       </div>

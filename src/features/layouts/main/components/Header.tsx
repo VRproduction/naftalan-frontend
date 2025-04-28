@@ -80,7 +80,11 @@ const Header = ({ siteSettings }: HeaderProps) => {
        </IntlLink>
         
         {/* Desktop Menu */}
-        <nav className="hidden md:flex items-center space-x-2 lg:space-x-4">
+        <nav className="hidden md:flex items-center space-x-2 lg:space-x-2">
+          <IntlLink href="/" className="py-2 px-2.5 font-medium hover:text-blue-500 transition-colors">
+            {t('home') || 'Ana səhifə'}
+          </IntlLink>
+
           <div className="group relative">
             <button className="py-2 px-2.5 flex items-center gap-1.5 hover:text-blue-500 transition-colors font-medium">
               {t('about')}
@@ -118,8 +122,8 @@ const Header = ({ siteSettings }: HeaderProps) => {
             {t('how_to_come')}
           </IntlLink>
           
-          <IntlLink href="/reservation" className="py-2 px-2.5 font-medium hover:text-blue-500 transition-colors">
-            {t('reservation')}
+          <IntlLink href="/ask-doctor" className="py-2 px-2.5 font-medium hover:text-blue-500 transition-colors">
+            {t('ask_doctor')}
           </IntlLink>
           
           <IntlLink href="/blog" className="py-2 px-2.5 font-medium hover:text-blue-500 transition-colors">
@@ -179,10 +183,10 @@ const Header = ({ siteSettings }: HeaderProps) => {
           <CurrencySelector />
           
           <IntlLink 
-            href="/ask-doctor" 
+            href="/reservation" 
             className="py-2 px-4 bg-blue-500 text-white rounded-full hover:bg-blue-600 transition-all duration-300 shadow-sm hover:shadow-md transform hover:-translate-y-0.5 text-sm font-medium"
           >
-            {t('ask_doctor')}
+            {t('reservation')}
           </IntlLink>
         </nav>
         
@@ -282,6 +286,15 @@ const Header = ({ siteSettings }: HeaderProps) => {
                 
                 {/* Menu Items */}
                 <div className="flex flex-col space-y-1">
+                  {/* Ana Sayfa */}
+                  <IntlLink 
+                    href="/" 
+                    className="py-2.5 px-3 hover:bg-blue-50 hover:text-blue-500 rounded-lg font-medium transition-colors"
+                    onClick={() => setMenuOpen(false)}
+                  >
+                    {t('home') || 'Ana səhifə'}
+                  </IntlLink>
+
                   {/* Haqqımızda dropdown */}
                   <div className="py-1">
                     <button 

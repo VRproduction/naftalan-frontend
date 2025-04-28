@@ -8,11 +8,11 @@
     "sanatoriums": "Sanatoriyalar",
     "naftalan_sanatoriums": "Naftalan sanatoriyaları",
     "other_sanatoriums": "Digər şəhərlərdəki sanatoriyalar",
-    "how_to_come": "Necə gəlmək?",
+    "how_to_come": "Necə gəlmək olar?",
     "reservation": "Rezervasiya",
     "blog": "Bloq",
     "contact": "Əlaqə",
-    "ask_doctor": "Həkimə sual verin"
+    "ask_doctor": "Həkimə sual ver"
   },
   "languages": {
     "az": "Azərbaycan",
@@ -24,24 +24,24 @@
     "phone": "Telefon",
     "subject": "Mövzu",
     "message": "Mesaj",
-    "required_fields": "* işarəli xanalar mütləq doldurulmalıdır",
+    "required_fields": "* işarəsi ilə qeyd olunan bölmələr mütləq doldurulmalıdır",
     "submit": "Göndər"
   },
   "search": {
-    "title": "Sizin Sağlamlıq Səyahətiniz Başlayır",
-    "check_in": "Gediş tarixi",
-    "check_out": "Dönüş tarixi",
-    "guests": "Şəxs sayı",
-    "adults": "böyük",
-    "children": "uşaq",
+    "title": "Sağlamlıq səyahətiniz buradan başlayır",
+    "check_in": "Giriş tarixi",
+    "check_out": "Çıxış tarixi",
+    "guests": "Qonaq sayı",
+    "adults": "böyüklər",
+    "children": "uşaqlar",
     "city": "Şəhər",
     "select_city": "Şəhər seçin",
     "search_button": "Axtar",
-    "view_all_offers": "Bütün təkliflərə baxın"
+    "view_all_offers": "Bütün təklifləri göstər"
   },
   "validation": {
-    "check_in_required": "Gediş tarixi tələb olunur",
-    "check_out_required": "Dönüş tarixi tələb olunur",
+    "check_in_required": "Giriş tarixi tələb olunur",
+    "check_out_required": "Çıxış tarixi tələb olunur",
     "min_adults": "Ən azı 1 böyük olmalıdır",
     "city_required": "Şəhər seçilməlidir",
     "name_min_length": "Ad ən azı 2 simvol olmalıdır",
@@ -64,6 +64,180 @@
     "message_placeholder": "Mesajınız",
     "submit_button": "Göndər",
     "sending": "Göndərilir...",
-    "success_message": "Mesajınız uğurla göndərildi. Tezliklə sizinlə əlaqə saxlanılacaq."
-  }
+    "success_message": "Mesajınız uğurla göndərildi. Tezliklə sizinlə əlaqə saxlayacağıq."
+  },
+  "ask_doctor": {
+    "name_placeholder": "Adınız və soyadınız",
+    "email_placeholder": "E-poçt ünvanınız",
+    "phone_placeholder": "Telefon nömrəniz",
+    "question_placeholder": "Sualınız",
+    "submit_button": "Sualı göndər",
+    "sending": "Göndərilir...",
+    "success_title": "Sualınız uğurla göndərildi!",
+    "success_message": "Təşəkkür edirik! Həkimlərimiz ən qısa zamanda sizə cavab verəcəklər. Cavab e-poçt ünvanınıza göndəriləcəkdir.",
+    "terms_agreement": "Şəxsi məlumatlarımın işlənməsinə razılıq verirəm. Bu, sualıma cavab verilməsi üçün lazımdır. Şəxsi məlumatlarım üçüncü şəxslərə verilməyəcək.*",
+    "question_hint": "Zəhmət olmasa, sualınızı aydın və ətraflı yazın. Həkimlərimiz daha dəqiq cavab verə bilsinlər."
+  },
+  "footer": {
+    "about_short_default": "Naftalan şəhəri müalicəvi neft ilə tanınan, qədim tarixi olan bir sağlamlıq mərkəzidir.",
+    "useful_links": "Faydalı linklər",
+    "about_naftalan": "Naftalan haqqında",
+    "naftalan_sanatoriums": "Naftalan sanatoriyaları",
+    "how_to_come": "Necə gəlmək?",
+    "blog": "Bloq",
+    "contact": "Əlaqə",
+    "treatment_types": "Müalicə növləri",
+    "naftalan_oil_baths": "Naftalan nefti vannaları",
+    "paraffin_treatment": "Parafin müalicəsi",
+    "massage": "Massaj",
+    "physiotherapy": "Fizioterapiya",
+    "default_address": "Naftalan şəhəri, Azərbaycan",
+    "copyright": "© {year} {name}. Bütün hüquqlar qorunur."
+  },
+  "home": {
+    "about": {
+      "learn_more": "Ətraflı məlumat",
+      "treatment_types": "Müalicə növləri"
+    },
+    "sanatoriums": {
+      "view_all": "Bütün sanatoriyalar"
+    },
+    "faq": {
+      "more_questions": "Daha çox sual"
+    },
+    "blog": {
+      "view_all": "Bütün məqalələr"
+    },
+    "contact": {
+      "get_in_touch": "Bizimlə əlaqə saxlayın"
+    }
+  },
+  "pages": {
+    "home": {
+      "title": "Ana səhifə",
+      "hero_title": "Naftalan - Sağlamlıq və şəfa mərkəzi",
+      "hero_subtitle": "Təbii müalicə metodu ilə sağlamlığınızı bərpa edin",
+      "learn_more": "Daha ətraflı"
+    },
+    "contact": {
+      "title": "Əlaqə",
+      "hero_title": "Əlaqə",
+      "hero_subtitle": "Suallarınızı bizə göndərin, sizinlə əlaqə saxlayacağıq",
+      "contact_us": "Bizimlə əlaqə saxlayın",
+      "contact_info": "Əlaqə məlumatları",
+      "address_title": "Ünvan",
+      "address": "Naftalan şəhəri, AZ 4700, Azərbaycan",
+      "phone_title": "Telefon",
+      "email_title": "E-poçt",
+      "hours_title": "İş saatları",
+      "work_hours": "Bazar ertəsi - Cümə: 09:00 - 18:00",
+      "weekend_hours": "Şənbə - Bazar: 10:00 - 16:00",
+      "map_title": "Bizi xəritədə tapın",
+      "map_subtitle": "Naftalan şəhərinin mövqeyi",
+      "form": {
+        "full_name": "Ad və Soyad*",
+        "email": "E-poçt*",
+        "phone": "Telefon",
+        "subject": "Mövzu*",
+        "subject_placeholder": "Seçin...",
+        "subject_reservation": "Rezervasiya",
+        "subject_question": "Sual",
+        "subject_feedback": "Rəy",
+        "subject_other": "Digər",
+        "message": "Mesaj*",
+        "required_fields": "* işarələnmiş sahələr mütləq doldurulmalıdır",
+        "send": "Göndər",
+        "sending": "Göndərilir...",
+        "success_title": "Mesajınız uğurla göndərildi!",
+        "success_message": "Mesajınız üçün təşəkkür edirik. Tezliklə sizinlə əlaqə saxlayacağıq."
+      }
+    },
+    "ask_doctor": {
+      "title": "Həkimə sual ver",
+      "hero_title": "Həkimə sual verin",
+      "hero_subtitle": "Naftalan müalicəsi ilə bağlı suallarınızı mütəxəssis həkimlərimizə ünvanlayın",
+      "form_title": "Sualınızı göndərin",
+      "full_name": "Ad və Soyad*",
+      "email": "E-poçt*",
+      "phone": "Telefon",
+      "question": "Sualınız*",
+      "required_fields": "* ilə işarələnmiş xanalar mütləq doldurulmalıdır",
+      "advantages_title": "Niyə onlayn məsləhət almalı?",
+      "advantages": {
+        "time_saving": "Vaxt və səyahət xərclərinə qənaət",
+        "pre_travel_info": "Səyahətdən əvvəl müalicə haqqında məlumat",
+        "suitability": "Müalicəyə uyğunluğunuzun qiymətləndirilməsi",
+        "expert_advice": "Təcrübəli mütəxəssislərdən peşəkar məsləhət"
+      }
+    },
+    "about": {
+      "title": "Haqqımızda"
+    },
+    "sanatoriums": {
+      "title": "Sanatoriyalar"
+    },
+    "blog": {
+      "title": "Bloq"
+    },
+    "reservation": {
+      "title": "Rezervasiya"
+    },
+    "how_to_come": {
+      "title": "Necə gəlmək olar?"
+    }
+  },
+  "sanatoriums": {
+    "not_found": "Sanatoriya tapılmadı",
+    "not_found_description": "Axtardığınız sanatoriya haqqında məlumat tapılmadı.",
+    "all_sanatoriums": "Bütün sanatoriyalar",
+    "contact": "Əlaqə",
+    "treated_diseases": "Müalicə olunan xəstəliklər",
+    "get_detailed_info": "Ətraflı məlumat almaq",
+    "naftalan_sanatoriums": "Naftalan sanatoriumları",
+    "overview": "Ümumi məlumat",
+    "treatments": "Müalicələr",
+    "rooms": "Otaqlar",
+    "reviews": "Rəylər",
+    "about": "Sanatoriya haqqında",
+    "services_facilities": "Xidmətlər və imkanlar",
+    "location": "Yer",
+    "address": "Ünvan",
+    "capacity": "Tutum",
+    "extra_beds": "Əlavə yataqlar",
+    "area": "Sahə",
+    "prices": "Qiymətlər",
+    "season": "Mövsüm",
+    "current": "Cari",
+    "general": "Ümumi",
+    "occupancy": "Tutum",
+    "person": "nəfər",
+    "treatment": "Müalicə",
+    "with_treatment": "Müalicə ilə",
+    "without_treatment": "Müalicəsiz",
+    "price": "Qiymət",
+    "extra_bed_prices": "Əlavə yataq qiymətləri",
+    "age_group": "Yaş qrupu",
+    "customer_reviews": "Müştəri rəyləri",
+    "no_reviews": "Hələ müştəri rəyi yoxdur.",
+    "no_rooms": "Hazırda otaqlar haqqında məlumat mövcud deyil.",
+    "price_booking": "Qiymət və rezervasiya",
+    "starting_price": "Başlanğıc qiyməti:",
+    "per_person_night": "bir nəfər / gecə",
+    "book_now": "İndi rezervasiya et",
+    "ask_question": "Sual vermək",
+    "price_note_1": "* Qiymətlər otaq növündən və mövsümdən asılı olaraq dəyişə bilər",
+    "price_note_2": "* Müalicə paketlərinin qiyməti əlavə olaraq hesablanır",
+    "similar_sanatoriums": "Oxşar sanatoriyalar",
+    "max": "maksimum"
+  },
+  "sanatorium": {
+  "price": "Qiymət",
+  "details": "Ətraflı məlumat",
+  "show_more": "Daha çox",
+  "close": "Bağla",
+  "photos": "Fotolar",
+  "book_now": "Rezervasiya et"
+},"blog": {
+  "read_more": "Ətraflı oxu"
+}
 }

@@ -42,12 +42,10 @@ const fetchExchangeRates = async () => {
       });
       
       // Log updated rates for debugging
-      console.log('Updated currency rates:', currencies.map(c => `${c.code}: ${c.rate}`));
       return true;
     }
     return false;
   } catch (error) {
-    console.error('Error fetching exchange rates:', error);
     return false;
   }
 };

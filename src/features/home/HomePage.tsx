@@ -4,7 +4,6 @@ import HeroSlider from "@/features/home/components/HeroSlider";
 import SearchForm from "@/features/home/components/SearchForm";
 import AboutSection from "@/features/home/components/AboutSection";
 import SanatoriumsSection from "@/features/home/components/SanatoriumsSection";
-import TreatmentTypesSection from "@/features/home/components/TreatmentTypesSection";
 import PackagesSection from "@/features/home/components/PackagesSection";
 import ContactSection from "@/features/home/components/ContactSection";
 import TestimonialsSection from "@/features/home/components/TestimonialsSection";
@@ -23,7 +22,7 @@ import {
   BlogSection as BlogSectionType,
   ContactSection as ContactSectionType,
 } from "@/lib/types/home.type";
-import { Sanatorium } from "@/lib/types/sanatorium.type";
+import { City, Sanatorium } from "@/lib/types/sanatorium.type";
 import { BlogPost } from "@/lib/types/blog.type";
 
 interface Props {
@@ -40,6 +39,7 @@ interface Props {
   blogs: BlogPost[];
   contactSection: ContactSectionType;
   sanatoriums: Sanatorium[];
+  locations: City []
 }
 
 export default function HomePage({
@@ -56,6 +56,7 @@ export default function HomePage({
   blogs,
   contactSection,
   sanatoriums,
+  locations
 }: Props) {
   return (
     <>
@@ -64,7 +65,7 @@ export default function HomePage({
 
       {/* Search Form */}
       <div className="container mx-auto relative">
-        <SearchForm />
+        <SearchForm locations={locations} />
       </div>
 
       {/* About Section */}
@@ -73,8 +74,7 @@ export default function HomePage({
       {/* Sanatoriums Section */}
       <SanatoriumsSection sanatoriums={sanatoriums} sanatoriumsSection={sanatoriumsSection} />
 
-      {/* Treatment Types Section */}
-      {/* <TreatmentTypesSection treatmentSection={treatmentSection} /> */}
+     
 
       {/* Packages Section */}
       <PackagesSection packagesSection={packagesSection} />
@@ -85,7 +85,7 @@ export default function HomePage({
       {/* FAQ Section */}
       <FAQSection faqSection={faqSection} faqs={faqs} />
 
-      {/* Blog Section */}
+      {/* Blog Section (replaces Treatment Types Section) */}
       <BlogSection blogs={blogs} blogSection={blogSection} />
 
       {/* Contact Section */}

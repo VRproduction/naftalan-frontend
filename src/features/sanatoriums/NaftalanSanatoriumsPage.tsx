@@ -2,9 +2,10 @@
 
 import { motion } from 'framer-motion';
 import Image from 'next/image';
-import Link from 'next/link';
+import { Link } from '@/i18n/navigation';
 import { NaftalanSanatoriumsPage as NaftalanSanatoriumsPageType, Sanatorium as SanatoriumType } from '@/lib/types/sanatorium.type';
 import SanatoriumHorizontal from '../common/SanatoriumHorizontal';
+import { useTranslations } from 'next-intl';
 
 interface Props {
   naftalanSanatoriumsPage: NaftalanSanatoriumsPageType;
@@ -12,7 +13,7 @@ interface Props {
 }
 
 export default function NaftalanSanatoriumsPage({ naftalanSanatoriumsPage, naftalanSanatoriums }: Props) {
-  
+  const t = useTranslations('sanatoriums');
 
   const fadeInUpVariant = {
     hidden: { opacity: 0, y: 20 },
@@ -66,7 +67,7 @@ export default function NaftalanSanatoriumsPage({ naftalanSanatoriumsPage, nafta
             >
               <Image 
                 src={naftalanSanatoriumsPage.main_section_image} 
-                alt="Naftalan sanatoriumları" 
+                alt={t('naftalan_sanatoriums')} 
                 fill
                 className="object-cover"
               />
@@ -120,10 +121,10 @@ export default function NaftalanSanatoriumsPage({ naftalanSanatoriumsPage, nafta
               </p>
               <div className="flex flex-wrap justify-center gap-4">
                 <Link href="/contact" className="px-8 py-3 bg-white text-blue-600 rounded-lg font-medium hover:bg-blue-50 transition-colors">
-                  Əlaqə
+                  {t('contact')}
                 </Link>
                 <Link href="/about/treatments" className="px-8 py-3 bg-transparent border-2 border-white text-white rounded-lg font-medium hover:bg-white hover:text-blue-600 transition-colors">
-                  Müalicə olunan xəstəliklər
+                  {t('treated_diseases')}
                 </Link>
               </div>
             </motion.div>

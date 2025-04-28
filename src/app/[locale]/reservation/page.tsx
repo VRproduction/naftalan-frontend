@@ -7,24 +7,21 @@ import { SupportedLocale } from "@/lib/utils/apiClient";
 
 interface Props {
   params: Promise<{ locale: SupportedLocale }>;
-  searchParams?: Promise<{
-    page?: string;
-    page_size?: string;
-    search?: string;
-    category?: string;
-    tags?: string;
-    is_popular?: boolean;
-    is_featured?: boolean;
+  searchParams: Promise<{
+    [key: string]: string | string[] | undefined;
   }>;
 }
 
 export default async function Page({ params, searchParams }: Props) {
   const { locale } = await params;
+  const { city } = await searchParams;
 
   const [
     sanatoriums
   ] = await Promise.all([
-    getSanatoriums(locale),
+    getSanatoriums(locale, {
+      location: String(city) 
+    }),
   ]);
 
   return (

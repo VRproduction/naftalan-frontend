@@ -4,8 +4,9 @@ import { Sanatorium } from '@/lib/types/sanatorium.type';
 import { useCurrency } from '@/lib/utils/currency';
 import { motion } from 'framer-motion';
 import Image from 'next/image';
-import Link from 'next/link';
+import { Link } from '@/i18n/navigation';
 import { FaStar, FaMapMarkerAlt, FaArrowRight, FaCheck } from 'react-icons/fa';
+import { useTranslations } from 'next-intl';
 
 
 
@@ -24,6 +25,7 @@ export default function SanatoriumCard({
 }: SanatoriumCardProps) {
 
 
+  const t = useTranslations('sanatorium');
   const { formatPrice } = useCurrency();
 
 
@@ -127,7 +129,7 @@ export default function SanatoriumCard({
               : "bg-green-500 hover:bg-green-600 text-white"
           } rounded-lg transition-colors text-sm font-medium flex items-center justify-center shadow-sm`}
         >
-          <span>Ətraflı məlumat</span>
+          <span>{t('details')}</span>
           <FaArrowRight className="ml-2 group-hover:translate-x-1 transition-transform" />
         </Link>
       </div>

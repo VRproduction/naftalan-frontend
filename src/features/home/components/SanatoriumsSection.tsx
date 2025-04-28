@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 import { SanatoriumSection as SanatoriumSectionType } from "@/lib/types/home.type";
 import SanatoriumCard from "@/features/common/SanatoriumCard";
 import { Sanatorium } from "@/lib/types/sanatorium.type";
+import { useTranslations } from "next-intl";
 
 const SanatoriumsSection = ({
   sanatoriumsSection,
@@ -11,6 +12,8 @@ const SanatoriumsSection = ({
   sanatoriumsSection: SanatoriumSectionType;
   sanatoriums: Sanatorium[];
 }) => {
+  const t = useTranslations("home.sanatoriums");
+  
   return (
     <section className="py-20 bg-blue-50">
       <div className="container mx-auto px-4">
@@ -63,7 +66,7 @@ const SanatoriumsSection = ({
             href="/reservation"
             className="py-3 px-8 bg-blue-500 text-white rounded-full hover:bg-blue-600 transition-all duration-300 inline-flex items-center justify-center shadow-lg hover:shadow-xl font-medium transform hover:-translate-y-1"
           >
-            <span>Bütün sanatoriyalar</span>
+            <span>{t('view_all')}</span>
             <svg
               xmlns="http://www.w3.org/2000/svg"
               className="h-5 w-5 ml-2"

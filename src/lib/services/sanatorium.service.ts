@@ -1,5 +1,5 @@
 import { PaginatedResponse } from "../types/response.type";
-import { NaftalanSanatoriumsPage, OtherCitiesSanatoriumsPage, Sanatorium, SanatoriumDetail } from "../types/sanatorium.type";
+import { City, NaftalanSanatoriumsPage, OtherCitiesSanatoriumsPage, Sanatorium, SanatoriumDetail } from "../types/sanatorium.type";
 import api, { SupportedLocale } from "../utils/apiClient";
 
 export const getSanatoriums = async (
@@ -10,6 +10,7 @@ export const getSanatoriums = async (
     page_size?: string;
     is_popular?: string;
     is_featured?: string;
+    location?: string;
   }
 ) => {
   const response = await api.get<PaginatedResponse<Sanatorium>>(
@@ -22,10 +23,16 @@ export const getSanatoriums = async (
         page_size: params?.page_size || "30",
         is_popular: params?.is_popular || "false",
         is_featured: params?.is_featured || "false",
+        location: params?.location || "",
       },
     }
   );
   return response
+};
+
+export const getLocations = async (locale: SupportedLocale) => {
+  const response = await api.get<City []>(`/sanatoriums/locations/`, { locale: locale });
+  return response;
 };
 
 export const getSanatorium = async (locale: SupportedLocale, slug: string) => {

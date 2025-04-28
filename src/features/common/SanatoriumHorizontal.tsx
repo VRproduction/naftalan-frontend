@@ -3,10 +3,11 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 import Image from 'next/image';
-import Link from 'next/link';
-import { FaStar, FaMapMarkerAlt, FaPhoneAlt, FaGlobe, FaWifi, FaSwimmingPool, FaParking, FaUtensils, FaSpa, FaShieldAlt, FaArrowRight } from 'react-icons/fa';
+import { Link } from '@/i18n/navigation';
+import { FaStar, FaMapMarkerAlt, FaArrowRight } from 'react-icons/fa';
 import { Sanatorium } from '@/lib/types/sanatorium.type';
 import { useCurrency } from '@/lib/utils/currency';
+import { useTranslations } from 'next-intl';
 
 
 
@@ -18,6 +19,7 @@ interface SanatoriumProps {
 export default function SanatoriumHorizontal({ sanatorium, index = 0 }: SanatoriumProps) {
   const [isExpanded, setIsExpanded] = useState(false);
   const { formatPrice } = useCurrency();
+  const t = useTranslations('sanatorium');
 
   const renderStars = (rating: number) => {
     const stars = [];
@@ -59,7 +61,7 @@ export default function SanatoriumHorizontal({ sanatorium, index = 0 }: Sanatori
         
         <div className="p-6 md:col-span-2">
           <div className="flex flex-wrap items-start justify-between mb-4">
-            <Link href={`/sanatoriums/${sanatorium.id}`} className="hover:text-blue-600 transition-colors">
+            <Link href={`/sanatoriums/${sanatorium.slug}`} className="hover:text-blue-600 transition-colors">
               <h3 className="text-2xl font-bold text-gray-800">{sanatorium.name}</h3>
             </Link>
             <div className="flex items-center mt-1 md:mt-0">
@@ -94,21 +96,21 @@ export default function SanatoriumHorizontal({ sanatorium, index = 0 }: Sanatori
             
             <div className="flex flex-col md:flex-row md:items-center space-y-2 md:space-y-0 md:space-x-3">
               <div className="text-sm font-medium text-gray-500">
-                Qiymət: <span className="text-blue-500">{formatPrice(sanatorium.min_price || 0)}</span>
+                {t('price')}: <span className="text-blue-500">{formatPrice(sanatorium.min_price || 0)}</span>
               </div>
               
               <Link 
                 href={`/sanatoriums/${sanatorium.slug}`}
                 className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center justify-center"
               >
-                Ətraflı <FaArrowRight className="ml-1" />
+                {t('details')} <FaArrowRight className="ml-1" />
               </Link>
               
               <button
                 onClick={() => setIsExpanded(!isExpanded)}
                 className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
               >
-                {isExpanded ? 'Bağla' : 'Daha çox'}
+                {isExpanded ? t('close') : t('show_more')}
               </button>
             </div>
           </div>
@@ -120,7 +122,7 @@ export default function SanatoriumHorizontal({ sanatorium, index = 0 }: Sanatori
               transition={{ duration: 0.3 }}
               className="mt-6 pt-6 border-t border-gray-200"
             >
-              <h4 className="text-lg font-semibold mb-4 text-gray-800">Fotolar</h4>
+              <h4 className="text-lg font-semibold mb-4 text-gray-800">{t('photos')}</h4>
               <div className="grid grid-cols-3 gap-4 mb-6">
                 {sanatorium.images.map((image, i) => (
                   <div key={i} className="relative h-32 rounded-lg overflow-hidden">
@@ -139,7 +141,7 @@ export default function SanatoriumHorizontal({ sanatorium, index = 0 }: Sanatori
                   href="/contact"
                   className="px-6 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
                 >
-                  Rezervasiya et
+                  {t('book_now')}
                 </Link>
               </div>
             </motion.div>

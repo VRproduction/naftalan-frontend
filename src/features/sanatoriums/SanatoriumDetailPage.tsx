@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 import {
   FaMapMarkerAlt,
   FaStar,
@@ -15,12 +15,14 @@ import {
 import { SanatoriumDetail } from "@/lib/types/sanatorium.type";
 import SanatoriumCard from "../common/SanatoriumCard";
 import { useCurrency } from "@/lib/utils/currency";
+import { useTranslations } from "next-intl";
 
 interface PageProps {
   sanatorium: SanatoriumDetail;
 }
 
 export default function SanatoriumDetailPage({ sanatorium }: PageProps) {
+  const t = useTranslations('sanatoriums');
   const [activeTab, setActiveTab] = useState<
     "overview" | "treatments" | "rooms" | "reviews"
   >("overview");
@@ -127,16 +129,16 @@ export default function SanatoriumDetailPage({ sanatorium }: PageProps) {
       <div className="container mx-auto px-4 py-16">
         <div className="text-center">
           <h2 className="text-2xl font-bold text-gray-800 mb-4">
-            Sanatoriya tapılmadı
+            {t('not_found')}
           </h2>
           <p className="text-gray-600 mb-8">
-            Axtardığınız sanatoriya məlumatları tapılmadı.
+            {t('not_found_description')}
           </p>
           <Link
             href="/sanatoriums"
             className="px-6 py-3 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
           >
-            Bütün sanatoriyalar
+            {t('all_sanatoriums')}
           </Link>
         </div>
       </div>
@@ -179,7 +181,7 @@ export default function SanatoriumDetailPage({ sanatorium }: PageProps) {
               <div className="flex items-center">
                 <FaStar className="text-yellow-400 mr-2" />
                 <span>
-                  {sanatorium.rating} ({sanatorium.reviews?.length || 0} rəy)
+                  {sanatorium.rating} ({sanatorium.reviews?.length || 0} {t('reviews')})
                 </span>
               </div>
             </div>
@@ -247,7 +249,7 @@ export default function SanatoriumDetailPage({ sanatorium }: PageProps) {
                     }`}
                     onClick={() => setActiveTab("overview")}
                   >
-                    Ümumi məlumat
+                    {t('overview')}
                   </button>
                   <button
                     className={`px-4 md:px-6 py-4 text-sm font-medium whitespace-nowrap ${
@@ -257,7 +259,7 @@ export default function SanatoriumDetailPage({ sanatorium }: PageProps) {
                     }`}
                     onClick={() => setActiveTab("treatments")}
                   >
-                    Müalicələr
+                    {t('treatments')}
                   </button>
                   <button
                     className={`px-4 md:px-6 py-4 text-sm font-medium whitespace-nowrap ${
@@ -267,7 +269,7 @@ export default function SanatoriumDetailPage({ sanatorium }: PageProps) {
                     }`}
                     onClick={() => setActiveTab("rooms")}
                   >
-                    Otaqlar
+                    {t('rooms')}
                   </button>
                   <button
                     className={`px-4 md:px-6 py-4 text-sm font-medium whitespace-nowrap ${
@@ -277,7 +279,7 @@ export default function SanatoriumDetailPage({ sanatorium }: PageProps) {
                     }`}
                     onClick={() => setActiveTab("reviews")}
                   >
-                    Rəylər ({sanatorium.reviews?.length || 0})
+                    {t('reviews')} ({sanatorium.reviews?.length || 0})
                   </button>
                 </div>
               </div>
@@ -285,7 +287,7 @@ export default function SanatoriumDetailPage({ sanatorium }: PageProps) {
               <div className="p-6">
                 {activeTab === "overview" && (
                   <div>
-                    <h2 className="text-xl font-bold mb-4">Haqqında</h2>
+                    <h2 className="text-xl font-bold mb-4">{t('about')}</h2>
                     <div
                       dangerouslySetInnerHTML={{
                         __html: sanatorium.description,
@@ -294,7 +296,7 @@ export default function SanatoriumDetailPage({ sanatorium }: PageProps) {
                     ></div>
 
                     <h3 className="text-lg font-semibold mb-3">
-                      Xidmətlər və imkanlar
+                      {t('services_facilities')}
                     </h3>
                     <div className="grid grid-cols-2 md:grid-cols-3 gap-y-3 mb-6">
                       {sanatorium.facilities?.map((facility, index) => (
@@ -307,10 +309,10 @@ export default function SanatoriumDetailPage({ sanatorium }: PageProps) {
                       ))}
                     </div>
 
-                    <h3 className="text-lg font-semibold mb-3">Mövqe</h3>
+                    <h3 className="text-lg font-semibold mb-3">{t('location')}</h3>
                     <div className="bg-gray-100 rounded-lg p-4 mb-6">
                       <p className="text-gray-700 mb-2">
-                        <strong>Ünvan:</strong> {sanatorium.address}
+                        <strong>{t('address')}:</strong> {sanatorium.address}
                       </p>
                     </div>
 
@@ -337,7 +339,7 @@ export default function SanatoriumDetailPage({ sanatorium }: PageProps) {
 
                 {activeTab === "rooms" && (
                   <div>
-                    <h2 className="text-xl font-bold mb-6">Otaqlar</h2>
+                    <h2 className="text-xl font-bold mb-6">{t('rooms')}</h2>
                     <div className="space-y-8">
                       {sanatorium.room_types &&
                       sanatorium.room_types.length > 0 ? (
@@ -355,21 +357,21 @@ export default function SanatoriumDetailPage({ sanatorium }: PageProps) {
                                   {roomType.min_capacity &&
                                     roomType.max_capacity && (
                                       <p className="text-gray-600">
-                                        <strong>Tutum:</strong>{" "}
+                                        <strong>{t('capacity')}:</strong>{" "}
                                         {roomType.min_capacity}-
-                                        {roomType.max_capacity} nəfər
+                                        {roomType.max_capacity} {t('person')}
                                       </p>
                                     )}
                                   {roomType.max_extra_beds &&
                                     roomType.max_extra_beds > 0 && (
                                       <p className="text-gray-600">
-                                        <strong>Əlavə çarpayı:</strong> maksimum{" "}
+                                        <strong>{t('extra_beds')}:</strong> {t('max')}{" "}
                                         {roomType.max_extra_beds}
                                       </p>
                                     )}
                                   {roomType.size && (
                                     <p className="text-gray-600">
-                                      <strong>Sahə:</strong> {roomType.size} m²
+                                      <strong>{t('area')}:</strong> {roomType.size} m²
                                     </p>
                                   )}
                                 </div>
@@ -420,23 +422,23 @@ export default function SanatoriumDetailPage({ sanatorium }: PageProps) {
                                 roomType.prices.length > 0 && (
                                   <div>
                                     <h4 className="text-md font-semibold mb-3">
-                                      Qiymətlər
+                                      {t('prices')}
                                     </h4>
                                     <div className="overflow-x-auto">
                                       <table className="min-w-full divide-y divide-gray-200">
                                         <thead className="bg-gray-50">
                                           <tr>
                                             <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                              Mövsüm
+                                              {t('season')}
                                             </th>
                                             <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                              Tutum
+                                              {t('occupancy')}
                                             </th>
                                             <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                              Müalicə
+                                              {t('treatment')}
                                             </th>
                                             <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                              Qiymət
+                                              {t('price')}
                                             </th>
                                           </tr>
                                         </thead>
@@ -457,26 +459,26 @@ export default function SanatoriumDetailPage({ sanatorium }: PageProps) {
                                                     {price.season
                                                       .is_current && (
                                                       <span className="ml-2 inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                                                        Cari
+                                                        {t('current')}
                                                       </span>
                                                     )}
                                                   </>
-                                                ): 'Ümumi'}
+                                                ): t('general')}
                                               </td>
                                               <td className="px-4 py-3 text-sm text-gray-900">
-                                                {price.occupancy} nəfər
+                                                {price.occupancy} {t('person')}
                                               </td>
                                               <td className="px-4 py-3 text-sm text-gray-900">
                                                 {price.with_treatment ? (
                                                   <>
                                                     <FaCheck className="inline text-green-500 mr-1" />
                                                     {price.treatment_option
-                                                      ?.name || "Müalicə ilə"}
+                                                      ?.name || t('with_treatment')}
                                                   </>
                                                 ) : (
                                                   <>
                                                     <FaTimes className="inline text-red-500 mr-1" />
-                                                    Müalicəsiz
+                                                    {t('without_treatment')}
                                                   </>
                                                 )}
                                               </td>
@@ -493,23 +495,23 @@ export default function SanatoriumDetailPage({ sanatorium }: PageProps) {
                                     {roomType.extra_bed_prices.length > 0 && (
                                       <div className="mt-6">
                                         <h5 className="text-md font-semibold mb-3">
-                                          Əlavə çarpayı qiymətləri
+                                          {t('extra_bed_prices')}
                                         </h5>
                                         <div className="overflow-x-auto">
                                           <table className="min-w-full divide-y divide-gray-200">
                                             <thead className="bg-gray-50">
                                               <tr>
                                                 <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                                  Mövsüm
+                                                  {t('season')}
                                                 </th>
                                                 <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                                  Yaş qrupu
+                                                  {t('age_group')}
                                                 </th>
                                                 <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                                  Müalicə
+                                                  {t('treatment')}
                                                 </th>
                                                 <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                                  Qiymət
+                                                  {t('price')}
                                                 </th>
                                               </tr>
                                             </thead>
@@ -531,11 +533,11 @@ export default function SanatoriumDetailPage({ sanatorium }: PageProps) {
                                                           {price.season
                                                             .is_current && (
                                                             <span className="ml-2 inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                                                              Cari
+                                                              {t('current')}
                                                             </span>
                                                           )}
                                                         </>
-                                                      ): 'Ümumi'}
+                                                      ): t('general')}
                                                     </td>
                                                     <td className="px-4 py-3 text-sm text-gray-900">
                                                       {price.age_group.name}
@@ -547,12 +549,12 @@ export default function SanatoriumDetailPage({ sanatorium }: PageProps) {
                                                           {price
                                                             .treatment_option
                                                             ?.name ||
-                                                            "Müalicə ilə"}
+                                                            t('with_treatment')}
                                                         </>
                                                       ) : (
                                                         <>
                                                           <FaTimes className="inline text-red-500 mr-1" />
-                                                          Müalicəsiz
+                                                          {t('without_treatment')}
                                                         </>
                                                       )}
                                                     </td>
@@ -574,7 +576,7 @@ export default function SanatoriumDetailPage({ sanatorium }: PageProps) {
                         ))
                       ) : (
                         <p className="text-gray-600">
-                          Hal-hazırda otaq məlumatları mövcud deyil.
+                          {t('no_rooms')}
                         </p>
                       )}
                     </div>
@@ -583,7 +585,7 @@ export default function SanatoriumDetailPage({ sanatorium }: PageProps) {
 
                 {activeTab === "reviews" && (
                   <div>
-                    <h2 className="text-xl font-bold mb-6">Müştəri rəyləri</h2>
+                    <h2 className="text-xl font-bold mb-6">{t('customer_reviews')}</h2>
 
                     <div className="space-y-6">
                       {sanatorium.reviews && sanatorium.reviews.length > 0 ? (
@@ -625,7 +627,7 @@ export default function SanatoriumDetailPage({ sanatorium }: PageProps) {
                         ))
                       ) : (
                         <p className="text-gray-600">
-                          Hələ heç bir müştəri rəyi yoxdur.
+                          {t('no_reviews')}
                         </p>
                       )}
                     </div>
@@ -640,12 +642,12 @@ export default function SanatoriumDetailPage({ sanatorium }: PageProps) {
             <div >
               <div className="bg-white rounded-xl shadow-md overflow-hidden sticky top-24">
                 <div className="p-6 border-b border-gray-200">
-                  <h2 className="text-xl font-bold">Qiymət və rezervasiya</h2>
+                  <h2 className="text-xl font-bold">{t('price_booking')}</h2>
                 </div>
                 <div className="p-6">
                   <div className="mb-6">
                     <div className="flex justify-between items-center mb-2">
-                      <span className="text-gray-600">Başlayan qiymət:</span>
+                      <span className="text-gray-600">{t('starting_price')}:</span>
                       <span className="text-2xl font-bold text-blue-600">
                         {formatPrice(
                           sanatorium.room_types.reduce((minPrice, roomType) => {
@@ -671,7 +673,7 @@ export default function SanatoriumDetailPage({ sanatorium }: PageProps) {
                       </span>
                     </div>
                     <div className="text-sm text-gray-500 mb-4">
-                      adam başına / gecə
+                      {t('per_person_night')}
                     </div>
                   </div>
 
@@ -681,22 +683,22 @@ export default function SanatoriumDetailPage({ sanatorium }: PageProps) {
                     }`}
                     className="block w-full py-3 px-4 bg-blue-500 text-white text-center font-medium rounded-lg hover:bg-blue-600 transition-colors mb-4"
                   >
-                    İndi rezervasiya et
+                    {t('book_now')}
                   </Link>
 
                   <Link
                     href="/contact"
                     className="block w-full py-3 px-4 border border-blue-500 text-blue-500 text-center font-medium rounded-lg hover:bg-blue-50 transition-colors"
                   >
-                    Sual vermək
+                    {t('ask_question')}
                   </Link>
 
                   <div className="mt-6 text-sm text-gray-500">
                     <p className="mb-2">
-                      * Qiymətlər otaq tipinə və mövsümə görə dəyişə bilər
+                      {t('price_note_1')}
                     </p>
                     <p>
-                      * Müalicə paketlərinin qiyməti əlavə olaraq hesablanır
+                      {t('price_note_2')}
                     </p>
                   </div>
                 </div>
@@ -711,7 +713,7 @@ export default function SanatoriumDetailPage({ sanatorium }: PageProps) {
         <section className="py-12 bg-gray-50">
           <div className="container mx-auto px-4">
             <h2 className="text-2xl font-bold text-center text-gray-800 mb-12">
-              Oxşar Sanatoriyalar
+              {t('similar_sanatoriums')}
             </h2>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
