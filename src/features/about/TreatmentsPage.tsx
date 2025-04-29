@@ -87,52 +87,7 @@ export default function TreatmentsPage({ treatmentsPage, categories, treatments,
         </div>
       </section>
       
-      {/* Categories */}
-      <section className="py-12 bg-gray-50">
-        <div className="container mx-auto px-4">
-          <motion.div 
-            className="text-center mb-12"
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
-            variants={fadeInUpVariant}
-          >
-            <h2 className="text-3xl font-bold mb-6 text-gray-800">{treatmentsPage.category_section_title}</h2>
-            <div className="w-20 h-1 bg-blue-500 mx-auto mb-6"></div>
-            <p className="max-w-3xl mx-auto text-lg text-gray-600">
-              {treatmentsPage.category_section_description}
-            </p>
-          </motion.div>
-          
-          <div className="flex flex-wrap justify-center gap-4 mb-12">
-            <button
-              onClick={() => setActiveCategory('all')}
-              className={`px-6 py-2 rounded-full transition-all ${
-                activeCategory === 'all' 
-                  ? 'bg-blue-500 text-white' 
-                  : 'bg-white text-gray-700 hover:bg-gray-200'
-              }`}
-            >
-              Bütün xəstəliklər
-            </button>
-            {categories.map((category) => (
-              <button
-                key={category.id}
-                onClick={() => setActiveCategory(category.id.toString())}
-                className={`px-6 py-2 rounded-full transition-all ${
-                  activeCategory === category.id.toString() 
-                    ? 'bg-blue-500 text-white' 
-                    : 'bg-white text-gray-700 hover:bg-gray-200'
-              }`}
-            >
-              {category.title}
-            </button>
-            ))}
-          
-          </div>
-        </div>
-      </section>
+ 
       
       {/* Treatments List */}
       <section className="py-16 bg-white">

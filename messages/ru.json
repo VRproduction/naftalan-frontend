@@ -23,11 +23,13 @@
     "sanatoriums": "Санатории",
     "naftalan_sanatoriums": "Санатории Нафталана",
     "other_sanatoriums": "Санатории в других городах",
+    "packages": "Пакеты",
     "how_to_come": "Как приехать?",
     "reservation": "Бронирование",
     "blog": "Блог",
     "contact": "Контакты",
-    "ask_doctor": "Задать вопрос врачу"
+    "ask_doctor": "Задать вопрос врачу",
+    "help": "Помощь"
   },
   "languages": {
     "az": "Azərbaycan",
@@ -107,7 +109,8 @@
     "massage": "Массаж",
     "physiotherapy": "Физиотерапия",
     "default_address": "город Нафталан, Азербайджан",
-    "copyright": "© {year} {name}. Все права защищены."
+    "copyright": "© {year} {name}. Все права защищены.",
+    "follow_us": "Подписывайтесь на нас"
   },
   "home": {
     "hero": {
@@ -128,6 +131,9 @@
     },
     "contact": {
       "get_in_touch": "Связаться с нами"
+    },
+    "packages": {
+      "all_packages": "Все пакеты"
     }
   },
   "pages": {
@@ -190,13 +196,20 @@
       }
     },
     "about": {
-      "title": "О нас"
+      "title": "О нас",
+      "reservation": "Бронирование",
+      "contact_infos": "Контактная информация",
+      "phone": "Телефон",
+      "email": "Эл. почта",
+      "location": "Адрес",
+      "useful_links": "Полезные ссылки",
+      "naftalan_history": "История Naftalan нефти",
+      "naftalan_treatments": "Лечение, используемое Naftalan",
+      "naftalan_sanatoriums": "Naftalan sanатории",
+      "how_to_come": "Как добраться до Naftalana"
     },
     "sanatoriums": {
       "title": "Санатории"
-    },
-    "blog": {
-      "title": "Блог"
     },
     "reservation": {
       "title": "Бронирование",
@@ -257,6 +270,22 @@
     },
     "how_to_come": {
       "title": "Как приехать?"
+    },
+    "packages": {
+      "packages": "Пакеты"
+    },
+    "blog": {
+      "title": "Блог",
+      "hero_title": "Блог",
+      "hero_description": "Нафталан медицина, здоровье и здоровый образ жизни о полезных статьях",
+      "popular_tags": "Популярные теги",
+      "show_all_blogs": "Показать все статьи",
+      "no_blogs_found": "Статьи не найдены"
+    },
+    "blog_detail": {
+      "tags": "Теги",
+      "share": "Поделиться этой статьей",
+      "related_posts": "Похожие статьи"
     }
   },
   "sanatoriums": {
@@ -423,6 +452,11 @@
       "room_type_required": "Необходимо выбрать тип номера",
       "terms_required": "Необходимо принять условия"
     }
+  },
+  "packages": {
+    "day": "День",
+    "include_package": "Входит в пакет",
+    "order": "Заказать"
   },
   "not_found": {
     "title": "Страница не найдена",

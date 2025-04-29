@@ -216,11 +216,11 @@ export default async function RootLayout({
             `}
           </Script>
         )}
-        <AppInitializer setting={siteSettings}>
           <NextIntlClientProvider messages={messages}>
-            <MainLayout siteSettings={siteSettings}>{children}</MainLayout>
+            <AppInitializer setting={siteSettings}>
+              <MainLayout siteSettings={siteSettings}>{children}</MainLayout>
+            </AppInitializer>
           </NextIntlClientProvider>
-        </AppInitializer>
 
         {/* Cookie policy popup */}
         {siteSettings.cookie_policy_popup && (

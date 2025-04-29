@@ -53,6 +53,19 @@ const Header = ({ siteSettings }: HeaderProps) => {
     return () => document.removeEventListener('click', handleOutsideClick);
   }, [isLangMenuOpen]);
 
+  // Update active submenu based on pathname
+  useEffect(() => {
+    if (pathname.startsWith('/sanatoriums')) {
+      setActiveSubmenu('sanatoriums');
+    } else if (pathname.startsWith('/about')) {
+      setActiveSubmenu('about');
+    } else if (pathname.startsWith('/help') || pathname.startsWith('/how-to-come') || pathname.startsWith('/ask-doctor') || pathname.startsWith('/contact')) {
+      setActiveSubmenu('help');
+    } else {
+      setActiveSubmenu(null);
+    }
+  }, [pathname]);
+
   const toggleSubmenu = (menu: string) => {
     setActiveSubmenu(activeSubmenu === menu ? null : menu);
   };
@@ -61,180 +74,290 @@ const Header = ({ siteSettings }: HeaderProps) => {
     if (lang === locale) return;
     
     setIsLangMenuOpen(false);
-    // Get current pathname and replace locale segment
     const params = new URLSearchParams(window.location.search);
     const searchParams = params.toString();
     const newPath = searchParams ? `${pathname}?${searchParams}` : pathname;
     router.push(newPath, { locale: lang, scroll: false });
   };
-  
+
+  const isActive = (path: string) => {
+    if (path === '/') {
+      return pathname === '/';
+    }
+    return pathname.startsWith(path);
+  };
+
+  const renderDesktopMenu = () => (
+    <nav className="hidden md:flex items-center space-x-2 lg:space-x-2">
+      <IntlLink 
+        href="/" 
+        className={`py-2 px-2.5 font-medium transition-colors ${
+          isActive('/') ? 'text-blue-600 font-semibold' : 'hover:text-blue-500'
+        }`}
+      >
+        {t('home')}
+      </IntlLink>
+
+      {/* Sanatoriums Dropdown */}
+      <div className="group relative">
+        <button 
+          className={`py-2 px-2.5 flex items-center gap-1.5 transition-colors font-medium ${
+            isActive('/sanatoriums') ? 'text-blue-600 font-semibold' : 'hover:text-blue-500'
+          }`}
+        >
+          <span>{t('sanatoriums')}</span>
+          <FaChevronDown className="text-xs opacity-70 group-hover:rotate-180 transition-transform duration-300" />
+        </button>
+        <div className="absolute left-0 top-full mt-1 w-64 bg-white/95 backdrop-blur-sm shadow-lg rounded-lg overflow-hidden opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 transform group-hover:translate-y-0 translate-y-2 border border-gray-100">
+          <IntlLink 
+            href="/sanatoriums/naftalan" 
+            className={`block px-4 py-2.5 transition-colors border-l-2 ${
+              isActive('/sanatoriums/naftalan') 
+                ? 'bg-blue-50 text-blue-600 border-blue-500' 
+                : 'border-transparent hover:bg-blue-50 hover:text-blue-500 hover:border-blue-500'
+            }`}
+          >
+            {t('naftalan_sanatoriums')}
+          </IntlLink>
+          <IntlLink 
+            href="/sanatoriums/other" 
+            className={`block px-4 py-2.5 transition-colors border-l-2 ${
+              isActive('/sanatoriums/other') 
+                ? 'bg-blue-50 text-blue-600 border-blue-500' 
+                : 'border-transparent hover:bg-blue-50 hover:text-blue-500 hover:border-blue-500'
+            }`}
+          >
+            {t('other_sanatoriums')}
+          </IntlLink>
+        </div>
+      </div>
+
+      {/* Packages */}
+      <IntlLink 
+        href="/packages" 
+        className={`py-2 px-2.5 font-medium transition-colors ${
+          isActive('/packages') ? 'text-blue-600 font-semibold' : 'hover:text-blue-500'
+        }`}
+      >
+        {t('packages')}
+      </IntlLink>
+
+      {/* About Dropdown */}
+      <div className="group relative">
+        <button 
+          className={`py-2 px-2.5 flex items-center gap-1.5 transition-colors font-medium ${
+            isActive('/about') ? 'text-blue-600 font-semibold' : 'hover:text-blue-500'
+          }`}
+        >
+          <span>{t('about')}</span>
+          <FaChevronDown className="text-xs opacity-70 group-hover:rotate-180 transition-transform duration-300" />
+        </button>
+        <div className="absolute left-0 top-full mt-1 w-64 bg-white/95 backdrop-blur-sm shadow-lg rounded-lg overflow-hidden opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 transform group-hover:translate-y-0 translate-y-2 border border-gray-100">
+          <IntlLink 
+            href="/about" 
+            className={`block px-4 py-2.5 transition-colors border-l-2 ${
+              isActive('/about') 
+                ? 'bg-blue-50 text-blue-600 border-blue-500' 
+                : 'border-transparent hover:bg-blue-50 hover:text-blue-500 hover:border-blue-500'
+            }`}
+          >
+            {t('about_naftalan')}
+          </IntlLink>
+          <IntlLink 
+            href="/about/history" 
+            className={`block px-4 py-2.5 transition-colors border-l-2 ${
+              isActive('/about/history') 
+                ? 'bg-blue-50 text-blue-600 border-blue-500' 
+                : 'border-transparent hover:bg-blue-50 hover:text-blue-500 hover:border-blue-500'
+            }`}
+          >
+            {t('naftalan_history')}
+          </IntlLink>
+          <IntlLink 
+            href="/about/treatments" 
+            className={`block px-4 py-2.5 transition-colors border-l-2 ${
+              isActive('/about/treatments') 
+                ? 'bg-blue-50 text-blue-600 border-blue-500' 
+                : 'border-transparent hover:bg-blue-50 hover:text-blue-500 hover:border-blue-500'
+            }`}
+          >
+            {t('treated_conditions')}
+          </IntlLink>
+        </div>
+      </div>
+
+      {/* Blog */}
+      <IntlLink 
+        href="/blog" 
+        className={`py-2 px-2.5 font-medium transition-colors ${
+          isActive('/blog') ? 'text-blue-600 font-semibold' : 'hover:text-blue-500'
+        }`}
+      >
+        {t('blog')}
+      </IntlLink>
+
+      {/* Help Dropdown */}
+      <div className="group relative">
+        <button 
+          className={`py-2 px-2.5 flex items-center gap-1.5 transition-colors font-medium ${
+            isActive('/help') ? 'text-blue-600 font-semibold' : 'hover:text-blue-500'
+          }`}
+        >
+          <span>{t('help')}</span>
+          <FaChevronDown className="text-xs opacity-70 group-hover:rotate-180 transition-transform duration-300" />
+        </button>
+        <div className="absolute left-0 top-full mt-1 w-64 bg-white/95 backdrop-blur-sm shadow-lg rounded-lg overflow-hidden opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 transform group-hover:translate-y-0 translate-y-2 border border-gray-100">
+          <IntlLink 
+            href="/how-to-come" 
+            className={`block px-4 py-2.5 transition-colors border-l-2 ${
+              isActive('/how-to-come') 
+                ? 'bg-blue-50 text-blue-600 border-blue-500' 
+                : 'border-transparent hover:bg-blue-50 hover:text-blue-500 hover:border-blue-500'
+            }`}
+          >
+            {t('how_to_come')}
+          </IntlLink>
+          <IntlLink 
+            href="/ask-doctor" 
+            className={`block px-4 py-2.5 transition-colors border-l-2 ${
+              isActive('/ask-doctor') 
+                ? 'bg-blue-50 text-blue-600 border-blue-500' 
+                : 'border-transparent hover:bg-blue-50 hover:text-blue-500 hover:border-blue-500'
+            }`}
+          >
+            {t('ask_doctor')}
+          </IntlLink>
+          <IntlLink 
+            href="/contact" 
+            className={`block px-4 py-2.5 transition-colors border-l-2 ${
+              isActive('/contact') 
+                ? 'bg-blue-50 text-blue-600 border-blue-500' 
+                : 'border-transparent hover:bg-blue-50 hover:text-blue-500 hover:border-blue-500'
+            }`}
+          >
+            {t('contact')}
+          </IntlLink>
+        </div>
+      </div>
+
+      <div className="h-5 w-px bg-gray-200 mx-1"></div>
+
+      {/* Language Switcher */}
+      <div className="relative lang-menu-container">
+        <button 
+          className="flex items-center gap-1.5 py-1.5 px-2.5 rounded-lg hover:bg-gray-100 transition-colors"
+          onClick={(e) => {
+            e.stopPropagation();
+            setIsLangMenuOpen(!isLangMenuOpen);
+          }}
+        >
+          <FaGlobe className="text-blue-500" />
+          <span className="uppercase font-medium">{locale}</span>
+          <FaChevronDown className={`text-xs transition-transform duration-300 ${isLangMenuOpen ? 'rotate-180' : ''}`} />
+        </button>
+
+        <AnimatePresence>
+          {isLangMenuOpen && (
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: 10 }}
+              transition={{ duration: 0.2 }}
+              className="absolute right-0 top-full mt-1 bg-white/95 backdrop-blur-sm shadow-lg rounded-lg overflow-hidden z-50 border border-gray-100 w-40"
+            >
+              <button 
+                className={`w-full text-left px-4 py-2 hover:bg-blue-50 transition-colors flex items-center ${locale === 'az' ? 'bg-blue-50 text-blue-500' : ''}`}
+                onClick={() => changeLanguage('az')}
+              >
+                <span className="w-6 text-center mr-2 uppercase font-bold">Az</span>
+                <span>{tLang('az')}</span>
+              </button>
+            
+              <button 
+                className={`w-full text-left px-4 py-2 hover:bg-blue-50 transition-colors flex items-center ${locale === 'ru' ? 'bg-blue-50 text-blue-500' : ''}`}
+                onClick={() => changeLanguage('ru')}
+              >
+                <span className="w-6 text-center mr-2 uppercase font-bold">Ru</span>
+                <span>{tLang('ru')}</span>
+              </button>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </div>
+
+      {/* Currency Selector */}
+      <CurrencySelector />
+
+      {/* Reservation Button */}
+      <IntlLink 
+        href="/reservation" 
+        className={`py-2 px-4 rounded-full transition-all duration-300 shadow-sm hover:shadow-md transform hover:-translate-y-0.5 text-sm font-medium ${
+          isActive('/reservation') 
+            ? 'bg-blue-600 text-white' 
+            : 'bg-blue-500 text-white hover:bg-blue-600'
+        }`}
+      >
+        {t('reservation')}
+      </IntlLink>
+    </nav>
+  );
+
+  const renderMobileMenu = () => (
+    <div className="md:hidden flex items-center gap-3">
+      <button 
+        className="text-lg p-1.5 z-[999] relative bg-gray-100 rounded-lg active:scale-95 transition-all"
+        onClick={toggleMenu}
+        aria-label={isMenuOpen ? "Close menu" : "Open menu"}
+      >
+        <AnimatePresence mode="wait">
+          {isMenuOpen ? (
+            <motion.div
+              key="close"
+              initial={{ opacity: 0, rotate: -90 }}
+              animate={{ opacity: 1, rotate: 0 }}
+              exit={{ opacity: 0, rotate: 90 }}
+              transition={{ duration: 0.2 }}
+              className="text-gray-800"
+            >
+              <FaTimes />
+            </motion.div>
+          ) : (
+            <motion.div
+              key="menu"
+              initial={{ opacity: 0, rotate: 90 }}
+              animate={{ opacity: 1, rotate: 0 }}
+              exit={{ opacity: 0, rotate: -90 }}
+              transition={{ duration: 0.2 }}
+            >
+              <FaBars />
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </button>
+    </div>
+  );
+
   return (
-    <header className={`fixed top-0 w-full z-[50] h-[60px] transition-all duration-300 ${
-      scrolled ? 'bg-white/95  shadow-md py-2' : 'bg-white/90 py-2.5 '
+    <header className={`fixed top-0 w-full z-[50] flex items-center h-[65px] transition-all duration-300 ${
+      scrolled ? 'bg-white/95 shadow-md py-2' : 'bg-white/90 py-2.5'
     }`}>
       <div className="container mx-auto px-3 md:px-4 flex justify-between items-center">
         <IntlLink 
           href="/" 
           onClick={() => setMenuOpen(false)}
         >
-          <Image className='h-10 w-auto hidden md:block' src={siteSettings.logo || '/logo.png'} alt="Naftalan" width={100} height={100} />
+          <Image className='h-12 w-auto hidden md:block' src={siteSettings.logo || '/logo.png'} alt="Naftalan" width={100} height={100} />
           <Image className='h-10 w-auto block md:hidden' src={siteSettings.mobile_app_icon || '/logo.png'} alt="Naftalan" width={100} height={100} />
+        </IntlLink>
 
-       </IntlLink>
-        
-        {/* Desktop Menu */}
-        <nav className="hidden md:flex items-center space-x-2 lg:space-x-2">
-          <IntlLink href="/" className="py-2 px-2.5 font-medium hover:text-blue-500 transition-colors">
-            {t('home') || 'Ana səhifə'}
-          </IntlLink>
-
-          <div className="group relative">
-            <button className="py-2 px-2.5 flex items-center gap-1.5 hover:text-blue-500 transition-colors font-medium">
-              {t('about')}
-              <FaChevronDown className="text-xs opacity-70 group-hover:rotate-180 transition-transform duration-300" />
-            </button>
-            <div className="absolute left-0 top-full mt-1 w-64 bg-white/95 backdrop-blur-sm shadow-lg rounded-lg overflow-hidden opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 transform group-hover:translate-y-0 translate-y-2 border border-gray-100">
-              <IntlLink href="/about" className="block px-4 py-2.5 hover:bg-blue-50 transition-colors border-l-2 border-transparent hover:border-blue-500">
-                {t('about_naftalan')}
-              </IntlLink>
-              <IntlLink href="/about/history" className="block px-4 py-2.5 hover:bg-blue-50 transition-colors border-l-2 border-transparent hover:border-blue-500">
-                {t('naftalan_history')}
-              </IntlLink>
-              <IntlLink href="/about/treatments" className="block px-4 py-2.5 hover:bg-blue-50 transition-colors border-l-2 border-transparent hover:border-blue-500">
-                {t('treated_conditions')}
-              </IntlLink>
-            </div>
-          </div>
-          
-          <div className="group relative">
-            <button className="py-2 px-2.5 flex items-center gap-1.5 hover:text-blue-500 transition-colors font-medium">
-              {t('sanatoriums')}
-              <FaChevronDown className="text-xs opacity-70 group-hover:rotate-180 transition-transform duration-300" />
-            </button>
-            <div className="absolute left-0 top-full mt-1 w-64 bg-white/95 backdrop-blur-sm shadow-lg rounded-lg overflow-hidden opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 transform group-hover:translate-y-0 translate-y-2 border border-gray-100">
-              <IntlLink href="/sanatoriums/naftalan" className="block px-4 py-2.5 hover:bg-blue-50 transition-colors border-l-2 border-transparent hover:border-blue-500">
-                {t('naftalan_sanatoriums')}
-              </IntlLink>
-              <IntlLink href="/sanatoriums/other" className="block px-4 py-2.5 hover:bg-blue-50 transition-colors border-l-2 border-transparent hover:border-blue-500">
-                {t('other_sanatoriums')}
-              </IntlLink>
-            </div>
-          </div>
-          
-          <IntlLink href="/how-to-come" className="py-2 px-2.5 font-medium hover:text-blue-500 transition-colors">
-            {t('how_to_come')}
-          </IntlLink>
-          
-          <IntlLink href="/ask-doctor" className="py-2 px-2.5 font-medium hover:text-blue-500 transition-colors">
-            {t('ask_doctor')}
-          </IntlLink>
-          
-          <IntlLink href="/blog" className="py-2 px-2.5 font-medium hover:text-blue-500 transition-colors">
-            {t('blog')}
-          </IntlLink>
-          
-          <IntlLink href="/contact" className="py-2 px-2.5 font-medium hover:text-blue-500 transition-colors">
-            {t('contact')}
-          </IntlLink>
-          
-          <div className="h-5 w-px bg-gray-200 mx-1"></div>
-          
-          {/* Language Switcher */}
-          <div className="relative lang-menu-container">
-            <button 
-              className="flex items-center gap-1.5 py-1.5 px-2.5 rounded-lg hover:bg-gray-100 transition-colors"
-              onClick={(e) => {
-                e.stopPropagation();
-                setIsLangMenuOpen(!isLangMenuOpen);
-              }}
-            >
-              <FaGlobe className="text-blue-500" />
-              <span className="uppercase font-medium">{locale}</span>
-              <FaChevronDown className={`text-xs transition-transform duration-300 ${isLangMenuOpen ? 'rotate-180' : ''}`} />
-            </button>
-
-            <AnimatePresence>
-              {isLangMenuOpen && (
-                <motion.div
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: 10 }}
-                  transition={{ duration: 0.2 }}
-                  className="absolute right-0 top-full mt-1 bg-white/95 backdrop-blur-sm shadow-lg rounded-lg overflow-hidden z-50 border border-gray-100 w-40"
-                >
-                  <button 
-                    className={`w-full text-left px-4 py-2 hover:bg-blue-50 transition-colors flex items-center ${locale === 'az' ? 'bg-blue-50 text-blue-500' : ''}`}
-                    onClick={() => changeLanguage('az')}
-                  >
-                    <span className="w-6 text-center mr-2 uppercase font-bold">Az</span>
-                    <span>{tLang('az')}</span>
-                  </button>
-                
-                  <button 
-                    className={`w-full text-left px-4 py-2 hover:bg-blue-50 transition-colors flex items-center ${locale === 'ru' ? 'bg-blue-50 text-blue-500' : ''}`}
-                    onClick={() => changeLanguage('ru')}
-                  >
-                    <span className="w-6 text-center mr-2 uppercase font-bold">Ru</span>
-                    <span>{tLang('ru')}</span>
-                  </button>
-                </motion.div>
-              )}
-            </AnimatePresence>
-          </div>
-          
-          {/* Currency Selector - Desktop */}
-          <CurrencySelector />
-          
-          <IntlLink 
-            href="/reservation" 
-            className="py-2 px-4 bg-blue-500 text-white rounded-full hover:bg-blue-600 transition-all duration-300 shadow-sm hover:shadow-md transform hover:-translate-y-0.5 text-sm font-medium"
-          >
-            {t('reservation')}
-          </IntlLink>
-        </nav>
-        
-        {/* Mobile menu button */}
-        <div className="md:hidden flex items-center gap-3">
-          
-
-          <button 
-            className="text-lg p-1.5 z-[999] relative bg-gray-100 rounded-lg active:scale-95 transition-all"
-            onClick={toggleMenu}
-            aria-label={isMenuOpen ? "Close menu" : "Open menu"}
-          >
-            <AnimatePresence mode="wait">
-              {isMenuOpen ? (
-                <motion.div
-                  key="close"
-                  initial={{ opacity: 0, rotate: -90 }}
-                  animate={{ opacity: 1, rotate: 0 }}
-                  exit={{ opacity: 0, rotate: 90 }}
-                  transition={{ duration: 0.2 }}
-                  className="text-gray-800"
-                >
-                  <FaTimes />
-                </motion.div>
-              ) : (
-                <motion.div
-                  key="menu"
-                  initial={{ opacity: 0, rotate: 90 }}
-                  animate={{ opacity: 1, rotate: 0 }}
-                  exit={{ opacity: 0, rotate: -90 }}
-                  transition={{ duration: 0.2 }}
-                >
-                  <FaBars />
-                </motion.div>
-              )}
-            </AnimatePresence>
-          </button>
-        </div>
+        {renderDesktopMenu()}
+        {renderMobileMenu()}
       </div>
-      
-      {/* Mobile Menu - Slides from right */}
+
+      {/* Mobile Menu */}
       <AnimatePresence>
         {isMenuOpen && (
           <>
-            {/* Overlay */}
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
@@ -243,7 +366,6 @@ const Header = ({ siteSettings }: HeaderProps) => {
               onClick={() => setMenuOpen(false)}
             />
             
-            {/* Menu */}
             <motion.div
               initial={{ x: "100%" }}
               animate={{ x: 0 }}
@@ -258,10 +380,10 @@ const Header = ({ siteSettings }: HeaderProps) => {
                     className="text-xl font-bold text-blue-500"
                     onClick={() => setMenuOpen(false)}
                   >
-                    Naftalan
+                    <Image className='h-12 w-auto hidden md:block' src={siteSettings.logo || '/logo.png'} alt="Naftalan" width={100} height={100} />
+                    <Image className='h-10 w-auto block md:hidden' src={siteSettings.mobile_app_icon || '/logo.png'} alt="Naftalan" width={100} height={100} />
                   </IntlLink>
 
-                  {/* Close button */}
                   <button
                     onClick={() => setMenuOpen(false)}
                     className="p-1.5 rounded-full hover:bg-gray-100 transition-colors"
@@ -269,8 +391,8 @@ const Header = ({ siteSettings }: HeaderProps) => {
                     <FaTimes />
                   </button>
                 </div>
-                
-                {/* Language switcher in mobile menu */}
+
+                {/* Language Switcher */}
                 <div className="flex items-center justify-center gap-2 text-sm mb-5">
                   <button 
                     className={`flex-1 py-2 rounded-md transition-colors ${locale === 'az' ? 'bg-blue-100 text-blue-600 font-medium' : 'bg-gray-100 hover:bg-gray-200'}`}
@@ -286,72 +408,25 @@ const Header = ({ siteSettings }: HeaderProps) => {
                     Русский
                   </button>
                 </div>
-                
+
                 {/* Menu Items */}
                 <div className="flex flex-col space-y-1">
-                  {/* Ana Sayfa */}
                   <IntlLink 
                     href="/" 
-                    className="py-2.5 px-3 hover:bg-blue-50 hover:text-blue-500 rounded-lg font-medium transition-colors"
+                    className={`py-2.5 px-3 rounded-lg font-medium transition-colors ${
+                      isActive('/') ? 'bg-blue-50 text-blue-600' : 'hover:bg-blue-50 hover:text-blue-500'
+                    }`}
                     onClick={() => setMenuOpen(false)}
                   >
-                    {t('home') || 'Ana səhifə'}
+                    {t('home')}
                   </IntlLink>
 
-                  {/* Haqqımızda dropdown */}
+                  {/* Sanatoriums */}
                   <div className="py-1">
                     <button 
-                      className={`w-full flex justify-between items-center py-2.5 px-3 rounded-lg font-medium ${activeSubmenu === 'about' ? 'bg-blue-50 text-blue-500' : 'hover:bg-gray-50'}`}
-                      onClick={() => toggleSubmenu('about')}
-                    >
-                      <span>{t('about')}</span>
-                      <FaChevronDown className={`transform transition-transform duration-300 ${activeSubmenu === 'about' ? 'rotate-180' : ''}`} />
-                    </button>
-                    
-                    <AnimatePresence>
-                      {activeSubmenu === 'about' && (
-                        <motion.div
-                          initial={{ height: 0, opacity: 0 }}
-                          animate={{ height: 'auto', opacity: 1 }}
-                          exit={{ height: 0, opacity: 0 }}
-                          transition={{ duration: 0.2 }}
-                          className="overflow-hidden"
-                        >
-                          <div className="pl-3 py-1 ml-2 border-l-2 border-blue-100 flex flex-col space-y-0.5 mt-1">
-                            <IntlLink 
-                              href="/about" 
-                              className="py-2 px-3 hover:bg-blue-50 hover:text-blue-500 rounded-lg flex items-center transition-colors"
-                              onClick={() => setMenuOpen(false)}
-                            >
-                              <FaChevronRight className="mr-2 text-xs text-blue-400" />
-                              {t('about_naftalan')}
-                            </IntlLink>
-                            <IntlLink 
-                              href="/about/history" 
-                              className="py-2 px-3 hover:bg-blue-50 hover:text-blue-500 rounded-lg flex items-center transition-colors"
-                              onClick={() => setMenuOpen(false)}
-                            >
-                              <FaChevronRight className="mr-2 text-xs text-blue-400" />
-                              {t('naftalan_history')}
-                            </IntlLink>
-                            <IntlLink 
-                              href="/about/treatments" 
-                              className="py-2 px-3 hover:bg-blue-50 hover:text-blue-500 rounded-lg flex items-center transition-colors"
-                              onClick={() => setMenuOpen(false)}
-                            >
-                              <FaChevronRight className="mr-2 text-xs text-blue-400" />
-                              {t('treated_conditions')}
-                            </IntlLink>
-                          </div>
-                        </motion.div>
-                      )}
-                    </AnimatePresence>
-                  </div>
-                  
-                  {/* Sanatoriyalar dropdown */}
-                  <div className="py-1">
-                    <button 
-                      className={`w-full flex justify-between items-center py-2.5 px-3 rounded-lg font-medium ${activeSubmenu === 'sanatoriums' ? 'bg-blue-50 text-blue-500' : 'hover:bg-gray-50'}`}
+                      className={`w-full flex justify-between items-center py-2.5 px-3 rounded-lg font-medium ${
+                        isActive('/sanatoriums') ? 'bg-blue-50 text-blue-600' : 'hover:bg-gray-50'
+                      }`}
                       onClick={() => toggleSubmenu('sanatoriums')}
                     >
                       <span>{t('sanatoriums')}</span>
@@ -370,7 +445,9 @@ const Header = ({ siteSettings }: HeaderProps) => {
                           <div className="pl-3 py-1 ml-2 border-l-2 border-blue-100 flex flex-col space-y-0.5 mt-1">
                             <IntlLink 
                               href="/sanatoriums/naftalan" 
-                              className="py-2 px-3 hover:bg-blue-50 hover:text-blue-500 rounded-lg flex items-center transition-colors"
+                              className={`py-2 px-3 rounded-lg flex items-center transition-colors ${
+                                isActive('/sanatoriums/naftalan') ? 'bg-blue-50 text-blue-600' : 'hover:bg-blue-50 hover:text-blue-500'
+                              }`}
                               onClick={() => setMenuOpen(false)}
                             >
                               <FaChevronRight className="mr-2 text-xs text-blue-400" />
@@ -378,7 +455,9 @@ const Header = ({ siteSettings }: HeaderProps) => {
                             </IntlLink>
                             <IntlLink 
                               href="/sanatoriums/other" 
-                              className="py-2 px-3 hover:bg-blue-50 hover:text-blue-500 rounded-lg flex items-center transition-colors"
+                              className={`py-2 px-3 rounded-lg flex items-center transition-colors ${
+                                isActive('/sanatoriums/other') ? 'bg-blue-50 text-blue-600' : 'hover:bg-blue-50 hover:text-blue-500'
+                              }`}
                               onClick={() => setMenuOpen(false)}
                             >
                               <FaChevronRight className="mr-2 text-xs text-blue-400" />
@@ -389,53 +468,161 @@ const Header = ({ siteSettings }: HeaderProps) => {
                       )}
                     </AnimatePresence>
                   </div>
-                  
-                  {/* Regular links */}
+
+                  {/* Packages */}
                   <IntlLink 
-                    href="/how-to-come" 
-                    className="py-2.5 px-3 hover:bg-blue-50 hover:text-blue-500 rounded-lg font-medium transition-colors"
+                    href="/packages" 
+                    className={`py-2.5 px-3 rounded-lg font-medium transition-colors ${
+                      isActive('/packages') ? 'bg-blue-50 text-blue-600' : 'hover:bg-blue-50 hover:text-blue-500'
+                    }`}
                     onClick={() => setMenuOpen(false)}
                   >
-                    {t('how_to_come')}
+                    {t('packages')}
                   </IntlLink>
-                  
-                  <IntlLink 
-                    href="/reservation" 
-                    className="py-2.5 px-3 hover:bg-blue-50 hover:text-blue-500 rounded-lg font-medium transition-colors"
-                    onClick={() => setMenuOpen(false)}
-                  >
-                    {t('reservation')}
-                  </IntlLink>
-                  
+
+                  {/* About */}
+                  <div className="py-1">
+                    <button 
+                      className={`w-full flex justify-between items-center py-2.5 px-3 rounded-lg font-medium ${
+                        isActive('/about') ? 'bg-blue-50 text-blue-600' : 'hover:bg-gray-50'
+                      }`}
+                      onClick={() => toggleSubmenu('about')}
+                    >
+                      <span>{t('about')}</span>
+                      <FaChevronDown className={`transform transition-transform duration-300 ${activeSubmenu === 'about' ? 'rotate-180' : ''}`} />
+                    </button>
+                    
+                    <AnimatePresence>
+                      {activeSubmenu === 'about' && (
+                        <motion.div
+                          initial={{ height: 0, opacity: 0 }}
+                          animate={{ height: 'auto', opacity: 1 }}
+                          exit={{ height: 0, opacity: 0 }}
+                          transition={{ duration: 0.2 }}
+                          className="overflow-hidden"
+                        >
+                          <div className="pl-3 py-1 ml-2 border-l-2 border-blue-100 flex flex-col space-y-0.5 mt-1">
+                            <IntlLink 
+                              href="/about" 
+                              className={`py-2 px-3 rounded-lg flex items-center transition-colors ${
+                                isActive('/about') ? 'bg-blue-50 text-blue-600' : 'hover:bg-blue-50 hover:text-blue-500'
+                              }`}
+                              onClick={() => setMenuOpen(false)}
+                            >
+                              <FaChevronRight className="mr-2 text-xs text-blue-400" />
+                              {t('about_naftalan')}
+                            </IntlLink>
+                            <IntlLink 
+                              href="/about/history" 
+                              className={`py-2 px-3 rounded-lg flex items-center transition-colors ${
+                                isActive('/about/history') ? 'bg-blue-50 text-blue-600' : 'hover:bg-blue-50 hover:text-blue-500'
+                              }`}
+                              onClick={() => setMenuOpen(false)}
+                            >
+                              <FaChevronRight className="mr-2 text-xs text-blue-400" />
+                              {t('naftalan_history')}
+                            </IntlLink>
+                            <IntlLink 
+                              href="/about/treatments" 
+                              className={`py-2 px-3 rounded-lg flex items-center transition-colors ${
+                                isActive('/about/treatments') ? 'bg-blue-50 text-blue-600' : 'hover:bg-blue-50 hover:text-blue-500'
+                              }`}
+                              onClick={() => setMenuOpen(false)}
+                            >
+                              <FaChevronRight className="mr-2 text-xs text-blue-400" />
+                              {t('treated_conditions')}
+                            </IntlLink>
+                          </div>
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+                  </div>
+
+                  {/* Blog */}
                   <IntlLink 
                     href="/blog" 
-                    className="py-2.5 px-3 hover:bg-blue-50 hover:text-blue-500 rounded-lg font-medium transition-colors"
+                    className={`py-2.5 px-3 rounded-lg font-medium transition-colors ${
+                      isActive('/blog') ? 'bg-blue-50 text-blue-600' : 'hover:bg-blue-50 hover:text-blue-500'
+                    }`}
                     onClick={() => setMenuOpen(false)}
                   >
                     {t('blog')}
                   </IntlLink>
-                  
-                  <IntlLink 
-                    href="/contact" 
-                    className="py-2.5 px-3 hover:bg-blue-50 hover:text-blue-500 rounded-lg font-medium transition-colors"
-                    onClick={() => setMenuOpen(false)}
-                  >
-                    {t('contact')}
-                  </IntlLink>
+
+                  {/* Help */}
+                  <div className="py-1">
+                    <button 
+                      className={`w-full flex justify-between items-center py-2.5 px-3 rounded-lg font-medium ${
+                        isActive('/help') ? 'bg-blue-50 text-blue-600' : 'hover:bg-gray-50'
+                      }`}
+                      onClick={() => toggleSubmenu('help')}
+                    >
+                      <span>{t('help')}</span>
+                      <FaChevronDown className={`transform transition-transform duration-300 ${activeSubmenu === 'help' ? 'rotate-180' : ''}`} />
+                    </button>
+                    
+                    <AnimatePresence>
+                      {activeSubmenu === 'help' && (
+                        <motion.div
+                          initial={{ height: 0, opacity: 0 }}
+                          animate={{ height: 'auto', opacity: 1 }}
+                          exit={{ height: 0, opacity: 0 }}
+                          transition={{ duration: 0.2 }}
+                          className="overflow-hidden"
+                        >
+                          <div className="pl-3 py-1 ml-2 border-l-2 border-blue-100 flex flex-col space-y-0.5 mt-1">
+                            <IntlLink 
+                              href="/how-to-come" 
+                              className={`py-2 px-3 rounded-lg flex items-center transition-colors ${
+                                isActive('/how-to-come') ? 'bg-blue-50 text-blue-600' : 'hover:bg-blue-50 hover:text-blue-500'
+                              }`}
+                              onClick={() => setMenuOpen(false)}
+                            >
+                              <FaChevronRight className="mr-2 text-xs text-blue-400" />
+                              {t('how_to_come')}
+                            </IntlLink>
+                            <IntlLink 
+                              href="/ask-doctor" 
+                              className={`py-2 px-3 rounded-lg flex items-center transition-colors ${
+                                isActive('/ask-doctor') ? 'bg-blue-50 text-blue-600' : 'hover:bg-blue-50 hover:text-blue-500'
+                              }`}
+                              onClick={() => setMenuOpen(false)}
+                            >
+                              <FaChevronRight className="mr-2 text-xs text-blue-400" />
+                              {t('ask_doctor')}
+                            </IntlLink>
+                            <IntlLink 
+                              href="/contact" 
+                              className={`py-2 px-3 rounded-lg flex items-center transition-colors ${
+                                isActive('/contact') ? 'bg-blue-50 text-blue-600' : 'hover:bg-blue-50 hover:text-blue-500'
+                              }`}
+                              onClick={() => setMenuOpen(false)}
+                            >
+                              <FaChevronRight className="mr-2 text-xs text-blue-400" />
+                              {t('contact')}
+                            </IntlLink>
+                          </div>
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+                  </div>
                 </div>
-                
-                {/* Currency Selector in mobile menu */}
-                
+
+                {/* Currency Selector */}
                 <CurrencySelector />
 
-                
+                {/* Reservation Button */}
                 <div className="mt-4 pt-4 border-t">
                   <IntlLink 
-                    href="/ask-doctor" 
-                    className="w-full py-2.5 px-3 bg-blue-500 text-white rounded-lg text-center font-medium hover:bg-blue-600 transition-all duration-300 shadow-md hover:shadow-lg flex items-center justify-center"
+                    href="/reservation" 
+                    className={`w-full py-2.5 px-3 rounded-lg text-center font-medium transition-all duration-300 shadow-md hover:shadow-lg flex items-center justify-center ${
+                      isActive('/reservation') 
+                        ? 'bg-blue-600 text-white' 
+                        : 'bg-blue-500 text-white hover:bg-blue-600'
+                    }`}
                     onClick={() => setMenuOpen(false)}
                   >
-                    {t('ask_doctor')}
+                    {t('reservation')}
                   </IntlLink>
                 </div>
               </div>

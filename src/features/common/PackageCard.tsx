@@ -1,7 +1,9 @@
+import { useCurrencyStore } from '@/lib/store/useCurrencyStore';
 import { PackageType } from '@/lib/types/package.type';
 import { motion } from 'framer-motion';
+import { useTranslations } from 'next-intl';
 import Link from 'next/link';
-import { FaCalendarAlt, FaHotel, FaSpa, FaTag } from 'react-icons/fa';
+import { FaCalendarAlt, FaHotel, FaSpa } from 'react-icons/fa';
 
 interface PackageCardProps {
   pkg: PackageType;
@@ -10,6 +12,8 @@ interface PackageCardProps {
 
 export const PackageCard = ({ pkg, index }: PackageCardProps) => {
   const hasDiscount = pkg.discount_value > 0;
+  const { formatPrice } = useCurrencyStore();
+  const t = useTranslations('packages')
 
   return (
     <motion.div
@@ -26,20 +30,20 @@ export const PackageCard = ({ pkg, index }: PackageCardProps) => {
             {hasDiscount ? (
               <>
                 <div className="flex items-center gap-2">
-                  <span className="text-sm text-gray-500 line-through">
-                    {pkg.original_price} {pkg.currency_symbol}
+                  <span className="text-sm text-gray-500 line-through whitespace-nowrap">
+                    {formatPrice(pkg.original_price)}
                   </span>
-                  <span className="bg-red-100 text-red-600 px-2 py-0.5 rounded-full text-xs font-medium">
-                    {pkg.discount_type === 'percentage' ? `-${pkg.discount_value}%` : `-${pkg.discount_value} ${pkg.currency_symbol}`}
+                  <span className="bg-red-100 text-red-600 px-2 py-0.5 rounded-full text-xs font-medium whitespace-nowrap">
+                    {pkg.discount_type === 'percentage' ? `-${pkg.discount_value}%` : `-${formatPrice(pkg.discount_value)}`}
                   </span>
                 </div>
-                <div className="text-lg font-bold text-blue-700">
-                  {pkg.discounted_price} {pkg.currency_symbol}
+                <div className="text-lg font-bold text-blue-700 whitespace-nowrap">
+                  {formatPrice(pkg.discounted_price)}
                 </div>
               </>
             ) : (
-              <div className="text-lg font-bold text-blue-700">
-                {pkg.original_price} {pkg.currency_symbol}
+              <div className="text-lg font-bold text-blue-700 whitespace-nowrap">
+                {formatPrice(pkg.original_price)}
               </div>
             )}
           </div>
@@ -50,19 +54,19 @@ export const PackageCard = ({ pkg, index }: PackageCardProps) => {
         </div>
         <div className="flex items-center text-gray-600">
           <FaCalendarAlt className="mr-2" />
-          <span>{pkg.duration} gün</span>
+          <span>{pkg.duration} {t('day')}</span>
         </div>
       </div>
       
       <div className="p-6 flex-grow">
         <h4 className="font-medium mb-3 flex items-center">
           <FaSpa className="mr-2 text-blue-600" />
-          Paketə daxildir:
+          {t("include_package")}:
         </h4>
         <ul className="space-y-2 mb-6">
           {pkg.inclusions.map((inclusion) => (
             <li key={inclusion.id} className="flex items-start">
-              <svg className="w-5 h-5 text-green-500 mr-2 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <svg className="min-w-5 min-md:h-5 text-green-500 mr-2 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path>
               </svg>
               <span className="text-gray-600">{inclusion.name}</span>
@@ -76,7 +80,7 @@ export const PackageCard = ({ pkg, index }: PackageCardProps) => {
           href={`/packages/${pkg.slug}`}
           className="w-full py-2 px-4 bg-blue-600 text-white rounded-full hover:bg-blue-700 transition-colors flex items-center justify-center"
         >
-          Sifariş et
+          {t("order")}
         </Link>
       </div>
     </motion.div>

@@ -7,6 +7,7 @@ import { FaCalendarAlt, FaFacebookF, FaTwitter, FaLinkedinIn, FaTelegramPlane } 
 import { Link } from "@/i18n/navigation";
 import { BlogPost } from "@/lib/types/blog.type";
 import { formatDate } from "@/lib/utils/timeUtils";
+import { useTranslations } from "next-intl";
 
 interface BlogPostDetailPageProps {
   blogPost: BlogPost;
@@ -16,6 +17,7 @@ const BlogPostDetailPage: React.FC<BlogPostDetailPageProps> = ({
   blogPost
 }) => {
 
+  const t = useTranslations('pages.blog_detail');
 
   return (
     <div>
@@ -59,7 +61,7 @@ const BlogPostDetailPage: React.FC<BlogPostDetailPageProps> = ({
             {blogPost.tags && blogPost.tags.length > 0 && (
               <div className="border-t border-b border-gray-200 py-6 my-8">
                 <div className="flex flex-wrap items-center gap-2">
-                  <span className="text-gray-700 font-medium">Teqlər:</span>
+                  <span className="text-gray-700 font-medium">{t('tags')}:</span>
                   {blogPost.tags.map((tag, index) => (
                     <Link 
                       key={index} 
@@ -75,7 +77,7 @@ const BlogPostDetailPage: React.FC<BlogPostDetailPageProps> = ({
             
             {/* Share */}
             <div className="mt-10">
-              <h4 className="text-xl font-bold mb-4">Bu məqaləni paylaşın</h4>
+              <h4 className="text-xl font-bold mb-4">{t('share')}</h4>
               <div className="flex gap-2">
                 <a 
                   href={`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(typeof window !== 'undefined' ? window.location.href : '')}`} 
@@ -120,7 +122,7 @@ const BlogPostDetailPage: React.FC<BlogPostDetailPageProps> = ({
         <div className="bg-gray-50 py-12 md:py-16">
           <div className="container mx-auto px-4">
             <div className="max-w-5xl mx-auto">
-              <h2 className="text-2xl md:text-3xl font-bold mb-8 text-center">Oxşar məqalələr</h2>
+              <h2 className="text-2xl md:text-3xl font-bold mb-8 text-center">{t('related_posts')}</h2>
               
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 {blogPost.other_blogs.map((post) => (

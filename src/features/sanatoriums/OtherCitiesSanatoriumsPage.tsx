@@ -133,9 +133,9 @@ export default function OtherSanatoriumsPage({ otherCitiesSanatoriumsPage, other
             transition={{ duration: 0.6 }}
             variants={fadeInUpVariant}
           >
-            <h2 className="text-3xl font-bold mb-6 text-gray-800">{otherCitiesSanatoriumsPage.main_section_title}</h2>
+            <h2 className="text-3xl font-bold mb-6 text-gray-800">{otherCitiesSanatoriumsPage.sanatoriums_section_title}</h2>
             <div className="w-20 h-1 bg-green-500 mx-auto mb-6"></div>
-            <div dangerouslySetInnerHTML={{ __html: otherCitiesSanatoriumsPage.main_section_description }} className="custom-html-content max-w-3xl mx-auto text-lg text-gray-600">
+            <div dangerouslySetInnerHTML={{ __html: otherCitiesSanatoriumsPage.sanatoriums_section_description }} className="custom-html-content max-w-3xl mx-auto text-lg text-gray-600">
               
             </div>
           </motion.div>
@@ -156,25 +156,7 @@ export default function OtherSanatoriumsPage({ otherCitiesSanatoriumsPage, other
                   index={index} 
                 />
                 
-                {/* Additional treatment info - custom for this page
-                <div className="mt-3 p-4 bg-green-50 rounded-lg border border-green-100">
-                  <h4 className="text-lg font-semibold mb-3 text-green-800">
-                    <div className="flex items-center">
-                      <svg className="w-5 h-5 mr-2 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
-                      </svg>
-                      Müalicə olunan xəstəliklər:
-                    </div>
-                  </h4>
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
-                    {otherSanatoriums[index].treatmentFor.map((treatment, i) => (
-                      <div key={i} className="flex items-center text-gray-700">
-                        <span className="h-2 w-2 bg-green-500 rounded-full mr-2 flex-shrink-0"></span>
-                        <span>{treatment}</span>
-                      </div>
-                    ))}
-                  </div>
-                </div> */}
+               
               </motion.div>
             ))}
           </div>

@@ -17,7 +17,7 @@ interface Props {
 export default function BookingPage({ sanatorium }: Props) {
   const { formatPrice } = useCurrencyStore();
   const t = useTranslations('booking');
-
+  
   // Form state
   const [formData, setFormData] = useState({
     firstName: '',
@@ -428,9 +428,9 @@ export default function BookingPage({ sanatorium }: Props) {
 
         // Send data to backend
         await createBooking(bookingData);
-        
-        // Show success message
-        setBookingSuccess(true);
+      
+      // Show success message
+      setBookingSuccess(true);
       } catch (error) {
         console.error('Error creating booking:', error);
         setErrors({
@@ -735,7 +735,7 @@ export default function BookingPage({ sanatorium }: Props) {
     };
   })();
   
-
+  
   // Fade in animation variant
   const fadeInUpVariant = {
     hidden: { opacity: 0, y: 20 },
@@ -822,7 +822,7 @@ export default function BookingPage({ sanatorium }: Props) {
                         id="roomTypeId"
                         name="roomTypeId"
                         value={formData.roomTypeId}
-                        onChange={handleInputChange}
+                          onChange={handleInputChange}
                         className={`w-full px-4 py-3 rounded-lg border ${errors.roomTypeId ? 'border-red-400' : 'border-gray-300'} focus:outline-none focus:ring-2 focus:ring-blue-500`}
                       >
                         <option value="">{t('form.select_room')}</option>
@@ -858,7 +858,7 @@ export default function BookingPage({ sanatorium }: Props) {
                     </div>
                     
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                      <div>
+                    <div>
                         <label htmlFor="adults" className="block text-sm font-medium text-gray-700 mb-1">{t('form.adults')}</label>
                         <select
                           id="adults"
@@ -891,9 +891,9 @@ export default function BookingPage({ sanatorium }: Props) {
                             {t('summary.price_info')}
                           </p>
                         )}
-                      </div>
-                      
-                      <div>
+                    </div>
+                    
+                    <div>
                         <label htmlFor="children" className="block text-sm font-medium text-gray-700 mb-1">{t('form.children')}</label>
                         <select
                           id="children"
@@ -950,8 +950,8 @@ export default function BookingPage({ sanatorium }: Props) {
                         )}
                       </div>
                     </div>
-                  </div>
-                  
+                    </div>
+                    
                   {formData.children > 0 && (
                     <div className="mb-8">
                       <h3 className="text-lg font-medium text-gray-800 mb-3">{t('form.children_ages')}</h3>
@@ -988,17 +988,17 @@ export default function BookingPage({ sanatorium }: Props) {
                               id={`childAge_${index}`}
                               name={`childAge_${index}`}
                               value={age}
-                              onChange={handleInputChange}
+                          onChange={handleInputChange}
                               className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
                             >
                               {[...Array(17)].map((_, i) => (
                                 <option key={i} value={i + 1}>{i + 1} {t('form.years')}</option>
                               ))}
                             </select>
-                          </div>
-                        ))}
                       </div>
+                        ))}
                     </div>
+                  </div>
                   )}
                   
                   <h2 className="text-2xl font-bold text-gray-800 mb-6">{t('form.date_selection')}</h2>
@@ -1041,41 +1041,41 @@ export default function BookingPage({ sanatorium }: Props) {
                       </div>
                       {errors.checkOut && <p className="mt-1 text-sm text-red-500">{errors.checkOut}</p>}
                     </div>
-                  </div>
-                  
-                  <div>
+                    </div>
+                    
+                    <div>
                     <label className="block text-sm font-medium text-gray-700 mb-3">{t('form.treatment_selection')}</label>
-                    <div className="space-y-3">
-                      <div className="flex items-center">
-                        <input
-                          type="radio"
-                          id="with-treatment"
-                          name="withTreatment"
-                          checked={formData.withTreatment}
+                      <div className="space-y-3">
+                        <div className="flex items-center">
+                          <input
+                            type="radio"
+                            id="with-treatment"
+                            name="withTreatment"
+                            checked={formData.withTreatment}
                           onChange={() => {
                             setFormData({...formData, withTreatment: true});
                             setPriceUpdateTrigger(prev => prev + 1);
                           }}
-                          className="h-4 w-4 text-blue-600 focus:ring-blue-500"
-                        />
+                            className="h-4 w-4 text-blue-600 focus:ring-blue-500"
+                          />
                         <label htmlFor="with-treatment" className="ml-2 text-gray-700">{t('form.with_treatment')}</label>
-                      </div>
-                      
-                      <div className="flex items-center">
-                        <input
-                          type="radio"
-                          id="without-treatment"
-                          name="withTreatment"
-                          checked={!formData.withTreatment}
+                        </div>
+                        
+                        <div className="flex items-center">
+                          <input
+                            type="radio"
+                            id="without-treatment"
+                            name="withTreatment"
+                            checked={!formData.withTreatment}
                           onChange={() => {
                             setFormData({...formData, withTreatment: false});
                             setPriceUpdateTrigger(prev => prev + 1);
                           }}
-                          className="h-4 w-4 text-blue-600 focus:ring-blue-500"
-                        />
+                            className="h-4 w-4 text-blue-600 focus:ring-blue-500"
+                          />
                         <label htmlFor="without-treatment" className="ml-2 text-gray-700">{t('form.without_treatment')}</label>
+                        </div>
                       </div>
-                    </div>
                   </div>
 
                   <h2 className="text-2xl font-bold text-gray-800 mb-6 mt-8">{t('form.personal_info')}</h2>
@@ -1268,7 +1268,7 @@ export default function BookingPage({ sanatorium }: Props) {
                   </div>
                   
                   {formData.children > 0 && (
-                    <div className="flex justify-between">
+                  <div className="flex justify-between">
                       <span className="text-gray-600">{t('summary.children_ages')}</span>
                       <span className="font-medium text-gray-800">
                         {formData.childrenAges.join(', ')} {t('form.years')}
@@ -1324,12 +1324,12 @@ export default function BookingPage({ sanatorium }: Props) {
                         if (extraBedCost <= 0) return null;
                         
                         return (
-                          <div className="flex justify-between">
+                        <div className="flex justify-between">
                             <span>{t('summary.extra_beds', { nights, children: formData.children })}</span>
-                            <span className="font-medium">
+                          <span className="font-medium">
                               {formatPrice((extraBedCost * nights).toString())}
-                            </span>
-                          </div>
+                          </span>
+                        </div>
                         );
                       })()}
                     </div>

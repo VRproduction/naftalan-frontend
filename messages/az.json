@@ -23,11 +23,13 @@
     "sanatoriums": "Sanatoriyalar",
     "naftalan_sanatoriums": "Naftalan sanatoriyaları",
     "other_sanatoriums": "Digər şəhərlərdəki sanatoriyalar",
+    "packages": "Paketlər",
     "how_to_come": "Necə gəlmək olar?",
     "reservation": "Rezervasiya",
     "blog": "Bloq",
     "contact": "Əlaqə",
-    "ask_doctor": "Həkimə sual ver"
+    "ask_doctor": "Həkimə sual ver",
+    "help": "Kömək"
   },
   "languages": {
     "az": "Azərbaycan",
@@ -107,7 +109,8 @@
     "massage": "Massaj",
     "physiotherapy": "Fizioterapiya",
     "default_address": "Naftalan şəhəri, Azərbaycan",
-    "copyright": "© {year} {name}. Bütün hüquqlar qorunur."
+    "copyright": "Copyright © 2025",
+    "follow_us": "Bizi izləyin"
   },
   "home": {
     "hero": {
@@ -128,6 +131,9 @@
     },
     "contact": {
       "get_in_touch": "Bizimlə əlaqə saxlayın"
+    },
+    "packages": {
+      "all_packages": "Bütün paketlər"
     }
   },
   "pages": {
@@ -190,13 +196,20 @@
       }
     },
     "about": {
-      "title": "Haqqımızda"
+      "title": "Haqqımızda",
+      "reservation": "Rezervasiya et",
+      "contact_infos": "Əlaqə məlumatları",
+      "phone": "Telefon",
+      "email": "Email",
+      "location": "Ünvan",
+      "useful_links": "Faydalı keçidlər",
+      "naftalan_history": "Naftalan neftinin tarixi",
+      "naftalan_treatments": "Müalicə olunan xəstəliklər",
+      "naftalan_sanatoriums": "Naftalan sanatoriyaları",
+      "how_to_come": "Naftalana necə gəlmək olar"
     },
     "sanatoriums": {
       "title": "Sanatoriyalar"
-    },
-    "blog": {
-      "title": "Bloq"
     },
     "reservation": {
       "title": "Rezervasiya",
@@ -257,6 +270,22 @@
     },
     "how_to_come": {
       "title": "Necə gəlmək olar?"
+    },
+    "packages": {
+      "packages": "Paketlər"
+    },
+    "blog": {
+      "title": "Bloq",
+      "hero_title": "Bloq",
+      "hero_description": "Naftalan müalicəsi, sağlamlıq və sağlam həyat tərzi haqqında faydalı məqalələr",
+      "popular_tags": "Populyar teqlər",
+      "show_all_blogs": "Bütün məqalələri göstər",
+      "no_blogs_found": "Axtarışınıza uyğun məqalə tapılmadı"
+    },
+    "blog_detail": {
+      "tags": "Teqlər",
+      "share": "Bu məqaləni paylaşın",
+      "related_posts": "Oxşar məqalələr"
     }
   },
   "sanatoriums": {
@@ -423,6 +452,11 @@
       "room_type_required": "Otaq növü seçilməlidir",
       "terms_required": "Şərtləri qəbul etməlisiniz"
     }
+  },
+  "packages": {
+    "day": "Gün",
+    "include_package": "Paketə daxildir",
+    "order": "Sifariş et"
   },
   "not_found": {
     "title": "Səhifə tapılmadı",

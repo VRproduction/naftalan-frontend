@@ -3,6 +3,7 @@ import Link from "next/link";
 import { PackageSection as PackageSectionType } from "@/lib/types/home.type";
 import { PackageCard } from "@/features/common/PackageCard";
 import { PackageType } from "@/lib/types/package.type";
+import { useTranslations } from "next-intl";
 
 const PackagesSection = ({
   packagesSection,
@@ -11,6 +12,8 @@ const PackagesSection = ({
   packagesSection: PackageSectionType;
   packages: PackageType []
 }) => {
+
+  const t = useTranslations('home.packages')
   return (
     <section className="py-16">
       <div className="container mx-auto px-4">
@@ -47,7 +50,7 @@ const PackagesSection = ({
             href="/packages"
             className="py-2 px-6 bg-blue-600 text-white rounded-full hover:bg-blue-700 transition-colors inline-block"
           >
-            Bütün paketlər
+            {t("all_packages")}
           </Link>
         </div>
       </div>

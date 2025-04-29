@@ -1,9 +1,11 @@
 'use client';
 
+import { Link } from '@/i18n/navigation';
+import { useSettingsStore } from '@/lib/store/useSettingsStore';
 import { About } from '@/lib/types/about.type';
 import { motion } from 'framer-motion';
+import { useTranslations } from 'next-intl';
 import Image from 'next/image';
-import Link from 'next/link';
 import { FaArrowRight } from 'react-icons/fa';
 
 interface Props {
@@ -11,6 +13,10 @@ interface Props {
 }
 
 export default function AboutPage({ about }: Props) {
+
+  const t = useTranslations('pages.about');
+  const {setting} = useSettingsStore();
+
   return (
     <div>
       {/* Hero Section */}
@@ -89,37 +95,37 @@ export default function AboutPage({ about }: Props) {
                       href="/reservation"
                       className="block text-center py-2 px-4 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
                     >
-                      Rezervasiya et
+                      {t("reservation")}
                     </Link>
                   </div>
                 </div>
                 
                 <div className="rounded-xl overflow-hidden shadow-md">
                   <div className="p-5">
-                    <h3 className="text-lg font-semibold mb-3">Əlaqə məlumatları</h3>
+                    <h3 className="text-lg font-semibold mb-3">{t("contact_infos")}</h3>
                     <div className="space-y-3 text-gray-600">
-                      <p><span className="font-medium">Telefon:</span> +994 12 345 67 89</p>
-                      <p><span className="font-medium">Email:</span> info@naftalan.az</p>
-                      <p><span className="font-medium">Ünvan:</span> Naftalan şəhəri, Azərbaycan</p>
+                      <p><span className="font-medium">{t("phone")}:</span> {setting?.contact_phones.filter((phone) => phone.is_primary === true).map((phone) => phone.phone)[0]}</p>
+                      <p><span className="font-medium">{t("email")}:</span> {setting?.contact_emails.filter((email) => email.is_primary === true).map((email) => email.email)[0]}</p>
+                      <p><span className="font-medium">{t("location")}:</span> {setting?.address}</p>
                     </div>
                   </div>
                 </div>
                 
                 <div className="rounded-xl overflow-hidden shadow-md">
                   <div className="p-5">
-                    <h3 className="text-lg font-semibold mb-3">Faydalı keçidlər</h3>
+                    <h3 className="text-lg font-semibold mb-3">{t("useful_links")}</h3>
                     <ul className="space-y-2">
                       <li>
-                        <Link href="/about/history" className="text-blue-500 hover:underline">Naftalan neftinin tarixi</Link>
+                        <Link href="/about/history" className="text-blue-500 hover:underline">{t("naftalan_history")}</Link>
                       </li>
                       <li>
-                        <Link href="/about/treatments" className="text-blue-500 hover:underline">Müalicə olunan xəstəliklər</Link>
+                        <Link href="/about/treatments" className="text-blue-500 hover:underline">{t("naftalan_treatments")}</Link>
                       </li>
                       <li>
-                        <Link href="/sanatoriums/naftalan" className="text-blue-500 hover:underline">Naftalan sanatoriyaları</Link>
+                        <Link href="/sanatoriums/naftalan" className="text-blue-500 hover:underline">{t("naftalan_sanatoriums")}</Link>
                       </li>
                       <li>
-                        <Link href="/how-to-come" className="text-blue-500 hover:underline">Naftalana necə gəlmək olar</Link>
+                        <Link href="/how-to-come" className="text-blue-500 hover:underline">{t("how_to_come")}</Link>
                       </li>
                     </ul>
                   </div>

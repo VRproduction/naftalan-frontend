@@ -1,7 +1,8 @@
 import { Link } from '@/i18n/navigation';
-import { FaFacebook, FaInstagram, FaTwitter, FaYoutube, FaPhoneAlt, FaEnvelope, FaMapMarkerAlt } from 'react-icons/fa';
+import { FaFacebook, FaInstagram, FaTwitter, FaYoutube, FaPhoneAlt, FaEnvelope, FaMapMarkerAlt, FaLinkedin, FaWhatsapp, FaTelegram, FaTiktok, FaPinterest } from 'react-icons/fa';
 import { SiteSettings } from '@/lib/types/core.type';
 import { useTranslations } from 'next-intl';
+import Image from 'next/image';
 
 interface FooterProps {
   siteSettings: SiteSettings;
@@ -15,31 +16,93 @@ const Footer = ({ siteSettings }: FooterProps) => {
       <div className="container mx-auto px-4 py-12">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
           <div>
-            <h3 className="text-xl font-bold mb-4">{siteSettings.site_name}</h3>
-            <p className="mb-4">{siteSettings.about_short || t('about_short_default')}</p>
+            <Link href="/" className="inline-block mb-6">
+              <Image 
+                src={siteSettings.footer_logo || siteSettings.logo || '/logo.png'} 
+                alt={siteSettings.site_name} 
+                width={150} 
+                height={50}
+                className="h-12 w-auto"
+              />
+            </Link>
+            <p className="mb-6 text-gray-400">{siteSettings.about_short || t('about_short_default')}</p>
             {siteSettings.show_social_in_footer && (
-            <div className="flex space-x-4">
-                {siteSettings.social_facebook && (
-                  <a href={siteSettings.social_facebook} className="text-white hover:text-blue-400 transition-colors">
-                <FaFacebook size={20} />
-              </a>
-                )}
-                {siteSettings.social_instagram && (
-                  <a href={siteSettings.social_instagram} className="text-white hover:text-pink-400 transition-colors">
-                <FaInstagram size={20} />
-              </a>
-                )}
-                {siteSettings.social_twitter && (
-                  <a href={siteSettings.social_twitter} className="text-white hover:text-blue-400 transition-colors">
-                <FaTwitter size={20} />
-              </a>
-                )}
-                {siteSettings.social_youtube && (
-                  <a href={siteSettings.social_youtube} className="text-white hover:text-red-500 transition-colors">
-                <FaYoutube size={20} />
-              </a>
-                )}
-            </div>
+              <div className="space-y-4">
+                <h4 className="font-medium text-gray-300">{t('follow_us')}</h4>
+                <div className="flex space-x-4">
+                  {siteSettings.social_facebook && (
+                    <a 
+                      href={siteSettings.social_facebook} 
+                      target="_blank" 
+                      rel="noopener noreferrer"
+                      className="min-w-10 min-h-10 rounded-full bg-gray-800 flex items-center justify-center text-white hover:bg-blue-600 transition-colors"
+                    >
+                      <FaFacebook size={20} />
+                    </a>
+                  )}
+                  {siteSettings.social_instagram && (
+                    <a 
+                      href={siteSettings.social_instagram} 
+                      target="_blank" 
+                      rel="noopener noreferrer"
+                      className="min-w-10 min-h-10 rounded-full bg-gray-800 flex items-center justify-center text-white hover:bg-pink-600 transition-colors"
+                    >
+                      <FaInstagram size={20} />
+                    </a>
+                  )}
+                  {siteSettings.social_twitter && (
+                    <a 
+                      href={siteSettings.social_twitter} 
+                      target="_blank" 
+                      rel="noopener noreferrer"
+                      className="min-w-10 min-h-10 rounded-full bg-gray-800 flex items-center justify-center text-white hover:bg-blue-400 transition-colors"
+                    >
+                      <FaTwitter size={20} />
+                    </a>
+                  )}
+                  {siteSettings.social_youtube && (
+                    <a 
+                      href={siteSettings.social_youtube} 
+                      target="_blank" 
+                      rel="noopener noreferrer"
+                      className="min-w-10 min-h-10 rounded-full bg-gray-800 flex items-center justify-center text-white hover:bg-red-600 transition-colors"
+                    >
+                      <FaYoutube size={20} />
+                    </a>
+                  )}
+                  {siteSettings.social_linkedin && (
+                    <a 
+                      href={siteSettings.social_linkedin} 
+                      target="_blank" 
+                      rel="noopener noreferrer"
+                      className="min-w-10 min-h-10 rounded-full bg-gray-800 flex items-center justify-center text-white hover:bg-blue-700 transition-colors"
+                    >
+                      <FaLinkedin size={20} />
+                    </a>
+                  )}
+                 
+                  {siteSettings.social_tiktok && (
+                    <a 
+                      href={siteSettings.social_tiktok} 
+                      target="_blank" 
+                      rel="noopener noreferrer"
+                      className="min-w-10 min-h-10 rounded-full bg-gray-800 flex items-center justify-center text-white hover:bg-black transition-colors"
+                    >
+                      <FaTiktok size={20} />
+                    </a>
+                  )}
+                  {siteSettings.social_pinterest && (
+                    <a 
+                      href={siteSettings.social_pinterest} 
+                      target="_blank" 
+                      rel="noopener noreferrer"
+                      className="min-w-10 min-h-10 rounded-full bg-gray-800 flex items-center justify-center text-white hover:bg-red-500 transition-colors"
+                    >
+                      <FaPinterest size={20} />
+                    </a>
+                  )}
+                </div>
+              </div>
             )}
           </div>
           
@@ -132,7 +195,16 @@ const Footer = ({ siteSettings }: FooterProps) => {
         </div>
         
         <div className="border-t border-gray-800 mt-8 pt-8 text-center text-sm">
-          <p>{siteSettings.copyright_text || t('copyright', {year: new Date().getFullYear(), name: siteSettings.company_name || siteSettings.site_name})}</p>
+          <p>
+            {t('copyright')}
+            {
+              siteSettings.copyright_link && 
+              <Link href={siteSettings.copyright_link} className="hover:text-blue-400 transition-colors ml-1">
+                {siteSettings.company_name || siteSettings.site_name}
+              </Link>
+            }
+            
+          </p>
         </div>
       </div>
     </footer>

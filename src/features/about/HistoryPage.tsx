@@ -301,42 +301,7 @@ export default function HistoryPage({ history }: Props) {
         </div>
       </section>
 
-      {/* Call to Action */}
-      <section className="py-16 bg-blue-600 text-white">
-        <div className="container mx-auto px-4">
-          <div className="max-w-4xl mx-auto text-center">
-            <motion.div
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true }}
-              transition={{ duration: 0.6 }}
-              variants={fadeInUpVariant}
-            >
-              <h2 className="text-3xl md:text-4xl font-bold mb-6">
-                Naftalan neftinin şəfa möcüzəsini kəşf edin
-              </h2>
-              <p className="text-xl mb-8 text-blue-100">
-                Yüzillərin təcrübəsi və müasir tibb elminin birləşdiyi Naftalan
-                müalicələri ilə sağlamlığınıza qovuşun
-              </p>
-              <div className="flex flex-wrap justify-center gap-4">
-                <Link
-                  href="/about/treatments"
-                  className="px-8 py-3 bg-white text-blue-600 rounded-lg font-medium hover:bg-blue-50 transition-colors flex items-center"
-                >
-                  Müalicə olunan xəstəliklər <FaArrowRight className="ml-2" />
-                </Link>
-                <Link
-                  href="/sanatoriums/naftalan"
-                  className="px-8 py-3 bg-transparent border-2 border-white text-white rounded-lg font-medium hover:bg-white hover:text-blue-600 transition-colors"
-                >
-                  Sanatoriumlar
-                </Link>
-              </div>
-            </motion.div>
-          </div>
-        </div>
-      </section>
+    
     </div>
   );
 }

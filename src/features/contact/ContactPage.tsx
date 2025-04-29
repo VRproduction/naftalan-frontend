@@ -51,7 +51,7 @@ export default function ContactPage() {
                     <div>
                       <h3 className="text-lg font-medium text-gray-900">{t('address_title')}</h3>
                       <p className="mt-1 text-gray-600">
-                        {t('address')}
+                        {setting?.address}
                       </p>
                     </div>
                   </div>
@@ -125,16 +125,18 @@ export default function ContactPage() {
       </section>
       
       {/* Map Section */}
-      <section className="py-12 bg-gray-50">
-        <div className="container mx-auto px-4">
-          <div className="text-center mb-10">
-            <h2 className="text-2xl font-bold mb-2">{t('map_title')}</h2>
+      {
+        setting?.map_src && (
+          <section className="py-12 bg-gray-50">
+            <div className="container mx-auto px-4">
+              <div className="text-center mb-10">
+                <h2 className="text-2xl font-bold mb-2">{t('map_title')}</h2>
             <p className="text-gray-600">{t('map_subtitle')}</p>
           </div>
           
           <div className="rounded-xl overflow-hidden shadow-md h-[400px]">
             <iframe
-              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d24232.51390993425!2d46.689722651272096!3d40.34583871449216!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x403e1a2eda06c4ed%3A0x2c54dfe2f8724283!2sNaftalan%2C%20Azerbaijan!5e0!3m2!1sen!2s!4v1716225149606!5m2!1sen!2s"
+              src={setting.map_src}
               width="100%"
               height="100%"
               style={{ border: 0 }}
@@ -145,6 +147,7 @@ export default function ContactPage() {
           </div>
         </div>
       </section>
+      )}
     </div>
   );
 } 

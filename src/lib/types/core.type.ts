@@ -24,6 +24,7 @@ export interface SiteSettings {
   map_latitude: number | null;
   map_longitude: number | null;
   map_zoom: number;
+  map_src: string | null;
   working_hours: Array<{
     id: number;
     day: string;
@@ -48,6 +49,7 @@ export interface SiteSettings {
   accent_color: string;
   footer_text: string | null;
   copyright_text: string | null;
+  copyright_link: string | null;
   show_social_in_footer: boolean;
   social_facebook: string | null;
   social_instagram: string | null;

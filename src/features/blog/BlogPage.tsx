@@ -7,6 +7,7 @@ import {  useRouter, usePathname } from '@/i18n/navigation';
 import { useSearchParams } from 'next/navigation';
 import { BlogCategory, BlogPost, BlogTag } from '@/lib/types/blog.type';
 import BlogCard from '../common/BlogCard';
+import { useTranslations } from 'next-intl';
 
 interface Props {
   blogs: BlogPost[];
@@ -27,27 +28,8 @@ export default function BlogPage({ blogs, categories, tags }: Props) {
   const activeTag = searchParams.get('tag');
   
   
-  const handleSearch = (e: React.FormEvent) => {
-    e.preventDefault();
-    
-    // Update URL with search params
-    const params = new URLSearchParams(searchParams.toString());
-    
-    if (searchQuery) {
-      params.set('search', searchQuery);
-    } else {
-      params.delete('search');
-    }
-    
-    if (activeCategory) {
-      params.set('category', activeCategory);
-    } else {
-      params.delete('category');
-    }
-    
-    const newUrl = `${pathname}${params.toString() ? '?' + params.toString() : ''}`;
-    router.push(newUrl);
-  };
+  const t = useTranslations('pages.blog');
+ 
   
   const handleCategoryChange = (category: string) => {
     // Update URL with category param
@@ -98,10 +80,10 @@ export default function BlogPage({ blogs, categories, tags }: Props) {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
           >
-            <h1 className="text-4xl md:text-5xl font-bold mb-4 text-gray-800">Bloq</h1>
+            <h1 className="text-4xl md:text-5xl font-bold mb-4 text-gray-800">{t('hero_title')}</h1>
             <div className="w-20 h-1 bg-blue-500 mx-auto mb-6"></div>
             <p className="max-w-2xl mx-auto text-lg text-gray-600">
-              Naftalan müalicəsi, sağlamlıq və sağlam həyat tərzi haqqında faydalı məqalələr
+              {t('hero_description')}
             </p>
           </motion.div>
         </div>
@@ -146,7 +128,7 @@ export default function BlogPage({ blogs, categories, tags }: Props) {
                 ))
               ) : (
                 <div className="col-span-full text-center py-12">
-                  <h3 className="text-xl text-gray-700 mb-4">Axtarışınıza uyğun məqalə tapılmadı</h3>
+                  <h3 className="text-xl text-gray-700 mb-4">{t('no_blogs_found')}</h3>
                   <button
                     onClick={() => {
                       setSearchQuery('');
@@ -154,7 +136,7 @@ export default function BlogPage({ blogs, categories, tags }: Props) {
                     }}
                     className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
                   >
-                    Bütün məqalələri göstər
+                    {t('show_all_blogs')}
                   </button>
                 </div>
               )}
@@ -168,7 +150,7 @@ export default function BlogPage({ blogs, categories, tags }: Props) {
         <section className="py-16 bg-white">
           <div className="container mx-auto px-4">
             <div className="max-w-5xl mx-auto">
-              <h2 className="text-2xl font-bold mb-8 text-center">Populyar teqlər</h2>
+              <h2 className="text-2xl font-bold mb-8 text-center">{t('popular_tags')}</h2>
               <div className="flex flex-wrap justify-center gap-3">
     
                 {tags.map((tag, index) => (
