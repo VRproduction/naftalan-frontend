@@ -12,6 +12,7 @@ import {
   BlogSection,
   ContactSection,
 } from "../types/home.type";
+import { PackageType } from "../types/package.type";
 import { Sanatorium } from "../types/sanatorium.type";
 import api, { SupportedLocale } from "../utils/apiClient";
 
@@ -89,3 +90,8 @@ export const getSanatoriums = async (locale: SupportedLocale) => {
     return response;
 };
   
+
+export const getPackages = async (locale: SupportedLocale) => {
+  const response = await api.get<PackageType []>("/home/packages/", { locale: locale });
+  return response;
+};

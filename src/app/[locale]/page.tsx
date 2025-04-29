@@ -1,5 +1,5 @@
 import HomePage from "@/features/home/HomePage";
-import { getBlogs, getHeroSlider, getSanatoriums } from "@/lib/services/home.service";
+import { getBlogs, getHeroSlider, getPackages, getSanatoriums } from "@/lib/services/home.service";
 import {
   getAboutSection,
   getSanatoriumsSection,
@@ -37,7 +37,8 @@ export default async function Home({ params }: Props) {
     contactSection,
     sanatoriums,
     blogs,
-    locations
+    locations,
+    packages
   ] = await Promise.all([
     getHeroSlider(locale),
     getAboutSection(locale),
@@ -52,7 +53,8 @@ export default async function Home({ params }: Props) {
     getContactSection(locale),
     getSanatoriums(locale),
     getBlogs(locale),
-    getLocations(locale)
+    getLocations(locale),
+    getPackages(locale)
   ]);
   return (
     <HomePage
@@ -62,6 +64,7 @@ export default async function Home({ params }: Props) {
       sanatoriums={sanatoriums}
       treatmentSection={treatmentSection}
       packagesSection={packagesSection}
+      packages={packages}
       testimonials={testimonials}
       testimonialSection={testimonialSection}
       faqSection={faqSection}

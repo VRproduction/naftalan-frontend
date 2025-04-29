@@ -15,7 +15,7 @@ import {
 import { SanatoriumDetail } from "@/lib/types/sanatorium.type";
 import SanatoriumCard from "../common/SanatoriumCard";
 import { useTranslations } from "next-intl";
-import { useCurrencyStore } from "@/store/useCurrencyStore";
+import { useCurrencyStore } from "@/lib/store/useCurrencyStore";
 
 interface PageProps {
   sanatorium: SanatoriumDetail;

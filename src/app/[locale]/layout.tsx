@@ -9,6 +9,7 @@ import { notFound } from "next/navigation";
 import { getMessages, setRequestLocale } from "next-intl/server";
 import Script from "next/script";
 import { getSiteSettings } from "@/lib/services/core.service";
+import { AppInitializer } from "@/lib/providers/AppInitializer";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -21,22 +22,29 @@ const geistMono = Geist_Mono({
 });
 
 // This is a dynamic metadata function that will be called for each request
-export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}): Promise<Metadata> {
   const { locale } = await params;
-  
+
   if (!routing.locales.includes(locale as SupportedLocale)) {
     return {
       title: "Not Found",
       description: "The page you are looking for does not exist.",
     };
   }
-  
+
   // Get site settings for SEO metadata
   const siteSettings = await getSiteSettings(locale as SupportedLocale);
-  
+
   // Ensure non-null descriptions
-  const metaDescription = siteSettings.default_meta_description || siteSettings.site_description || "";
-  
+  const metaDescription =
+    siteSettings.default_meta_description ||
+    siteSettings.site_description ||
+    "";
+
   return {
     title: {
       template: `%s | ${siteSettings.site_name}`,
@@ -44,7 +52,9 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
     },
     description: metaDescription,
     keywords: siteSettings.default_meta_keywords || "",
-    metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || "https://naftalan.az"),
+    metadataBase: new URL(
+      process.env.NEXT_PUBLIC_SITE_URL || "https://naftalan.az"
+    ),
     openGraph: {
       title: siteSettings.default_meta_title || siteSettings.site_name,
       description: metaDescription,
@@ -73,8 +83,8 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
     alternates: {
       canonical: `/${locale}`,
       languages: {
-        az: '/az',
-        ru: '/ru',
+        az: "/az",
+        ru: "/ru",
       },
     },
   };
@@ -101,19 +111,19 @@ export default async function RootLayout({
   }
 
   setRequestLocale(locale);
-  
+
   // Get site settings and messages for the page
   const [messages, siteSettings] = await Promise.all([
     getMessages(),
-    getSiteSettings(locale as SupportedLocale)
+    getSiteSettings(locale as SupportedLocale),
   ]);
-  
+
   // Define CSS variables for site colors
   const colorVars = `
     :root {
-      --color-primary: ${siteSettings.primary_color || '#3b82f6'};
-      --color-secondary: ${siteSettings.secondary_color || '#1e40af'};
-      --color-accent: ${siteSettings.accent_color || '#60a5fa'};
+      --color-primary: ${siteSettings.primary_color || "#3b82f6"};
+      --color-secondary: ${siteSettings.secondary_color || "#1e40af"};
+      --color-accent: ${siteSettings.accent_color || "#60a5fa"};
     }
   `;
 
@@ -125,10 +135,16 @@ export default async function RootLayout({
           <style dangerouslySetInnerHTML={{ __html: colorVars }} />
           <link rel="icon" href={siteSettings.favicon || "/favicon.ico"} />
         </head>
-        <body className={`${geistSans.variable} ${geistMono.variable} flex items-center justify-center min-h-screen p-4 bg-gray-100`}>
+        <body
+          className={`${geistSans.variable} ${geistMono.variable} flex items-center justify-center min-h-screen p-4 bg-gray-100`}
+        >
           <div className="text-center max-w-md p-8 bg-white rounded-lg shadow-md">
-            <h1 className="text-2xl font-bold mb-4 text-gray-800">Maintenance Mode</h1>
-            <p className="text-gray-600">{siteSettings.maintenance_message || "We'll be back soon."}</p>
+            <h1 className="text-2xl font-bold mb-4 text-gray-800">
+              Maintenance Mode
+            </h1>
+            <p className="text-gray-600">
+              {siteSettings.maintenance_message || "We'll be back soon."}
+            </p>
           </div>
         </body>
       </html>
@@ -141,7 +157,10 @@ export default async function RootLayout({
         <style dangerouslySetInnerHTML={{ __html: colorVars }} />
         <link rel="icon" href={siteSettings.favicon || "/favicon.ico"} />
         {siteSettings.google_site_verification && (
-          <meta name="google-site-verification" content={siteSettings.google_site_verification} />
+          <meta
+            name="google-site-verification"
+            content={siteSettings.google_site_verification}
+          />
         )}
       </head>
       <body
@@ -197,28 +216,33 @@ export default async function RootLayout({
             `}
           </Script>
         )}
-
-        <NextIntlClientProvider messages={messages}>
-          <MainLayout siteSettings={siteSettings}>
-            {children}
-          </MainLayout>
-        </NextIntlClientProvider>
+        <AppInitializer setting={siteSettings}>
+          <NextIntlClientProvider messages={messages}>
+            <MainLayout siteSettings={siteSettings}>{children}</MainLayout>
+          </NextIntlClientProvider>
+        </AppInitializer>
 
         {/* Cookie policy popup */}
         {siteSettings.cookie_policy_popup && (
-          <div id="cookie-consent-banner" className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 shadow-md p-4 z-50 hidden">
+          <div
+            id="cookie-consent-banner"
+            className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 shadow-md p-4 z-50 hidden"
+          >
             <div className="container mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
-              <p className="text-sm text-gray-700">{siteSettings.cookie_popup_text || 'This website uses cookies to improve your experience.'}</p>
+              <p className="text-sm text-gray-700">
+                {siteSettings.cookie_popup_text ||
+                  "This website uses cookies to improve your experience."}
+              </p>
               <div className="flex gap-2">
-                <button 
-                  id="cookie-consent-accept" 
+                <button
+                  id="cookie-consent-accept"
                   className="px-4 py-2 bg-blue-600 text-white rounded-md text-sm hover:bg-blue-700 transition"
                 >
                   Accept
                 </button>
                 {siteSettings.privacy_policy_page && (
-                  <a 
-                    href={siteSettings.privacy_policy_page} 
+                  <a
+                    href={siteSettings.privacy_policy_page}
                     className="px-4 py-2 border border-gray-300 rounded-md text-sm hover:bg-gray-50 transition"
                   >
                     Learn More

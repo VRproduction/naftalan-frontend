@@ -3,10 +3,12 @@
 import { FaMapMarkerAlt, FaPhoneAlt, FaEnvelope, FaClock } from 'react-icons/fa';
 import ContactForm from '@/features/contact/components/ContactForm';
 import { useTranslations } from 'next-intl';
+import { useSettingsStore } from '@/lib/store/useSettingsStore';
 
 
 export default function ContactPage() {
   const t = useTranslations('pages.contact');
+  const {setting} = useSettingsStore();
   
   return (
     <div>
@@ -60,10 +62,15 @@ export default function ContactPage() {
                     </div>
                     <div>
                       <h3 className="text-lg font-medium text-gray-900">{t('phone_title')}</h3>
-                      <p className="mt-1 text-gray-600">
-                        +994 12 345 67 89<br />
-                        +994 50 123 45 67
-                      </p>
+                      <ul className="mt-1 text-gray-600">
+                        {
+                          setting?.contact_phones.map((phone, index) => (
+                            <li key={index}>
+                              <a href={`tel:${phone.phone}`}>{phone.phone}</a>
+                            </li>
+                          ))
+                        }
+                      </ul>
                     </div>
                   </div>
                   
@@ -73,10 +80,15 @@ export default function ContactPage() {
                     </div>
                     <div>
                       <h3 className="text-lg font-medium text-gray-900">{t('email_title')}</h3>
-                      <p className="mt-1 text-gray-600">
-                        info@naftalan.az<br />
-                        support@naftalan.az
-                      </p>
+                      <ul className="mt-1 text-gray-600">
+                        {
+                          setting?.contact_emails.map((email, index) => (
+                            <li key={index}>
+                              <a href={`mailto:${email.email}`}>{email.email}</a>
+                            </li>
+                          ))
+                        }
+                      </ul>
                     </div>
                   </div>
                   
@@ -86,10 +98,23 @@ export default function ContactPage() {
                     </div>
                     <div>
                       <h3 className="text-lg font-medium text-gray-900">{t('hours_title')}</h3>
-                      <p className="mt-1 text-gray-600">
-                        {t('work_hours')}<br />
-                        {t('weekend_hours')}
-                      </p>
+                      <ul className="mt-1 text-gray-600">
+                        {
+                          setting?.working_hours.map((hour, index) => (
+                            <li key={index}>
+                              <span className="font-semibold">{hour.day_display}</span>
+                              :
+                              {
+                                hour.opening_time && hour.closing_time ? (
+                                  <span className="ml-2">{hour.opening_time.slice(0, 5)} - {hour.closing_time.slice(0, 5)}</span>
+                                ) : (
+                                  <span className="ml-2">{t('closed')}</span>
+                                )
+                              }
+                            </li>
+                          ))
+                        }
+                      </ul>
                     </div>
                   </div>
                 </div>

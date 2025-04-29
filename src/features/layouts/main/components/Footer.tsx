@@ -107,18 +107,26 @@ const Footer = ({ siteSettings }: FooterProps) => {
                 <FaMapMarkerAlt className="mr-2" />
                 <span>{siteSettings.address || t('default_address')}</span>
               </li>
-              <li className="flex items-center">
-                <FaPhoneAlt className="mr-2" />
-                <a href={`tel:${siteSettings.contact_phone}`} className="hover:text-blue-400 transition-colors">
-                  {siteSettings.contact_phone}
-                </a>
-              </li>
-              <li className="flex items-center">
-                <FaEnvelope className="mr-2" />
-                <a href={`mailto:${siteSettings.contact_email}`} className="hover:text-blue-400 transition-colors">
-                  {siteSettings.contact_email}
-                </a>
-              </li>
+              {
+                siteSettings.contact_phones.map((phone, index) => (
+                  <li key={index} className="flex items-center">
+                    <FaPhoneAlt className="mr-2" />
+                    <a href={`tel:${phone.phone}`} className="hover:text-blue-400 transition-colors">
+                      {phone.phone}
+                    </a>
+                  </li>
+                ))
+              }
+              {
+                siteSettings.contact_emails.map((email, index) => (
+                  <li key={index} className="flex items-center">
+                    <FaEnvelope className="mr-2" />
+                    <a href={`mailto:${email.email}`} className="hover:text-blue-400 transition-colors">
+                      {email.email}
+                    </a>
+                  </li>
+                ))
+              }
             </ul>
           </div>
         </div>

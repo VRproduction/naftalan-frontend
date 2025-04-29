@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
-import { useCurrencyStore } from "@/store/useCurrencyStore";
+import { useCurrencyStore } from "@/lib/store/useCurrencyStore";
 import { FaGlobeAmericas, FaChevronDown, FaTimes } from "react-icons/fa";
 import { motion, AnimatePresence } from "framer-motion";
 import { usePathname, useRouter } from "@/i18n/navigation";

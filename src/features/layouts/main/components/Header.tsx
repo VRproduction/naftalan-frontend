@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FaBars, FaTimes, FaChevronDown, FaChevronRight, FaGlobe } from 'react-icons/fa';
-import { useUIStore } from '@/store/useUIStore';
+import { useUIStore } from '@/lib/store/useUIStore';
 import { useLocale, useTranslations } from 'next-intl';
 import { useRouter, Link as IntlLink, usePathname } from '@/i18n/navigation';
 import { SupportedLocale } from '@/lib/utils/apiClient';

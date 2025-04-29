@@ -7,7 +7,7 @@ import { FaCalendarAlt, FaUser, FaEnvelope, FaPhone, FaInfoCircle, FaCheck, FaHo
 import { createBooking } from '@/lib/services/booking.service';
 import { BookingRequestData } from '@/lib/types/booking.type';
 import { SanatoriumDetail } from '@/lib/types/sanatorium.type';
-import { useCurrencyStore } from '@/store/useCurrencyStore';
+import { useCurrencyStore } from '@/lib/store/useCurrencyStore';
 import { useTranslations } from 'next-intl';
 
 interface Props {

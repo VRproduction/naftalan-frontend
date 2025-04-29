@@ -3,7 +3,7 @@
 import { motion } from 'framer-motion';
 import { useTranslations } from 'next-intl';
 import { FaSpinner } from 'react-icons/fa';
-import { useLoadingStore } from '@/store/useLoadingStore';
+import { useLoadingStore } from '@/lib/store/useLoadingStore';
 
 interface LoadingProps {
   variant?: 'default' | 'fullscreen' | 'inline';
@@ -38,7 +38,7 @@ export default function Loading({
   };
 
   const variantClasses = {
-    default: 'fixed inset-0 bg-white/80 backdrop-blur-sm z-50',
+    default: 'fixed inset-0 bg-white/80 backdrop-blur-sm z-[1200]',
     fullscreen: 'fixed inset-0 bg-white z-50',
     inline: 'relative'
   };

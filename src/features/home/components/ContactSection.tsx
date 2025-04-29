@@ -9,6 +9,7 @@ import { motion } from 'framer-motion';
 import { useTranslations } from 'next-intl';
 
 import { ContactSection as ContactSectionType } from '@/lib/types/home.type';
+import { useSettingsStore } from '@/lib/store/useSettingsStore';
 
 // Define schema for form validation
 const contactSchema = z.object({
@@ -30,6 +31,8 @@ const ContactSection = ({ contactSection }: ContactSectionProps) => {
   
   const t = useTranslations('contact');
   const tValidation = useTranslations('validation');
+
+  const {setting} = useSettingsStore();
   
   const { register, handleSubmit, reset, formState: { errors } } = useForm<ContactFormValues>({
     resolver: zodResolver(contactSchema),
@@ -88,7 +91,7 @@ const ContactSection = ({ contactSection }: ContactSectionProps) => {
                     </div>
                     <div>
                       <h4 className="font-medium text-white/80">{t('phone_label')}</h4>
-                      <p className="text-lg">+994 12 345 67 89</p>
+                      <p className="text-lg">{setting?.contact_phones.filter(phone => phone.is_primary).map(phone => phone.phone)[0]}</p>
                     </div>
                   </div>
                   
@@ -98,7 +101,7 @@ const ContactSection = ({ contactSection }: ContactSectionProps) => {
                     </div>
                     <div>
                       <h4 className="font-medium text-white/80">{t('email_label')}</h4>
-                      <p className="text-lg">info@naftalan.az</p>
+                      <p className="text-lg">{setting?.contact_emails.filter(email => email.is_primary).map(email => email.email)[0]}</p>
                     </div>
                   </div>
                 </div>

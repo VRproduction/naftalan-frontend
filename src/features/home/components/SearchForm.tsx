@@ -6,7 +6,7 @@ import { useTranslations } from 'next-intl';
 import { Link as IntlLink, useRouter } from '@/i18n/navigation';
 import { motion } from 'framer-motion';
 import { City } from '@/lib/types/sanatorium.type';
-import { useLoadingStore } from '@/store/useLoadingStore';
+import { useLoadingStore } from '@/lib/store/useLoadingStore';
 
 // Define schema for form validation
 const searchSchema = z.object({
@@ -45,10 +45,10 @@ const SearchForm = ({locations}: Props) => {
 
   const onSubmit = (data: SearchFormValues) => {
     setLoading(true)
-    router.push(`/reservation/?city=${data.location}`)
-    setLoading(false)
-
-    // Here we would redirect to search results with these parameters
+    setTimeout(() => {
+      router.push(`/reservation/?city=${data.location}`)
+      setLoading(false)
+    }, 300)
   };
 
   return (

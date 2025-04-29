@@ -24,6 +24,7 @@ import {
 } from "@/lib/types/home.type";
 import { City, Sanatorium } from "@/lib/types/sanatorium.type";
 import { BlogPost } from "@/lib/types/blog.type";
+import { PackageType } from "@/lib/types/package.type";
 
 interface Props {
   heroSliders: HeroSliderType[];
@@ -39,14 +40,14 @@ interface Props {
   blogs: BlogPost[];
   contactSection: ContactSectionType;
   sanatoriums: Sanatorium[];
-  locations: City []
+  locations: City [];
+  packages: PackageType [];
 }
 
 export default function HomePage({
   heroSliders,
   aboutSection,
   sanatoriumsSection,
-  treatmentSection,
   packagesSection,
   testimonials,
   testimonialSection,
@@ -56,7 +57,8 @@ export default function HomePage({
   blogs,
   contactSection,
   sanatoriums,
-  locations
+  locations,
+  packages
 }: Props) {
   return (
     <>
@@ -74,10 +76,8 @@ export default function HomePage({
       {/* Sanatoriums Section */}
       <SanatoriumsSection sanatoriums={sanatoriums} sanatoriumsSection={sanatoriumsSection} />
 
-     
-
       {/* Packages Section */}
-      <PackagesSection packagesSection={packagesSection} />
+      <PackagesSection packages={packages} packagesSection={packagesSection} />
 
       {/* Testimonials Section */}
       <TestimonialsSection testimonialSection={testimonialSection} testimonials={testimonials} />

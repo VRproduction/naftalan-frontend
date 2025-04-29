@@ -1,7 +1,7 @@
 'use client';
 
 import { Sanatorium } from '@/lib/types/sanatorium.type';
-import { useCurrencyStore } from '@/store/useCurrencyStore';
+import { useCurrencyStore } from '@/lib/store/useCurrencyStore';
 import { motion } from 'framer-motion';
 import Image from 'next/image';
 import { Link } from '@/i18n/navigation';

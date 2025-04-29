@@ -7,7 +7,7 @@ import { Link } from '@/i18n/navigation';
 import { FaStar, FaMapMarkerAlt, FaArrowRight } from 'react-icons/fa';
 import { Sanatorium } from '@/lib/types/sanatorium.type';
 import { useTranslations } from 'next-intl';
-import { useCurrencyStore } from '@/store/useCurrencyStore';
+import { useCurrencyStore } from '@/lib/store/useCurrencyStore';
 
 
 
