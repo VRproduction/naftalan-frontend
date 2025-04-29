@@ -38,7 +38,7 @@ const HeroSlider = ({ heroSliders }: Props) => {
             
             {/* Background image */}
             <Image
-              src={slide.sanatorium.main_image.image}
+              src={slide.sanatorium.main_image?.image || '/images/placeholder.svg'}
               alt={`Hero Slider ${index + 1}`}
               fill
               className="object-cover object-center"
