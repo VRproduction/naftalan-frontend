@@ -52,7 +52,7 @@ export default function SanatoriumHorizontal({ sanatorium, index = 0 }: Sanatori
       <div className="grid md:grid-cols-3 h-full">
         <div className="relative h-64 md:h-full md:col-span-1">
           <Image 
-            src={sanatorium.main_image.image} 
+            src={sanatorium.main_image?.image || '/images/placeholder.svg'} 
             alt={sanatorium.name} 
             fill
             className="object-cover"

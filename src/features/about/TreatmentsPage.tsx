@@ -178,33 +178,7 @@ export default function TreatmentsPage({ treatmentsPage, categories, treatments,
         </div>
       </section>
       
-      {/* Call to Action */}
-      <section className="py-16 bg-blue-600 text-white">
-        <div className="container mx-auto px-4">
-          <div className="max-w-4xl mx-auto text-center">
-            <motion.div
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true }}
-              transition={{ duration: 0.6 }}
-              variants={fadeInUpVariant}
-            >
-              <h2 className="text-3xl md:text-4xl font-bold mb-6">{treatmentsPage.contact_section_title}</h2>
-              <p className="text-xl mb-8 text-blue-100">
-                {treatmentsPage.contact_section_description}
-              </p>
-              <div className="flex flex-wrap justify-center gap-4">
-                <Link href="/sanatoriums/naftalan" className="px-8 py-3 bg-white text-blue-600 rounded-lg font-medium hover:bg-blue-50 transition-colors flex items-center">
-                  Naftalan sanatoriumları <FaArrowRight className="ml-2" />
-                </Link>
-                <Link href="/contact" className="px-8 py-3 bg-transparent border-2 border-white text-white rounded-lg font-medium hover:bg-white hover:text-blue-600 transition-colors">
-                  Əlaqə
-                </Link>
-              </div>
-            </motion.div>
-          </div>
-        </div>
-      </section>
+     
     </div>
   );
 } 

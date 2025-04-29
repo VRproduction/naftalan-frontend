@@ -53,7 +53,7 @@ export default function SanatoriumCard({
     >
       <div className="relative h-64 overflow-hidden">
         <Image
-          src={sanatorium.main_image.image}
+          src={sanatorium.main_image?.image || '/images/placeholder.svg'}
           alt={sanatorium.name}
           fill
           className="object-cover transition-transform duration-700 group-hover:scale-105"

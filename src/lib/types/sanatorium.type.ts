@@ -24,7 +24,7 @@ export interface Sanatorium {
     image: string;
     is_main: boolean;
     priority: number;
-  };
+  } | null;
   facilities: {
     id: number;
     facility: {

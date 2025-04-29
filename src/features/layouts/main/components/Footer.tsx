@@ -196,7 +196,7 @@ const Footer = ({ siteSettings }: FooterProps) => {
         
         <div className="border-t border-gray-800 mt-8 pt-8 text-center text-sm">
           <p>
-            {t('copyright')}
+            {t('copyright')} {new Date().getFullYear()}
             {
               siteSettings.copyright_link && 
               <Link href={siteSettings.copyright_link} className="hover:text-blue-400 transition-colors ml-1">
