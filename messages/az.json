@@ -456,7 +456,27 @@
   "packages": {
     "day": "Gün",
     "include_package": "Paketə daxildir",
-    "order": "Sifariş et"
+    "order": "Sifariş et",
+    "order_package": "Sifariş paketləri",
+    "first_name": "Ad",
+    "last_name": "Soyad",
+    "email": "E-poçt",
+    "phone": "Telefon",
+    "check_in_date": "Giriş tarixi",
+    "guests": "Qonaqlar",
+    "adult": "böyük",
+    "adults": "böyük",
+    "child": "uşaq",
+    "children": "uşaq",
+    "special_requests": "Xüsusi istəklər",
+    "cancel": "Ləğv et",
+    "submit_order": "Sifarişi göndər",
+    "submitting": "Göndərilir...",
+    "order_success_title": "Sifariş qəbul edildi!",
+    "order_success_message": "Paket sifarişiniz uğurla göndərildi. Sizinlə tezliklə əlaqə saxlanılacaq.",
+    "order_error_title": "Xəta baş verdi",
+    "order_error": "Sifariş göndərilərkən xəta baş verdi. Zəhmət olmasa yenidən cəhd edin.",
+    "package": "günlük paket"
   },
   "not_found": {
     "title": "Səhifə tapılmadı",

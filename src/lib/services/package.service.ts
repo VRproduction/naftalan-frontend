@@ -23,4 +23,25 @@ export const getPackages = async (
       }
     );
     return response;
-  };
+};
+
+interface CreatePackageOrderRequest {
+  package: number;
+  first_name: string;
+  last_name: string;
+  email: string;
+  phone: string;
+  check_in: string;
+  check_out: string;
+  adults: number;
+  children: number;
+  notes: string;
+}
+
+export const createPackageOrder = async (data: CreatePackageOrderRequest) => {
+    const response = await api.post<CreatePackageOrderRequest, CreatePackageOrderRequest>(
+        '/packages/orders/',
+        data
+    );
+    return response;
+};
