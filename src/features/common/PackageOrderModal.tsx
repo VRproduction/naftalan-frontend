@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { FaCalendarAlt, FaUser, FaEnvelope, FaPhone, FaUsers, FaTimes } from 'react-icons/fa';
 import { useTranslations } from 'next-intl';
 import { PackageType } from '@/lib/types/package.type';
@@ -26,6 +26,12 @@ export const PackageOrderModal = ({ isOpen, onClose, pkg }: PackageOrderModalPro
   const tomorrow = new Date();
   tomorrow.setDate(tomorrow.getDate() + 1);
   const minDate = formatDate(tomorrow);
+
+  // Generate adults options based on package occupancy
+  const adultOptions = useMemo(() => {
+    const maxOccupancy = pkg.occupancy || 4; // Default to 4 if not specified
+    return Array.from({ length: maxOccupancy }, (_, i) => i + 1);
+  }, [pkg.occupancy]);
 
   const [formData, setFormData] = useState({
     first_name: '',
@@ -288,7 +294,7 @@ export const PackageOrderModal = ({ isOpen, onClose, pkg }: PackageOrderModalPro
                             className="pl-10 w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                             required
                           >
-                            {[1, 2, 3, 4].map(num => (
+                            {adultOptions.map(num => (
                               <option key={num} value={num}>
                                 {num} {num === 1 ? t('adult') : t('adults')}
                               </option>
