@@ -200,7 +200,7 @@ const Footer = ({ siteSettings }: FooterProps) => {
             {
               siteSettings.copyright_link && 
               <Link href={siteSettings.copyright_link} className="hover:text-blue-400 transition-colors ml-1">
-                {siteSettings.company_name || siteSettings.site_name}
+                {siteSettings.copyright_text}
               </Link>
             }
             

@@ -49,12 +49,34 @@
     "check_in": "Дата заезда",
     "check_out": "Дата выезда",
     "guests": "Количество гостей",
-    "adults": "взрослых",
-    "children": "детей",
+    "guest": "Гость",
+    "adults": "Взрослых",
+    "children": "Детей",
     "city": "Город",
     "select_city": "Выберите город",
     "search_button": "Поиск",
-    "view_all_offers": "Посмотреть все предложения"
+    "view_all_offers": "Посмотреть все предложения",
+    "apply": "Применить",
+    "clear": "Очистить",
+    "children_ages": "Возраст детей",
+    "years": "лет",
+    "adults_plural": "Взрослые",
+    "children_plural": "Дети",
+    "children_ages_placeholder": "Выберите возраст",
+    "age": "Возраст",
+    "child": "Ребенок",
+    "adult": "Взрослый",
+    "children_ages_label": "Возраст детей",
+    "adults_label": "Взрослые",
+    "children_label": "Дети",
+    "dates": "Даты",
+    "select_dates": "Выберите даты",
+    "night": "ночь",
+    "nights": "ночей",
+    "today": "Сегодня",
+    "check_in_date": "Дата заезда",
+    "check_out_date": "Дата выезда",
+    "select_year": "Выберите год"
   },
   "validation": {
     "check_in_required": "Дата заезда обязательна",
@@ -239,6 +261,9 @@
           "show": "Больше фильтров",
           "hide": "Скрыть фильтры",
           "price_range": "Ценовой диапазон (AZN)",
+          "custom_range": "Собственный диапазон цен",
+          "min_price": "Минимальная цена",
+          "max_price": "Максимальная цена",
           "features": {
             "title": "Удобства",
             "wifi": "Wi-Fi",
@@ -265,7 +290,15 @@
           "description": "По выбранным критериям санатории не найдены. Пожалуйста, измените фильтры или очистите все фильтры.",
           "clear_filters": "Очистить фильтры",
           "adjust_filters": "Изменить фильтры"
-        }
+        },
+        "filters": {
+          "title": "Фильтры",
+          "price_range": "Ценовой диапазон",
+          "features": "Удобства",
+          "treatments": "Виды лечения"
+        },
+        "found": "Найдено",
+        "results": "Результат"
       }
     },
     "how_to_come": {
@@ -286,6 +319,9 @@
       "tags": "Теги",
       "share": "Поделиться этой статьей",
       "related_posts": "Похожие статьи"
+    },
+    "treatment": {
+      "benefits": "Преимущества"
     }
   },
   "sanatoriums": {
@@ -333,12 +369,68 @@
     "max": "максимум"
   },
   "sanatorium": {
-    "price": "Цена",
+    "featured": "Рекомендуемый",
     "details": "Подробнее",
+    "show_on_map": "Показать на карте",
+    "quick_view": "Быстрый просмотр",
+    "photos_count": "{count} фото",
+    "status": {
+      "unavailable": "Недоступно"
+    },
+    "discount": {
+      "percent": "Скидка"
+    },
+    "reviews": "{count} отзывов",
+    "price": {
+      "per_night": "за ночь",
+      "per_person": "на человека",
+      "with_treatment": "С лечением",
+      "without_treatment": "Без лечения",
+      "based_on_guests": "В зависимости от количества гостей",
+      "contact_for_price": "Уточняйте цену",
+      "total": "Итого",
+      "for_stay": "За весь период"
+    },
+    "season": {
+      "current_season": "Текущий сезон",
+      "name": "Сезон {name}"
+    },
+    "limited_time_offer": "Предложение ограничено по времени",
+    "book_now": "Забронировать сейчас",
+    "view_details": "Подробнее",
+    "location_type": {
+      "naftalan": "Нафталан",
+      "other_city": "Другой город"
+    },
+    "actions": {
+      "favorite": "Добавить в избранное",
+      "share": "Поделиться"
+    },
+    "room": {
+      "persons": "человек",
+      "persons_plural": "человек",
+      "room_type": "Тип номера",
+      "room_type_plural": "Типы номеров",
+      "room_type_singular": "Тип номера",
+      "room_type_singular_plural": "Типы номеров"
+    },
+    "rating": {
+      "average": "Средний",
+      "poor": "Плохо",
+      "very_good": "Очень хорошо",
+      "good": "Хорошо",
+      "excellent": "Отлично",
+      "bad": "Плохо",
+      "superb": "Превосходно",
+      "terrible": "Ужасно"
+    },
     "show_more": "Показать больше",
+    "nights": "ночей",
+    "stay_duration": "Продолжительность пребывания",
     "close": "Закрыть",
+    "days": "Дней",
     "photos": "Фотографии",
-    "book_now": "Забронировать"
+    "photo": "Фото"
   },
   "blog": {
     "read_more": "Читать далее"
@@ -394,7 +486,7 @@
       "booking_info_message": "После отправки запроса на бронирование мы свяжемся с вами для подтверждения.",
       "submit": "Отправить запрос на бронирование",
       "sending": "Отправка...",
-      "error": "Произошла ошибка при создании бронирования. Пожалуйста, попробуйте снова."
+      "error": "Произошла ошибка при создании бронирования. Пожалуйста, попробуйте еще раз."
     },
     "summary": {
       "title": "Информация о бронировании",

@@ -9,13 +9,63 @@ export interface Sanatorium {
   };
   location_type: "naftalan" | "other_cities";
   short_description: string;
-  rating: string;
+  rating: string | number;
   min_price: number | null;
   min_price_currency: {
     id: number;
     code: string;
     name: string;
     symbol: string;
+  } | null;
+  total_price: number | null;
+  total_discount_price: number | null;
+  min_price_details: {
+    sanatorium: {
+      id: number;
+      name: string;
+      location: string;
+    };
+    room: {
+      id: number;
+      name: string;
+      min_capacity: number | null;
+      max_capacity: number | null;
+      max_extra_beds: number | null;
+      size: number | null;
+    };
+    pricing: {
+      base_price: number;
+      total_base_price: number;
+      currency: string;
+      with_treatment: boolean;
+      treatment_option: string | null;
+      occupancy: number;
+      discount: {
+        type: string;
+        value: number;
+        amount: number;
+        discounted_price: number;
+        room_discount_amount: number;
+        room_discounted_price: number;
+      };
+    };
+    season: {
+      name: string;
+      is_current: boolean;
+      start_date: string;
+      end_date: string;
+    };
+    search_criteria: {
+      occupancy: number | null;
+      children_ages: number[];
+      total_guests: number | null;
+    };
+    result: {
+      base_price: number;
+      discounted_price: number;
+      discount_amount: number;
+      pricing_method: string;
+    };
   } | null;
   is_active: boolean;
   in_home: boolean;

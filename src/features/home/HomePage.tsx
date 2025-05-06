@@ -1,14 +1,14 @@
 "use client";
 
-import HeroSlider from "@/features/home/components/HeroSlider";
-import SearchForm from "@/features/home/components/SearchForm";
-import AboutSection from "@/features/home/components/AboutSection";
-import SanatoriumsSection from "@/features/home/components/SanatoriumsSection";
-import PackagesSection from "@/features/home/components/PackagesSection";
-import ContactSection from "@/features/home/components/ContactSection";
-import TestimonialsSection from "@/features/home/components/TestimonialsSection";
-import FAQSection from "@/features/home/components/FAQSection";
-import BlogSection from "@/features/home/components/BlogSection";
+import HeroSlider from "@/features/home/components/sections/HeroSlider";
+import SearchForm from "@/features/home/components/sections/SearchForm";
+import AboutSection from "@/features/home/components/sections/AboutSection";
+import SanatoriumsSection from "@/features/home/components/sections/SanatoriumsSection";
+import PackagesSection from "@/features/home/components/sections/PackagesSection";
+import ContactSection from "@/features/home/components/sections/ContactSection";
+import TestimonialsSection from "@/features/home/components/sections/TestimonialsSection";
+import FAQSection from "@/features/home/components/sections/FAQSection";
+import BlogSection from "@/features/home/components/sections/BlogSection";
 import {
   HeroSlider as HeroSliderType,
   AboutSection as AboutSectionType,

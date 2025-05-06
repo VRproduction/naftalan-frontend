@@ -6,6 +6,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { FaCheck, FaArrowRight } from 'react-icons/fa';
 import { TreantmentProcess, Treatment, TreatmentCategory, TreatmentsPage as TreatmentsPageType } from '@/lib/types/about.type';
+import { useTranslations } from 'next-intl';
 
 
 
@@ -30,6 +31,8 @@ export default function TreatmentsPage({ treatmentsPage, categories, treatments,
     hidden: { opacity: 0, y: 20 },
     visible: { opacity: 1, y: 0 }
   };
+
+  const t = useTranslations('treatment');
 
   return (
     <div>
@@ -120,7 +123,7 @@ export default function TreatmentsPage({ treatmentsPage, categories, treatments,
                   <h3 className="text-xl font-bold mb-3 text-gray-800">{treatment.title}</h3>
                   <p className="text-gray-600 mb-4">{treatment.content}</p>
                   
-                  <h4 className="text-md font-semibold text-gray-700 mb-2">Faydaları:</h4>
+                  <h4 className="text-md font-semibold text-gray-700 mb-2">{t('benefits')}:</h4>
                   <ul className="space-y-1 mb-4">
                     {treatment.benefits.map((benefit, i) => (
                       <li key={i} className="flex items-start">

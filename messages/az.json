@@ -45,16 +45,38 @@
     "submit": "Göndər"
   },
   "search": {
-    "title": "Sağlamlıq səyahətiniz buradan başlayır",
-    "check_in": "Giriş tarixi",
-    "check_out": "Çıxış tarixi",
-    "guests": "Qonaq sayı",
-    "adults": "böyüklər",
-    "children": "uşaqlar",
+    "title": "Axtarışınızı buradan başlayın",
+    "check_in": "Giriş",
+    "check_out": "Çıxış",
+    "guests": "Qonaqlar",
+    "guest": "Qonaq",
+    "adults": "Böyük",
+    "children": "Uşaq",
     "city": "Şəhər",
     "select_city": "Şəhər seçin",
-    "search_button": "Axtar",
-    "view_all_offers": "Bütün təklifləri göstər"
+    "search_button": "Axtarış et",
+    "view_all_offers": "Bütün təkliflər",
+    "apply": "Təsdiqlə",
+    "clear": "Təmizlə",
+    "children_ages": "Uşaqların yaşı",
+    "years": "il",
+    "adults_plural": "Böyüklər",
+    "children_plural": "Uşaqlar",
+    "children_ages_placeholder": "Yaş seçin",
+    "age": "Yaş",
+    "child": "Uşaq",
+    "adult": "Böyük",
+    "children_ages_label": "Uşaqların yaşı",
+    "adults_label": "Böyüklər",
+    "children_label": "Uşaqlar",
+    "dates": "Tarix",
+    "select_dates": "Tarix seçin",
+    "night": "gecə",
+    "nights": "gecə",
+    "today": "Bu gün",
+    "check_in_date": "Giriş tarixi",
+    "check_out_date": "Çıxış tarixi",
+    "select_year": "İl seçin"
   },
   "validation": {
     "check_in_required": "Giriş tarixi tələb olunur",
@@ -239,6 +261,9 @@
           "show": "Daha çox filter",
           "hide": "Filterləri gizlət",
           "price_range": "Qiymət aralığı (AZN)",
+          "custom_range": "Özəl qiymət aralığı",
+          "min_price": "Minimum qiymət",
+          "max_price": "Maximum qiymət",
           "features": {
             "title": "İmkanlar",
             "wifi": "Wi-Fi",
@@ -265,7 +290,15 @@
           "description": "Seçdiyiniz kriteriyalara uyğun sanatoriya tapılmadı. Zəhmət olmasa, filterləri dəyişdirin və ya bütün filterləri təmizləyin.",
           "clear_filters": "Filterləri təmizlə",
           "adjust_filters": "Filterləri dəyişdir"
-        }
+        },
+        "filters": {
+          "title": "Filterlər",
+          "price_range": "Qiymət aralığı",
+          "features": "İmkanlar",
+          "treatments": "Müalicə növləri"
+        },
+        "found": "Tapıldı",
+        "results": "Nəticə"
       }
     },
     "how_to_come": {
@@ -286,6 +319,9 @@
       "tags": "Teqlər",
       "share": "Bu məqaləni paylaşın",
       "related_posts": "Oxşar məqalələr"
+    },
+    "treatment": {
+      "benefits": "Faydaları"
     }
   },
   "sanatoriums": {
@@ -333,12 +369,68 @@
     "max": "maksimum"
   },
   "sanatorium": {
-    "price": "Qiymət",
+    "featured": "Seçilmiş",
     "details": "Ətraflı məlumat",
+    "show_on_map": "Xəritədə göstər",
+    "quick_view": "Tez baxış",
+    "photos_count": "{count} şəkil",
+    "status": {
+      "unavailable": "Mövcud deyil"
+    },
+    "discount": {
+      "percent": "Endirim"
+    },
+    "reviews": "{count} rəy",
+    "price": {
+      "per_night": "gecə başına",
+      "per_person": "bir nəfər üçün",
+      "with_treatment": "Müalicə ilə",
+      "without_treatment": "Müalicəsiz",
+      "based_on_guests": "Qonaqlar sayına görə",
+      "contact_for_price": "Qiymət müzakirəsi",
+      "total": "Cəmi",
+      "for_stay": "Ümumi qiymət"
+    },
+    "season": {
+      "current_season": "Cari mövsüm",
+      "name": "{name} mövsümü"
+    },
+    "limited_time_offer": "Məhdud müddətli təklif",
+    "book_now": "İndi rezervasiya et",
+    "view_details": "Ətraflı bax",
+    "location_type": {
+      "naftalan": "Naftalan",
+      "other_city": "Digər şəhər"
+    },
+    "actions": {
+      "favorite": "Seçilmişlərə əlavə et",
+      "share": "Paylaş"
+    },
+    "room": {
+      "persons": "nəfər",
+      "persons_plural": "nəfər",
+      "room_type": "Otaq növü",
+      "room_type_plural": "Otaq növləri",
+      "room_type_singular": "Otaq növü",
+      "room_type_singular_plural": "Otaq növləri"
+    },
+    "rating": {
+      "average": "Orta",
+      "poor": "Zəif",
+      "very_good": "Çox yaxşı",
+      "good": "Yaxşı",
+      "excellent": "Əla",
+      "bad": "Pis",
+      "superb": "Əla",
+      "terrible": "Pis"
+    },
     "show_more": "Daha çox",
+    "nights": "gecə",
+    "stay_duration": "Qalma müddəti",
     "close": "Bağla",
-    "photos": "Fotolar",
-    "book_now": "Rezervasiya et"
+    "days": "Gün",
+    "photos": "Şəkillər",
+    "photo": "Şəkil"
   },
   "blog": {
     "read_more": "Ətraflı oxu"

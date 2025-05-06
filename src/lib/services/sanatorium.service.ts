@@ -11,6 +11,15 @@ export const getSanatoriums = async (
     is_popular?: string;
     is_featured?: string;
     location?: string;
+    check_in?: string;
+    check_out?: string;
+    occupancy?: string;
+    children_ages?: string;
+    min_price?: string;
+    max_price?: string;
+    min_total_price?: string;
+    max_total_price?: string;
+    ratings?: string;
   }
 ) => {
   const response = await api.get<PaginatedResponse<Sanatorium>>(
@@ -20,10 +29,19 @@ export const getSanatoriums = async (
       params: {
         category: params?.category || "",
         page: params?.page || "1",
-        page_size: params?.page_size || "30",
+        page_size: params?.page_size || "100",
         is_popular: params?.is_popular || "false",
         is_featured: params?.is_featured || "false",
         location: params?.location || "",
+        check_in: params?.check_in || "",
+        check_out: params?.check_out || "",
+        occupancy: params?.occupancy || "",
+        children_ages: params?.children_ages || "",
+        min_price: params?.min_price || "",
+        max_price: params?.max_price || "",
+        min_total_price: params?.min_total_price || "",
+        max_total_price: params?.max_total_price || "",
+        ratings: params?.ratings || "",
       },
     }
   );
