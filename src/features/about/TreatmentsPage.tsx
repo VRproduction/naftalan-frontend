@@ -32,7 +32,7 @@ export default function TreatmentsPage({ treatmentsPage, categories, treatments,
     visible: { opacity: 1, y: 0 }
   };
 
-  const t = useTranslations('treatment');
+  const t = useTranslations('pages.treatment');
 
   return (
     <div>
