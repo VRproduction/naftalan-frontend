@@ -169,9 +169,9 @@ export default function SanatoriumHorizontal({ sanatorium, index = 0 }: Sanatori
             {sanatorium.location_type && (
               <div className="absolute top-3 left-3 mt-8 bg-gradient-to-r from-teal-500 to-teal-700 text-white text-xs py-1 px-2 rounded-full z-20 shadow-sm">
                 {sanatorium.location_type === "naftalan" ? t('location_type.naftalan') : t('location_type.other_city')}
-              </div>
+            </div>
             )}
-
+            
             {/* Rating stars */}
             <div className="absolute top-3 right-3 flex items-center bg-white/80 backdrop-blur-sm rounded-full px-2 py-1 z-20 shadow-sm">
               <div className="flex items-center">
@@ -225,7 +225,7 @@ export default function SanatoriumHorizontal({ sanatorium, index = 0 }: Sanatori
                       </div>
                     )}
                   </div>
-                  
+            
                   <div className="flex items-center justify-between">
                     <div>
                       {showDiscount && basePrice > finalPrice && (
@@ -237,8 +237,8 @@ export default function SanatoriumHorizontal({ sanatorium, index = 0 }: Sanatori
                       <div className="text-xs text-gray-600">
                         {getPriceLabel()}
                       </div>
-                    </div>
-                    
+            </div>
+            
                     {showTotal && (
                       <div className="text-sm font-semibold text-blue-800 bg-blue-100 rounded px-2 py-1 inline-block">
                         {showDiscount ? (
@@ -276,15 +276,15 @@ export default function SanatoriumHorizontal({ sanatorium, index = 0 }: Sanatori
                   {isExpanded ? <FaTimes /> : <FaChevronDown />}
                 </button>
               )}
+              </div>
             </div>
-          </div>
-          
-          {/* Expanded Section */}
-          {isExpanded && (
-            <motion.div
-              initial={{ opacity: 0, height: 0 }}
-              animate={{ opacity: 1, height: 'auto' }}
-              transition={{ duration: 0.3 }}
+            
+            {/* Expanded Section */}
+            {isExpanded && (
+              <motion.div
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: 'auto' }}
+                transition={{ duration: 0.3 }}
               className="border-t border-gray-200 p-4 bg-gradient-to-b from-gray-50 to-white"
             >
               {/* Only show photos section if there's more than one image */}
@@ -299,26 +299,26 @@ export default function SanatoriumHorizontal({ sanatorium, index = 0 }: Sanatori
                   <div className="grid grid-cols-2 gap-3 mb-4">
                     {sanatorium.images.slice(0, 4).map((image, i) => (
                       <div key={i} className="relative h-24 rounded-lg overflow-hidden shadow-md">
-                        <Image 
-                          src={image.image} 
+                      <Image 
+                        src={image.image} 
                           alt={`${sanatorium.name} - ${t('photo')} ${i+1}`} 
-                          fill
-                          className="object-cover"
-                        />
-                      </div>
-                    ))}
-                  </div>
+                        fill
+                        className="object-cover"
+                      />
+                    </div>
+                  ))}
+                </div>
                 </>
               )}
-              
-              <Link 
-                href={`/sanatoriums/${sanatorium.slug}`}
+                
+                <Link 
+                  href={`/sanatoriums/${sanatorium.slug}`}
                 className="w-full py-3 bg-gradient-to-r from-blue-600 to-blue-800 text-white rounded-lg shadow-md font-medium flex items-center justify-center mt-3"
-              >
-                {t('book_now')} <FaArrowRight className="ml-2" />
-              </Link>
-            </motion.div>
-          )}
+                >
+                  {t('book_now')} <FaArrowRight className="ml-2" />
+                </Link>
+              </motion.div>
+            )}
         </div>
       </motion.div>
     );
@@ -379,12 +379,12 @@ export default function SanatoriumHorizontal({ sanatorium, index = 0 }: Sanatori
           {/* Quick view button */}
           <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-20">
             {sanatorium.images.length > 1 && (
-              <button 
-                onClick={() => setIsExpanded(!isExpanded)}
-                className="bg-white/90 hover:bg-white text-blue-800 font-medium py-2 px-4 rounded-lg shadow-lg transform transition-transform duration-300 hover:scale-105"
-              >
+            <button 
+              onClick={() => setIsExpanded(!isExpanded)}
+              className="bg-white/90 hover:bg-white text-blue-800 font-medium py-2 px-4 rounded-lg shadow-lg transform transition-transform duration-300 hover:scale-105"
+            >
                 {t('quick_view')}
-              </button>
+            </button>
             )}
           </div>
         </div>
@@ -411,7 +411,7 @@ export default function SanatoriumHorizontal({ sanatorium, index = 0 }: Sanatori
             </div>
             
             <p className="text-gray-600 mb-4 text-sm line-clamp-2">{sanatorium.short_description}</p>
-           
+            
             
             <div className="hidden md:flex flex-wrap gap-2 mb-3">
               {sanatorium.facilities.slice(0, 5).map((facility, i) => (
@@ -435,16 +435,16 @@ export default function SanatoriumHorizontal({ sanatorium, index = 0 }: Sanatori
                   {showDiscount && (
                     <div className="bg-red-100 text-red-700 text-xs px-2 py-1 rounded-md font-medium mr-2">
                       {getDiscount()}
-                    </div>
+            </div>
                   )}
                   
                   {seasonName && (
                     <div className="bg-teal-100 text-teal-800 text-xs px-2 py-1 rounded-md font-medium">
                       {seasonIsCurrent ? t('season.current_season') : t('season.name', { name: seasonName })}
-                    </div>
+            </div>
                   )}
-                </div>
-                
+          </div>
+          
                 {showDiscount && basePrice > finalPrice && (
                   <div className="text-sm line-through text-gray-500 mb-1">{formatPrice(basePrice)}</div>
                 )}
@@ -470,8 +470,8 @@ export default function SanatoriumHorizontal({ sanatorium, index = 0 }: Sanatori
                   <div className="mt-1 text-xs text-gray-700">
                     <span className="font-medium">{roomName}</span>
                   
-                  </div>
-                )}
+                </div>
+              )}
               </div>
             ) : null}
           </div>
@@ -487,12 +487,12 @@ export default function SanatoriumHorizontal({ sanatorium, index = 0 }: Sanatori
             </Link>
             
             {sanatorium.images.length > 1 && (
-              <button
-                onClick={() => setIsExpanded(!isExpanded)}
-                className="px-4 py-2.5 border border-blue-600 text-blue-700 text-center rounded-lg hover:bg-blue-50 transition-colors text-sm font-medium"
-              >
-                {isExpanded ? t('close') : t('show_more')}
-              </button>
+            <button
+              onClick={() => setIsExpanded(!isExpanded)}
+              className="px-4 py-2.5 border border-blue-600 text-blue-700 text-center rounded-lg hover:bg-blue-50 transition-colors text-sm font-medium"
+            >
+              {isExpanded ? t('close') : t('show_more')}
+            </button>
             )}
           </div>
         </div>
@@ -509,28 +509,28 @@ export default function SanatoriumHorizontal({ sanatorium, index = 0 }: Sanatori
           {/* Only show photos section if there's more than one image */}
           {sanatorium.images.length > 1 && (
             <>
-              <h4 className="text-lg font-semibold mb-4 text-gray-800 flex items-center">
-                <span className="bg-blue-100 w-8 h-8 rounded-full flex items-center justify-center mr-2">
-                  <FaStar className="text-blue-600" />
-                </span>
-                {t('photos')}
-              </h4>
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-6">
-                {sanatorium.images.slice(0, 4).map((image, i) => (
-                  <div key={i} className="relative h-32 md:h-40 rounded-lg overflow-hidden shadow-md group">
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10"></div>
-                    <Image 
-                      src={image.image} 
+          <h4 className="text-lg font-semibold mb-4 text-gray-800 flex items-center">
+            <span className="bg-blue-100 w-8 h-8 rounded-full flex items-center justify-center mr-2">
+              <FaStar className="text-blue-600" />
+            </span>
+            {t('photos')}
+          </h4>
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-6">
+            {sanatorium.images.slice(0, 4).map((image, i) => (
+              <div key={i} className="relative h-32 md:h-40 rounded-lg overflow-hidden shadow-md group">
+                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10"></div>
+                <Image 
+                  src={image.image} 
                       alt={`${sanatorium.name} - ${t('photo')} ${i+1}`} 
-                      fill
-                      className="object-cover transition-transform duration-500 group-hover:scale-110"
-                    />
-                    <div className="absolute bottom-2 left-2 text-white text-xs font-medium opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-20">
+                  fill
+                  className="object-cover transition-transform duration-500 group-hover:scale-110"
+                />
+                <div className="absolute bottom-2 left-2 text-white text-xs font-medium opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-20">
                       {t('photo')} {i+1}
-                    </div>
-                  </div>
-                ))}
+                </div>
               </div>
+            ))}
+          </div>
             </>
           )}
           

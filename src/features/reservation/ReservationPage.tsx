@@ -4,7 +4,7 @@ import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FaCalendarAlt, FaUserFriends, FaSearch, FaMapMarkerAlt, FaInfoCircle, FaTags, FaFilter, FaSort, FaThumbsUp, FaSlidersH, FaChevronDown, FaPercent, FaHotel, FaSwimmingPool, FaSpa, FaUtensils, FaWheelchair, FaStar, FaTimes, FaArrowRight, FaMinus, FaPlus, FaChild, FaBaby } from 'react-icons/fa';
 import SanatoriumHorizontal from '@/features/common/SanatoriumHorizontal';
-import { Sanatorium, City } from '@/lib/types/sanatorium.type';
+import { Sanatorium, City, SanatoriumListType } from '@/lib/types/sanatorium.type';
 import { useTranslations } from 'next-intl';
 import { format } from 'date-fns';
 import { useForm, Controller } from 'react-hook-form';
@@ -22,6 +22,7 @@ const searchSchema = z.object({
   children: z.number().min(0),
   childrenAges: z.array(z.number()).optional(),
   location: z.string().optional(),
+  sanatorium: z.string().optional(),
   minPrice: z.number().optional(),
   maxPrice: z.number().optional(),
   ratings: z.array(z.number()).optional()
@@ -208,10 +209,9 @@ const GuestSelector = ({
   );
 };
 
-export default function ReservationPage({ sanatoriums, locations = [] }: { sanatoriums: Sanatorium[], locations?: City[] }) {
+export default function ReservationPage({ sanatoriums, locations = [], sanatoriumsList = [] }: { sanatoriums: Sanatorium[], locations?: City[], sanatoriumsList?: SanatoriumListType[] }) {
   const t = useTranslations('pages.reservation');
   const tSearch = useTranslations('search');
-  const tValidation = useTranslations('validation');
   const router = useRouter();
   const { setLoading } = useLoadingStore();
   
@@ -242,6 +242,7 @@ export default function ReservationPage({ sanatoriums, locations = [] }: { sanat
       children: 0,
       childrenAges: [],
       location: '',
+      sanatorium: '',
       minPrice: MIN_PRICE_DEFAULT,
       maxPrice: MAX_PRICE_DEFAULT,
       ratings: []
@@ -253,6 +254,7 @@ export default function ReservationPage({ sanatoriums, locations = [] }: { sanat
     // Get URL search params
     const urlParams = new URLSearchParams(window.location.search);
     const city = urlParams.get('city');
+    const sanatorium = urlParams.get('id');
     const checkIn = urlParams.get('check_in');
     const checkOut = urlParams.get('check_out');
     const occupancy = urlParams.get('occupancy');
@@ -266,6 +268,7 @@ export default function ReservationPage({ sanatoriums, locations = [] }: { sanat
     
     // Set form values from URL
     if (city) setValue('location', city);
+    if (sanatorium) setValue('sanatorium', sanatorium);
     if (checkIn) setValue('checkIn', checkIn);
     if (checkOut) setValue('checkOut', checkOut);
     if (occupancy) setValue('adults', parseInt(occupancy));
@@ -313,7 +316,7 @@ export default function ReservationPage({ sanatoriums, locations = [] }: { sanat
     });
     
     // Build URL parameters including ratings
-    let url = `/reservation/?city=${data.location}&check_in=${data.checkIn}&check_out=${data.checkOut}&occupancy=${data.adults}&children_ages=${data.childrenAges ? data.childrenAges.join(',') : ''}&min_total_price=${data.minPrice || MIN_PRICE_DEFAULT}&max_total_price=${data.maxPrice || MAX_PRICE_DEFAULT}`;
+    let url = `/reservation/?city=${data.location}&id=${data.sanatorium}&check_in=${data.checkIn}&check_out=${data.checkOut}&occupancy=${data.adults}&children_ages=${data.childrenAges ? data.childrenAges.join(',') : ''}&min_total_price=${data.minPrice || MIN_PRICE_DEFAULT}&max_total_price=${data.maxPrice || MAX_PRICE_DEFAULT}`;
     
     // Add ratings if they exist
     if (data.ratings && data.ratings.length > 0) {
@@ -323,7 +326,9 @@ export default function ReservationPage({ sanatoriums, locations = [] }: { sanat
     // Navigate with search params
     router.push(url);
     
-    setLoading(false);
+    setTimeout(() => {
+      setLoading(false);
+    }, 800);
   };
   
   // Apply sidebar filters
@@ -429,7 +434,7 @@ export default function ReservationPage({ sanatoriums, locations = [] }: { sanat
   const [activeFilters, setActiveFilters] = useState<string[]>([]);
   const [showDatePicker, setShowDatePicker] = useState(false);
   const datePickerRef = useRef<HTMLDivElement>(null);
-
+  
   // Remove unused scroll position effect
   useEffect(() => {
     const handleOutsideClick = (event: MouseEvent) => {
@@ -444,7 +449,7 @@ export default function ReservationPage({ sanatoriums, locations = [] }: { sanat
     };
   }, []);
   
- 
+
   return (
     <div className="bg-gray-50 min-h-screen pb-5">
       {/* Search Form - Styled to match the page */}
@@ -453,7 +458,7 @@ export default function ReservationPage({ sanatoriums, locations = [] }: { sanat
           <form onSubmit={handleSubmit(onSubmit)}>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-4 items-center">
               {/* Location Selector */}
-              <div className="w-full lg:col-span-3">
+              <div className="w-full lg:col-span-2">
                 <div className="relative group">
                   <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-gray-500 group-hover:text-blue-500 transition-colors">
                     <FaMapMarkerAlt />
@@ -465,6 +470,24 @@ export default function ReservationPage({ sanatoriums, locations = [] }: { sanat
                     <option value="">{tSearch('select_city')}</option>
                     {locations?.map(location => (
                       <option key={location.id} value={location.id}>{location.region}</option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+
+              {/* Sanatorium Selector */}
+              <div className="w-full lg:col-span-2">
+                <div className="relative group">
+                  <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-gray-500 group-hover:text-blue-500 transition-colors">
+                    <FaHotel />
+                  </div>
+                  <select
+                    {...register('sanatorium')}
+                    className="w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white text-gray-800 transition-all"
+                  >
+                    <option value="">{tSearch('select_hotel')}</option>
+                    {sanatoriumsList?.map(sanatorium => (
+                      <option key={sanatorium.id} value={sanatorium.id}>{sanatorium.name}</option>
                     ))}
                   </select>
                 </div>
@@ -548,7 +571,7 @@ export default function ReservationPage({ sanatoriums, locations = [] }: { sanat
               </div>
 
               {/* Search Button */}
-              <div className="w-full lg:col-span-3">
+              <div className="w-full lg:col-span-2">
                 <button
                   type="submit"
                   className="w-full py-3 px-4 bg-gradient-to-r from-blue-600 to-blue-800 text-white rounded-lg flex items-center justify-center gap-2 font-medium shadow-md hover:from-blue-700 hover:to-blue-900 transition-all"
@@ -570,15 +593,15 @@ export default function ReservationPage({ sanatoriums, locations = [] }: { sanat
       <div className="container mx-auto px-4 py-0">
         {/* Mobile Filter Button - Moved above results */}
         <div className="md:hidden mb-4">
-          <button
+                  <button
             onClick={() => setShowMobileFilters(true)}
             className="w-full py-3 border border-blue-600 text-blue-600 rounded-lg font-medium flex items-center justify-center"
           >
             <FaFilter className="mr-2" />
             {t('search.filters.show')}
-          </button>
+              </button>
         </div>
-
+      
         <div className="flex flex-col md:flex-row gap-6">
           {/* Mobile Filters Modal */}
           {showMobileFilters && (

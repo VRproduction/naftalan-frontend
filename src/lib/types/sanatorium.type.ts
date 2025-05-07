@@ -91,6 +91,12 @@ export interface Sanatorium {
   }[];
 }
 
+export interface SanatoriumListType {
+  id: number;
+  name: string;
+  location: number;
+}
+
 export interface SanatoriumDetail {
   id: number;
   name: string;

@@ -1,8 +1,10 @@
 import { PaginatedResponse } from "../types/response.type";
-import { City, NaftalanSanatoriumsPage, OtherCitiesSanatoriumsPage, Sanatorium, SanatoriumDetail } from "../types/sanatorium.type";
+import { City, NaftalanSanatoriumsPage, OtherCitiesSanatoriumsPage, Sanatorium, SanatoriumDetail, SanatoriumListType } from "../types/sanatorium.type";
 import api, { SupportedLocale } from "../utils/apiClient";
 
-export const getSanatoriums = async (
+
+
+export const getSanatoriumsSearch = async (
   locale: SupportedLocale,
   params?: {
     category?: string;
@@ -20,10 +22,11 @@ export const getSanatoriums = async (
     min_total_price?: string;
     max_total_price?: string;
     ratings?: string;
+    id?: string;
   }
 ) => {
   const response = await api.get<PaginatedResponse<Sanatorium>>(
-    "/sanatoriums/",
+    "/sanatoriums/search/",
     {
       locale: locale,
       params: {
@@ -42,6 +45,7 @@ export const getSanatoriums = async (
         min_total_price: params?.min_total_price || "",
         max_total_price: params?.max_total_price || "",
         ratings: params?.ratings || "",
+        id: params?.id || "",
       },
     }
   );
@@ -76,5 +80,16 @@ export const getOtherCitiesSanatoriumsPage = async (locale: SupportedLocale) => 
 
 export const getOtherCitiesSanatoriums = async (locale: SupportedLocale) => {
   const response = await api.get<Sanatorium[]>("/sanatoriums/other-cities-sanatoriums/", { locale: locale });
+  return response;
+};
+
+
+export const getSanatoriumList = async (
+  locale: SupportedLocale,
+  params?: {
+    location?: string;
+  }
+) => {
+  const response = await api.get<SanatoriumListType[]>(`/sanatoriums/`, { locale: locale, params: params });
   return response;
 };

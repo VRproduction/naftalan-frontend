@@ -76,7 +76,9 @@
     "today": "Сегодня",
     "check_in_date": "Дата заезда",
     "check_out_date": "Дата выезда",
-    "select_year": "Выберите год"
+    "select_year": "Выберите год",
+    "hotel": "Отель",
+    "select_hotel": "Выберите отель"
   },
   "validation": {
     "check_in_required": "Дата заезда обязательна",

@@ -1,7 +1,8 @@
 import ReservationPage from "@/features/reservation/ReservationPage";
 import {
   getLocations,
-  getSanatoriums,
+  getSanatoriumList,
+  getSanatoriumsSearch,
 } from "@/lib/services/sanatorium.service";
 
 import { SupportedLocale } from "@/lib/utils/apiClient";
@@ -26,10 +27,11 @@ export default async function Page({ params, searchParams }: Props) {
     max_price,
     min_total_price,
     max_total_price,
+    id
   } = await searchParams;
 
-  const [sanatoriums, locations] = await Promise.all([
-    getSanatoriums(locale, {
+  const [sanatoriums, locations, sanatoriumsList] = await Promise.all([
+    getSanatoriumsSearch(locale, {
       location: String(city),
       check_in: String(check_in),
       check_out: String(check_out),
@@ -40,11 +42,15 @@ export default async function Page({ params, searchParams }: Props) {
       max_price: String(max_price),
       min_total_price: String(min_total_price),
       max_total_price: String(max_total_price),
+      id: String(id)
     }),
     getLocations(locale),
+    getSanatoriumList(locale)
   ]);
 
   return (
-    <ReservationPage sanatoriums={sanatoriums.results} locations={locations} />
+    <ReservationPage sanatoriums={sanatoriums.results} locations={locations} sanatoriumsList={sanatoriumsList} />
   );
 }
+
+

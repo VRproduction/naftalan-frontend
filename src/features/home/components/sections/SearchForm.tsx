@@ -2,11 +2,11 @@ import { useEffect, useRef, useState } from 'react';
 import { useForm, Controller } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { FaSearch, FaUsers, FaMapMarkerAlt, FaMinus, FaPlus, FaChild, FaBaby, FaChevronDown } from 'react-icons/fa';
+import { FaSearch, FaUsers, FaMapMarkerAlt, FaMinus, FaPlus, FaChild, FaBaby, FaChevronDown, FaHotel } from 'react-icons/fa';
 import { useTranslations } from 'next-intl';
 import { Link as IntlLink, useRouter } from '@/i18n/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
-import { City } from '@/lib/types/sanatorium.type';
+import { City, Sanatorium, SanatoriumListType } from '@/lib/types/sanatorium.type';
 import { useLoadingStore } from '@/lib/store/useLoadingStore';
 import DateRangePicker from '@/components/ui/inputs/DateRangePicker';
 
@@ -17,7 +17,8 @@ const searchSchema = z.object({
   adults: z.number().min(1, { message: 'min_adults' }),
   children: z.number().min(0),
   childrenAges: z.array(z.number()).optional(),
-  location: z.string().optional()
+  location: z.string().optional(),
+  sanatorium: z.string().optional()
 });
 
 type SearchFormValues = z.infer<typeof searchSchema>;
@@ -203,9 +204,10 @@ const GuestSelector = ({
 
 interface Props {
   locations: City[]
+  sanatoriums: SanatoriumListType[]
 }
 
-const SearchForm = ({locations}: Props) => {
+const SearchForm = ({locations, sanatoriums}: Props) => {
   const t = useTranslations('search');
   const tValidation = useTranslations('validation');
   
@@ -220,16 +222,22 @@ const SearchForm = ({locations}: Props) => {
       adults: 2,
       children: 0,
       childrenAges: [],
-      location: ''
+      location: '',
+      sanatorium: ''
     }
   });
 
-  // Watch values for displaying in UI
-  const { adults, children, childrenAges } = watch();
+  // Watch location value to filter sanatoriums
+  const selectedLocation = watch('location');
+  
+  // Filter sanatoriums based on selected location
+  const filteredSanatoriums = selectedLocation 
+    ? sanatoriums.filter(s => s.location === Number(selectedLocation))
+    : sanatoriums; // Show all sanatoriums when no city is selected
 
   const onSubmit = (data: SearchFormValues) => {
     setLoading(true);
-    router.push(`/reservation/?city=${data.location}&check_in=${data.checkIn}&check_out=${data.checkOut}&occupancy=${data.adults}&children_ages=${data.childrenAges ? data.childrenAges.join(',') : ''}`);
+    router.push(`/reservation/?city=${data.location}&id=${data.sanatorium}&check_in=${data.checkIn}&check_out=${data.checkOut}&occupancy=${data.adults}&children_ages=${data.childrenAges ? data.childrenAges.join(',') : ''}`);
 
     setTimeout(() => {
       setLoading(false);
@@ -248,9 +256,9 @@ const SearchForm = ({locations}: Props) => {
       </h2>
       
       <form onSubmit={handleSubmit(onSubmit)}>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-5 items-stretch">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-4 items-stretch">
           {/* Location Selector */}
-          <div className="w-full lg:col-span-3 flex flex-col h-full">
+          <div className="w-full lg:col-span-2 flex flex-col h-full">
             <label className="block text-gray-700 mb-2 font-medium">{t('city')}</label>
             <div className="relative group">
               <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-gray-500 group-hover:text-blue-500 transition-colors">
@@ -268,6 +276,28 @@ const SearchForm = ({locations}: Props) => {
             </div>
             {errors.location && errors.location.message && (
               <p className="text-red-500 text-sm mt-1">{tValidation(errors.location.message as string)}</p>
+            )}
+          </div>
+
+          {/* Sanatorium Selector */}
+          <div className="w-full lg:col-span-2 flex flex-col h-full">
+            <label className="block text-gray-700 mb-2 font-medium">{t('hotel')}</label>
+            <div className="relative group">
+              <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-gray-500 group-hover:text-blue-500 transition-colors">
+                <FaHotel />
+              </div>
+              <select
+                {...register('sanatorium')}
+                className="w-full pl-10 pr-3 py-[14px] border-[2.5px] border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white text-gray-800 transition-all duration-200"
+              >
+                <option value="">{t('select_hotel')}</option>
+                {filteredSanatoriums.map(sanatorium => (
+                  <option key={sanatorium.id} value={sanatorium.id}>{sanatorium.name}</option>
+                ))}
+              </select>
+            </div>
+            {errors.sanatorium && errors.sanatorium.message && (
+              <p className="text-red-500 text-sm mt-1">{tValidation(errors.sanatorium.message as string)}</p>
             )}
           </div>
 
@@ -356,7 +386,7 @@ const SearchForm = ({locations}: Props) => {
           </div>
 
           {/* Search Button */}
-          <div className="w-full lg:col-span-3 flex flex-col h-full">
+          <div className="w-full lg:col-span-2 flex flex-col h-full">
             <label className="invisible block text-gray-700 mb-2 font-medium">Search</label>
             <button
               type="submit"

@@ -368,7 +368,7 @@ export default function DateRangePicker({
       </div>
     );
   };
-  
+ 
   return (
     <div className={`relative`}>
       {/* Input field */}

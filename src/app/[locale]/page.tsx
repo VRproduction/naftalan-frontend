@@ -12,7 +12,7 @@ import {
   getBlogSection,
   getContactSection,
 } from "@/lib/services/home.service";
-import { getLocations } from "@/lib/services/sanatorium.service";
+import { getLocations, getSanatoriumList } from "@/lib/services/sanatorium.service";
 
 import { SupportedLocale } from "@/lib/utils/apiClient";
 
@@ -38,7 +38,8 @@ export default async function Home({ params }: Props) {
     sanatoriums,
     blogs,
     locations,
-    packages
+    packages,
+    allSanatoriums
   ] = await Promise.all([
     getHeroSlider(locale),
     getAboutSection(locale),
@@ -54,7 +55,8 @@ export default async function Home({ params }: Props) {
     getSanatoriums(locale),
     getBlogs(locale),
     getLocations(locale),
-    getPackages(locale)
+    getPackages(locale),
+    getSanatoriumList(locale)
   ]);
   return (
     <HomePage
@@ -68,6 +70,7 @@ export default async function Home({ params }: Props) {
       testimonials={testimonials}
       testimonialSection={testimonialSection}
       faqSection={faqSection}
+      allSanatoriums={allSanatoriums}
       faqs={faqs}
       blogSection={blogSection}
       blogs={blogs}

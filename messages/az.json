@@ -76,7 +76,9 @@
     "today": "Bu gün",
     "check_in_date": "Giriş tarixi",
     "check_out_date": "Çıxış tarixi",
-    "select_year": "İl seçin"
+    "select_year": "İl seçin",
+      "hotel": "Otel",
+      "select_hotel": "Otel seçin"
   },
   "validation": {
     "check_in_required": "Giriş tarixi tələb olunur",

@@ -22,7 +22,7 @@ import {
   BlogSection as BlogSectionType,
   ContactSection as ContactSectionType,
 } from "@/lib/types/home.type";
-import { City, Sanatorium } from "@/lib/types/sanatorium.type";
+import { City, Sanatorium, SanatoriumListType } from "@/lib/types/sanatorium.type";
 import { BlogPost } from "@/lib/types/blog.type";
 import { PackageType } from "@/lib/types/package.type";
 
@@ -40,6 +40,7 @@ interface Props {
   blogs: BlogPost[];
   contactSection: ContactSectionType;
   sanatoriums: Sanatorium[];
+  allSanatoriums: SanatoriumListType[];
   locations: City [];
   packages: PackageType [];
 }
@@ -57,6 +58,7 @@ export default function HomePage({
   blogs,
   contactSection,
   sanatoriums,
+  allSanatoriums,
   locations,
   packages
 }: Props) {
@@ -67,7 +69,7 @@ export default function HomePage({
 
       {/* Search Form */}
       <div className="container mx-auto relative">
-        <SearchForm locations={locations} />
+        <SearchForm locations={locations} sanatoriums={allSanatoriums} />
       </div>
 
       {/* About Section */}
