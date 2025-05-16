@@ -24,7 +24,7 @@ const nextConfig: NextConfig = {
       },
       {
         protocol: "https",
-        hostname: "naftalan-admin.mediamarketinq.az",
+        hostname: "adminnn.kurortnaftalan.com",
         pathname: "/**",
       },
     ],
