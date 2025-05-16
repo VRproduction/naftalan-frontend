@@ -7,9 +7,10 @@ import {
   Treatment,
   TreatmentCategory,
   TreantmentProcess,
+  Indication,
 } from "../types/about.type";
 
-const DEFAULT_OPTIONS = { revalidate: 1000};
+const DEFAULT_OPTIONS = { revalidate: 1000 };
 
 export const getAbout = (locale: SupportedLocale) =>
   api.get<About>("/about/", { ...DEFAULT_OPTIONS, locale: locale });
@@ -40,6 +41,18 @@ export const getTreatmentCategories = (locale: SupportedLocale) =>
 
 export const getTreantmentProcesses = (locale: SupportedLocale) =>
   api.get<TreantmentProcess[]>("/about/treatment-process-list/", {
+    ...DEFAULT_OPTIONS,
+    locale: locale,
+  });
+
+export const getIndication = (locale: SupportedLocale) =>
+  api.get<Indication>("/about/indication/", {
+    ...DEFAULT_OPTIONS,
+    locale: locale,
+  });
+
+export const getContraindications = (locale: SupportedLocale) =>
+  api.get<Indication>("/about/contraindications/", {
     ...DEFAULT_OPTIONS,
     locale: locale,
   });

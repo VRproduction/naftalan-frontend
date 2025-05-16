@@ -84,7 +84,7 @@ const Header = ({ siteSettings }: HeaderProps) => {
     if (path === '/') {
       return pathname === '/';
     }
-    return pathname.startsWith(path);
+    return pathname.endsWith(path);
   };
 
   const renderDesktopMenu = () => (
@@ -174,14 +174,24 @@ const Header = ({ siteSettings }: HeaderProps) => {
             {t('naftalan_history')}
           </IntlLink>
           <IntlLink 
-            href="/about/treatments" 
+            href="/about/indications" 
             className={`block px-4 py-2.5 transition-colors border-l-2 ${
-              isActive('/about/treatments') 
+              isActive('/about/indications') 
                 ? 'bg-blue-50 text-blue-600 border-blue-500' 
                 : 'border-transparent hover:bg-blue-50 hover:text-blue-500 hover:border-blue-500'
             }`}
           >
-            {t('treated_conditions')}
+            {t('indications')}
+          </IntlLink>
+          <IntlLink 
+            href="/about/contraindications" 
+            className={`block px-4 py-2.5 transition-colors border-l-2 ${
+              isActive('/about/contraindications') 
+                ? 'bg-blue-50 text-blue-600 border-blue-500' 
+                : 'border-transparent hover:bg-blue-50 hover:text-blue-500 hover:border-blue-500'
+            }`}
+          >
+            {t('contraindications')}
           </IntlLink>
         </div>
       </div>

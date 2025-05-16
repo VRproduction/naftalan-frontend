@@ -75,3 +75,12 @@ export interface TreantmentProcess {
   content: string;
   priority: number;
 }
+
+
+export interface Indication {
+  content: string;
+}
+
+export interface ContraIndication {
+  content: string;
+}

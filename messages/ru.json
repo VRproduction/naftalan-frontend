@@ -29,7 +29,10 @@
     "blog": "Блог",
     "contact": "Контакты",
     "ask_doctor": "Задать вопрос врачу",
-    "help": "Помощь"
+    "help": "Помощь",
+    "indications": "Показания к применению нафталана",
+    "contraindications": "Противопоказания"
+
   },
   "languages": {
     "az": "Azərbaycan",

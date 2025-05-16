@@ -29,7 +29,9 @@
     "blog": "Bloq",
     "contact": "Əlaqə",
     "ask_doctor": "Həkimə sual ver",
-    "help": "Kömək"
+    "help": "Kömək",
+    "indications": "Naftalana göstərişlər",
+    "contraindications": "Əks göstərişlər"
   },
   "languages": {
     "az": "Azərbaycan",

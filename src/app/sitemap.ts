@@ -11,6 +11,8 @@ const staticPages = [
   "/about", // Hakkımızda
   "/about/history", // Tarih
   "/about/treatments", // Tedaviler
+  "/about/indications", // Tedaviler
+  "/about/contraindications", // Tedaviler
   "/sanatoriums/naftalan", // Naftalan sanatoriumları
   "/sanatoriums/other", // Diğer sanatoriumlar
   "/how-to-come", // Nasıl gelinir
