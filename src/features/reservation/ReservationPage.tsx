@@ -91,7 +91,7 @@ const GuestSelector = ({
   return (
     <div className="relative" ref={dropdownRef}>
       <div 
-        className={`w-full flex items-center border-2 border-gray-200 rounded-lg py-3 pl-10 pr-4 bg-white shadow-sm cursor-pointer hover:border-blue-400 transition-all duration-200 ${isOpen ? 'ring-2 ring-blue-200 border-blue-400' : ''}`}
+        className={`w-full flex items-center border-2 border-gray-200 rounded-lg py-2.5 pl-10 pr-4 bg-white  cursor-pointer hover:border-blue-400 transition-all duration-200 ${isOpen ? 'ring-2 ring-blue-200 border-blue-400' : ''}`}
         onClick={() => setIsOpen(!isOpen)}
       >
         <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-gray-500 group-hover:text-blue-500 transition-colors">

@@ -54,7 +54,7 @@ const SharePopover: React.FC<SharePopoverProps> = ({
       <button
         type="button"
         aria-label="Paylaş"
-        className="flex items-center gap-2 p-2 pr-4 rounded-full bg-gray-100 hover:bg-blue-100 text-gray-500 hover:text-blue-600 transition-colors shadow-sm border border-gray-200"
+        className="flex items-center gap-2 p-2 rounded-full bg-gray-100 hover:bg-blue-100 text-gray-500 hover:text-blue-600 transition-colors shadow-sm border border-gray-200"
         onClick={handleShare}
       >
         <RiShareForwardLine className="w-5 h-5" />

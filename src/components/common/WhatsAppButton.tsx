@@ -51,11 +51,7 @@ const WhatsAppButton: React.FC<WhatsAppButtonProps> = ({
     >
       <FaWhatsapp className="text-white text-3xl" />
       
-      {/* Tooltip on hover */}
-      <span className="absolute top-0 right-0 -mt-12 bg-white text-green-600 px-3 py-1 rounded-full text-sm font-medium shadow-md opacity-0 group-hover:opacity-100 transition-opacity duration-300 whitespace-nowrap">
-        WhatsApp ile əlaqə
-      </span>
-      
+     
       {/* Ripple effect */}
       <span className="absolute inset-0 rounded-full border-4 border-green-400 animate-ping opacity-75"></span>
     </a>

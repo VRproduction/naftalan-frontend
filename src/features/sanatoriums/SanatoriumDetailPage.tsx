@@ -94,7 +94,7 @@ export default function SanatoriumDetailPage({ sanatorium }: PageProps) {
 
       {/* Important Info Header */}
       <div className="container mx-auto px-4 pt-4 pb-2">
-        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+        <div className="flex justify-between gap-4">
           <div className="flex-1 min-w-0">
             <h1 className="text-2xl md:text-3xl font-bold text-gray-900 mb-2 truncate">{sanatorium.name}</h1>
             <div className="flex items-center gap-3 flex-wrap text-gray-600 text-sm mb-1">
@@ -106,9 +106,10 @@ export default function SanatoriumDetailPage({ sanatorium }: PageProps) {
                 </span>
               )}
             </div>
+            
           </div>
-          {/* Sağ kısım: paylaş ve favori butonları */}
-          <div className="flex gap-2 items-center mt-2 md:mt-0 relative">
+          {/* Desktop: Share button in header */}
+          <div className="flex gap-2 items-center mt-0 relative">
             <SharePopover
               url={typeof window !== 'undefined' ? window.location.href : ''}
               title={sanatorium.name}
@@ -130,9 +131,9 @@ export default function SanatoriumDetailPage({ sanatorium }: PageProps) {
 
       {/* Main Content */}
       <div className="container mx-auto px-4 py-4">
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 lg:grid-cols-[1.7fr_1fr] gap-6">
           {/* Left Column - Images */}
-          <div className={`lg:col-span-2`}>
+          <div className="max-w-3xl w-full">
             {/* Responsive gallery: mobile = big image + horizontal thumbnails, desktop = grid */}
             {sanatorium.images && sanatorium.images.length > 0 && (
               <div className="w-full mb-8">
