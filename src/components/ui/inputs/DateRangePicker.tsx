@@ -4,8 +4,10 @@ import { useState, useRef, useEffect } from 'react';
 import { format, isToday, isAfter, isBefore, addMonths, startOfMonth, endOfMonth, 
   eachDayOfInterval, getDay, parseISO, isValid, addYears, subYears, getYear } from 'date-fns';
 import { FaCalendarAlt, FaChevronLeft, FaChevronRight, FaTimes } from 'react-icons/fa';
-import { motion, AnimatePresence } from 'framer-motion';
 import { twMerge } from 'tailwind-merge';
+import * as Popover from '@radix-ui/react-popover';
+import * as Dialog from '@radix-ui/react-dialog';
+import { VisuallyHidden } from '@radix-ui/react-visually-hidden';
 
 type ColorOption = 'slate' | 'zinc' | 'blue' | 'indigo' | 'violet' | 'purple' | 'teal';
 
@@ -368,238 +370,360 @@ export default function DateRangePicker({
       </div>
     );
   };
- 
+
+  // Helper to detect mobile
+  const isMobile = typeof window !== 'undefined' && window.innerWidth < 640;
+
   return (
     <div className={`relative`}>
       {/* Input field */}
-      <div ref={inputRef} className="relative h-full w-full">
-        
-        <div 
-          className={twMerge(
-            "w-full flex items-center border-2 border-gray-200 rounded-lg py-3 pl-12 pr-4 bg-white shadow-sm cursor-pointer transition-all duration-200",
-            `hover:${colorVariants[primaryColor].border}`,
-            isOpen && `ring-2 ${colorVariants[primaryColor].ring} ${colorVariants[primaryColor].border}`,
-            `${className}`
-          )}
-          onClick={() => setIsOpen(prev => !prev)}
-        >
-          <div className={`absolute inset-y-0 left-0 flex items-center pl-4 pointer-events-none ${colorVariants[primaryColor].text}`}>
-            <FaCalendarAlt className="w-4 h-4 text-gray-500" />
-          </div>
-          
-          <span className={twMerge(
-            "block w-full truncate text-base",
-            startDate && endDate ? "text-gray-800 font-medium" : "text-gray-400"
-          )}>
-            {displayValue}
-          </span>
-          
-          {(startDate || endDate) && (
-            <button 
-              type="button"
-              className="absolute right-4 text-gray-400 hover:text-gray-600 hover:bg-gray-100 p-1.5 rounded-full transition-colors"
-              onClick={(e) => {
-                e.stopPropagation();
-                clearSelection();
-              }}
-            >
-              <FaTimes className="w-4 h-4" />
-            </button>
-          )}
-        </div>
-      </div>
-      
-      {/* Calendar dropdown with animation */}
-      <AnimatePresence>
-        {isOpen && (
-          <motion.div
-            ref={calendarRef}
-            initial={{ opacity: 0, y: 8 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: 8 }}
-            transition={{ duration: 0.15 }}
-            className="fixed inset-x-0 bottom-0 sm:absolute sm:bottom-auto sm:inset-auto z-[9999] sm:mt-2 w-full sm:w-auto sm:min-w-[680px] max-w-full bg-white rounded-t-xl sm:rounded-xl shadow-2xl border border-gray-200 overflow-hidden"
-            style={{
-              maxHeight: window.innerWidth < 640 ? '80vh' : 'calc(100vh - 100px)',
-              overflowY: 'auto'
-            }}
-          >
-            {/* Mobile month navigation */}
-            <div className="sm:hidden bg-gray-50 border-b border-gray-200 p-3 sticky top-0 z-10">
-              <div className="flex items-center justify-between">
-                <button 
-                  type="button"
-                  className="p-2 rounded-full hover:bg-gray-200 transition-colors"
-                  onClick={() => navigateMonth('prev', 0)}
-                >
-                  <FaChevronLeft className="h-4 w-4 text-gray-600" />
-                </button>
-                <div className="flex items-center gap-2">
-                  <h2 className="text-base font-medium text-gray-800">
-                    {format(currentMonth, 'MMMM')}
-                  </h2>
-                  <select
-                    className="text-base font-medium text-gray-800 bg-white border border-gray-200 rounded-md py-1 px-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    value={getYear(currentMonth)}
-                    onChange={(e) => handleYearChange(parseInt(e.target.value), 0)}
-                    aria-label={translations.selectYear}
+      {isMobile ? (
+        <Dialog.Root open={isOpen} onOpenChange={setIsOpen}>
+          <Dialog.Trigger asChild>
+            <div ref={inputRef} className="relative h-full w-full">
+              <div 
+                className={twMerge(
+                  "w-full flex items-center border-2 border-gray-200 rounded-lg py-3 pl-12 pr-4 bg-white shadow-sm cursor-pointer transition-all duration-200",
+                  `hover:${colorVariants[primaryColor].border}`,
+                  isOpen && `ring-2 ${colorVariants[primaryColor].ring} ${colorVariants[primaryColor].border}`,
+                  `${className}`
+                )}
+              >
+                <div className={`absolute inset-y-0 left-0 flex items-center pl-4 pointer-events-none ${colorVariants[primaryColor].text}`}>
+                  <FaCalendarAlt className="w-4 h-4 text-gray-500" />
+                </div>
+                <span className={twMerge(
+                  "block w-full truncate text-base",
+                  startDate && endDate ? "text-gray-800 font-medium" : "text-gray-400"
+                )}>
+                  {displayValue}
+                </span>
+                {(startDate || endDate) && (
+                  <button 
+                    type="button"
+                    className="absolute right-4 text-gray-400 hover:text-gray-600 hover:bg-gray-100 p-1.5 rounded-full transition-colors"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      clearSelection();
+                    }}
                   >
-                    {yearOptions.map(year => (
-                      <option key={year} value={year}>{year}</option>
-                    ))}
-                  </select>
-                </div>
-                <button 
-                  type="button"
-                  className="p-2 rounded-full hover:bg-gray-200 transition-colors"
-                  onClick={() => navigateMonth('next', 0)}
-                >
-                  <FaChevronRight className="h-4 w-4 text-gray-600" />
-                </button>
+                    <FaTimes className="w-4 h-4" />
+                  </button>
+                )}
               </div>
-              
-              {/* Date range summary (mobile) */}
-              <div className="flex mt-2 pt-2 border-t border-gray-200 items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <div className={twMerge(
-                    "h-3 w-3 rounded-full flex-shrink-0",
-                    colorVariants[primaryColor].primary
-                  )} />
-                  <span className="text-sm font-medium text-gray-700 truncate">
-                    {parsedStartDate ? format(parsedStartDate, 'MMM dd') : translations.checkIn}
-                  </span>
+            </div>
+          </Dialog.Trigger>
+          <Dialog.Portal>
+            <Dialog.Overlay className="fixed inset-0 bg-black/50 z-[9998]" />
+            <Dialog.Content
+              ref={calendarRef}
+              className="fixed inset-x-0 bottom-0 top-20 z-[9999] w-full max-h-[80vh] bg-white rounded-t-xl shadow-2xl border border-gray-200 overflow-hidden animate-slideUp"
+              style={{
+                maxHeight: '80vh',
+                overflowY: 'auto',
+              }}
+              onOpenAutoFocus={e => e.preventDefault()}
+            >
+              <Dialog.Title>
+                <VisuallyHidden>{label || 'Select date range'}</VisuallyHidden>
+              </Dialog.Title>
+              {/* Mobile month navigation */}
+              <div className="sm:hidden bg-gray-50 border-b border-gray-200 p-3 sticky top-0 z-10">
+                <div className="flex items-center justify-between">
+                  <button 
+                    type="button"
+                    className="p-2 rounded-full hover:bg-gray-200 transition-colors"
+                    onClick={() => navigateMonth('prev', 0)}
+                  >
+                    <FaChevronLeft className="h-4 w-4 text-gray-600" />
+                  </button>
+                  <div className="flex items-center gap-2">
+                    <h2 className="text-base font-medium text-gray-800">
+                      {format(currentMonth, 'MMMM')}
+                    </h2>
+                    <select
+                      className="text-base font-medium text-gray-800 bg-white border border-gray-200 rounded-md py-1 px-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      value={getYear(currentMonth)}
+                      onChange={(e) => handleYearChange(parseInt(e.target.value), 0)}
+                      aria-label={translations.selectYear}
+                    >
+                      {yearOptions.map(year => (
+                        <option key={year} value={year}>{year}</option>
+                      ))}
+                    </select>
+                  </div>
+                  <button 
+                    type="button"
+                    className="p-2 rounded-full hover:bg-gray-200 transition-colors"
+                    onClick={() => navigateMonth('next', 0)}
+                  >
+                    <FaChevronRight className="h-4 w-4 text-gray-600" />
+                  </button>
                 </div>
                 
-                <div className="flex items-center text-gray-400">→</div>
-                
-                <div className="flex items-center gap-2">
-                  <div className={twMerge(
-                    "h-3 w-3 rounded-full flex-shrink-0",
-                    colorVariants[secondaryColor].primary
-                  )} />
-                  <span className="text-sm font-medium text-gray-700 truncate">
-                    {parsedEndDate ? format(parsedEndDate, 'MMM dd') : translations.checkOut}
-                  </span>
-                </div>
-              </div>
-            </div>
-            
-            <div className="flex flex-col sm:flex-row w-full">
-              {/* First month */}
-              <div className="w-full sm:w-1/2 p-3 sm:p-5 sm:border-r border-gray-200">
-                {renderCalendarMonth(currentMonth, 0)}
-              </div>
-              
-              {/* Second month */}
-              <div className="hidden sm:block w-1/2 p-5">
-                {renderCalendarMonth(secondCurrentMonth, 1)}
-              </div>
-            </div>
-            
-            {/* Calendar legend */}
-            <div className="hidden sm:flex px-5 py-3 border-t border-gray-200 bg-gray-50 justify-center gap-6">
-              <div className="flex items-center gap-2">
-                <div className={twMerge("h-3 w-3 rounded-full", colorVariants[primaryColor].primary)} />
-                <span className="text-xs text-gray-600">{translations.checkInDate}</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <div className={twMerge("h-3 w-3 rounded-full", colorVariants[secondaryColor].primary)} />
-                <span className="text-xs text-gray-600">{translations.checkOutDate}</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <div className={twMerge("h-3 w-3 rounded-full bg-gray-100 ring-2 ring-blue-400")} />
-                <span className="text-xs text-gray-600">{translations.today}</span>
-              </div>
-            </div>
-            
-            {/* Selection controls */}
-            <div className="bg-gray-50 p-3 border-t border-gray-200 sticky bottom-0">
-              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2">
-                <div className="flex flex-row items-center justify-between w-full sm:w-auto sm:justify-start gap-4 sm:gap-8">
-                  {/* Start date */}
+                {/* Date range summary (mobile) */}
+                <div className="flex mt-2 pt-2 border-t border-gray-200 items-center justify-between">
                   <div className="flex items-center gap-2">
                     <div className={twMerge(
-                      "h-4 w-4 rounded-full shadow-sm flex-shrink-0",
+                      "h-3 w-3 rounded-full flex-shrink-0",
                       colorVariants[primaryColor].primary
                     )} />
                     <span className="text-sm font-medium text-gray-700 truncate">
-                      {parsedStartDate 
-                        ? format(parsedStartDate, 'MMM dd, yyyy')
-                        : translations.checkIn}
+                      {parsedStartDate ? format(parsedStartDate, 'MMM dd') : translations.checkIn}
                     </span>
                   </div>
                   
                   <div className="flex items-center text-gray-400">→</div>
                   
-                  {/* End date */}
                   <div className="flex items-center gap-2">
                     <div className={twMerge(
-                      "h-4 w-4 rounded-full shadow-sm flex-shrink-0",
+                      "h-3 w-3 rounded-full flex-shrink-0",
                       colorVariants[secondaryColor].primary
                     )} />
                     <span className="text-sm font-medium text-gray-700 truncate">
-                      {parsedEndDate 
-                        ? format(parsedEndDate, 'MMM dd, yyyy')
-                        : translations.checkOut}
+                      {parsedEndDate ? format(parsedEndDate, 'MMM dd') : translations.checkOut}
                     </span>
                   </div>
                 </div>
-                
-                {/* Action buttons */}
-                <div className="flex gap-2 w-full sm:w-auto mt-2 sm:mt-0">
-                  <button
-                    type="button"
-                    className="px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg font-medium text-sm transition-colors sm:w-auto w-1/2 focus:outline-none focus:ring-2 focus:ring-gray-200"
-                    onClick={() => {
-                      clearSelection();
-                      setIsOpen(false);
-                    }}
-                  >
-                    {translations.clear}
-                  </button>
-                  <button
-                    type="button"
-                    className={twMerge(
-                      "px-4 py-2 rounded-lg font-medium text-sm transition-colors sm:w-auto w-1/2 focus:outline-none focus:ring-2",
-                      colorVariants[primaryColor].primary,
-                      colorVariants[primaryColor].ring
-                    )}
-                    onClick={() => setIsOpen(false)}
-                  >
-                    {translations.apply}
-                  </button>
+              </div>
+              <div className="flex flex-col w-full">
+                <div className="w-full p-3">
+                  {renderCalendarMonth(currentMonth, 0)}
                 </div>
               </div>
-              
-              {/* Additional information about selection */}
-              {parsedStartDate && parsedEndDate && (
-                <div className="mt-2 pt-2 border-t border-gray-200 flex justify-between items-center text-xs text-gray-500">
-                  <span>
-                    {(() => {
-                      const diff = Math.ceil((parsedEndDate.getTime() - parsedStartDate.getTime()) / (1000 * 60 * 60 * 24));
-                      return `${diff} ${diff === 1 ? translations.night : translations.nights}`;
-                    })()}
-                  </span>
-                  <span className="hidden sm:inline">{format(parsedStartDate, 'EEEE')} - {format(parsedEndDate, 'EEEE')}</span>
+              {/* Selection controls */}
+              <div className="bg-gray-50 p-3 border-t border-gray-200 sticky bottom-0">
+                <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2">
+                  <div className="flex flex-row items-center justify-between w-full sm:w-auto sm:justify-start gap-4 sm:gap-8">
+                    {/* Start date */}
+                    <div className="flex items-center gap-2">
+                      <div className={twMerge(
+                        "h-4 w-4 rounded-full shadow-sm flex-shrink-0",
+                        colorVariants[primaryColor].primary
+                      )} />
+                      <span className="text-sm font-medium text-gray-700 truncate">
+                        {parsedStartDate 
+                          ? format(parsedStartDate, 'MMM dd, yyyy')
+                          : translations.checkIn}
+                      </span>
+                    </div>
+                    
+                    <div className="flex items-center text-gray-400">→</div>
+                    
+                    {/* End date */}
+                    <div className="flex items-center gap-2">
+                      <div className={twMerge(
+                        "h-4 w-4 rounded-full shadow-sm flex-shrink-0",
+                        colorVariants[secondaryColor].primary
+                      )} />
+                      <span className="text-sm font-medium text-gray-700 truncate">
+                        {parsedEndDate 
+                          ? format(parsedEndDate, 'MMM dd, yyyy')
+                          : translations.checkOut}
+                      </span>
+                    </div>
+                  </div>
+                  
+                  {/* Action buttons */}
+                  <div className="flex gap-2 w-full sm:w-auto mt-2 sm:mt-0">
+                    <button
+                      type="button"
+                      className="px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg font-medium text-sm transition-colors sm:w-auto w-1/2 focus:outline-none focus:ring-2 focus:ring-gray-200"
+                      onClick={() => {
+                        clearSelection();
+                        setIsOpen(false);
+                      }}
+                    >
+                      {translations.clear}
+                    </button>
+                    <button
+                      type="button"
+                      className={twMerge(
+                        "px-4 py-2 rounded-lg font-medium text-sm transition-colors sm:w-auto w-1/2 focus:outline-none focus:ring-2",
+                        colorVariants[primaryColor].primary,
+                        colorVariants[primaryColor].ring
+                      )}
+                      onClick={() => setIsOpen(false)}
+                    >
+                      {translations.apply}
+                    </button>
+                  </div>
                 </div>
-              )}
+                
+                {/* Additional information about selection */}
+                {parsedStartDate && parsedEndDate && (
+                  <div className="mt-2 pt-2 border-t border-gray-200 flex justify-between items-center text-xs text-gray-500">
+                    <span>
+                      {(() => {
+                        const diff = Math.ceil((parsedEndDate.getTime() - parsedStartDate.getTime()) / (1000 * 60 * 60 * 24));
+                        return `${diff} ${diff === 1 ? translations.night : translations.nights}`;
+                      })()}
+                    </span>
+                    <span className="hidden sm:inline">{format(parsedStartDate, 'EEEE')} - {format(parsedEndDate, 'EEEE')}</span>
+                  </div>
+                )}
+              </div>
+              {/* Close button for mobile */}
+              <button
+                type="button"
+                className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 bg-white rounded-full p-2 shadow"
+                onClick={() => setIsOpen(false)}
+                aria-label="Close"
+              >
+                <FaTimes className="w-5 h-5" />
+              </button>
+            </Dialog.Content>
+          </Dialog.Portal>
+        </Dialog.Root>
+      ) : (
+        <Popover.Root open={isOpen} onOpenChange={setIsOpen}>
+          <Popover.Trigger asChild>
+            <div ref={inputRef} className="relative h-full w-full">
+              <div 
+                className={twMerge(
+                  "w-full flex items-center border-2 border-gray-200 rounded-lg py-3 pl-12 pr-4 bg-white shadow-sm cursor-pointer transition-all duration-200",
+                  `hover:${colorVariants[primaryColor].border}`,
+                  isOpen && `ring-2 ${colorVariants[primaryColor].ring} ${colorVariants[primaryColor].border}`,
+                  `${className}`
+                )}
+              >
+                <div className={`absolute inset-y-0 left-0 flex items-center pl-4 pointer-events-none ${colorVariants[primaryColor].text}`}>
+                  <FaCalendarAlt className="w-4 h-4 text-gray-500" />
+                </div>
+                <span className={twMerge(
+                  "block w-full truncate text-base",
+                  startDate && endDate ? "text-gray-800 font-medium" : "text-gray-400"
+                )}>
+                  {displayValue}
+                </span>
+                {(startDate || endDate) && (
+                  <button 
+                    type="button"
+                    className="absolute right-4 text-gray-400 hover:text-gray-600 hover:bg-gray-100 p-1.5 rounded-full transition-colors"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      clearSelection();
+                    }}
+                  >
+                    <FaTimes className="w-4 h-4" />
+                  </button>
+                )}
+              </div>
             </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-      
-      {/* Background overlay when calendar is open on mobile */}
-      <AnimatePresence>
-        {isOpen && window.innerWidth < 640 && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 0.5 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-black z-[9998]"
-            onClick={() => setIsOpen(false)}
-          />
-        )}
-      </AnimatePresence>
+          </Popover.Trigger>
+          <Popover.Portal>
+            <Popover.Content
+              ref={calendarRef}
+              sideOffset={8}
+              className="z-[9999] mt-2 w-full sm:w-auto sm:min-w-[680px] max-w-full bg-white rounded-t-xl sm:rounded-xl shadow-2xl border border-gray-200 overflow-hidden"
+              style={{
+                maxHeight: typeof window !== 'undefined' && window.innerWidth < 640 ? '80vh' : 'calc(100vh - 100px)',
+                overflowY: 'auto',
+              }}
+              onOpenAutoFocus={e => e.preventDefault()}
+            >
+              {/* Desktop calendar */}
+              <div className="flex flex-col sm:flex-row w-full">
+                {/* First month */}
+                <div className="w-full sm:w-1/2 p-3 sm:p-5 sm:border-r border-gray-200">
+                  {renderCalendarMonth(currentMonth, 0)}
+                </div>
+                {/* Second month */}
+                <div className="hidden sm:block w-1/2 p-5">
+                  {renderCalendarMonth(secondCurrentMonth, 1)}
+                </div>
+              </div>
+              {/* Calendar legend */}
+              <div className="hidden sm:flex px-5 py-3 border-t border-gray-200 bg-gray-50 justify-center gap-6">
+                <div className="flex items-center gap-2">
+                  <div className={twMerge("h-3 w-3 rounded-full", colorVariants[primaryColor].primary)} />
+                  <span className="text-xs text-gray-600">{translations.checkInDate}</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <div className={twMerge("h-3 w-3 rounded-full", colorVariants[secondaryColor].primary)} />
+                  <span className="text-xs text-gray-600">{translations.checkOutDate}</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <div className={twMerge("h-3 w-3 rounded-full bg-gray-100 ring-2 ring-blue-400")} />
+                  <span className="text-xs text-gray-600">{translations.today}</span>
+                </div>
+              </div>
+              {/* Selection controls */}
+              <div className="bg-gray-50 p-3 border-t border-gray-200 sticky bottom-0">
+                <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2">
+                  <div className="flex flex-row items-center justify-between w-full sm:w-auto sm:justify-start gap-4 sm:gap-8">
+                    {/* Start date */}
+                    <div className="flex items-center gap-2">
+                      <div className={twMerge(
+                        "h-4 w-4 rounded-full shadow-sm flex-shrink-0",
+                        colorVariants[primaryColor].primary
+                      )} />
+                      <span className="text-sm font-medium text-gray-700 truncate">
+                        {parsedStartDate 
+                          ? format(parsedStartDate, 'MMM dd, yyyy')
+                          : translations.checkIn}
+                      </span>
+                    </div>
+                    
+                    <div className="flex items-center text-gray-400">→</div>
+                    
+                    {/* End date */}
+                    <div className="flex items-center gap-2">
+                      <div className={twMerge(
+                        "h-4 w-4 rounded-full shadow-sm flex-shrink-0",
+                        colorVariants[secondaryColor].primary
+                      )} />
+                      <span className="text-sm font-medium text-gray-700 truncate">
+                        {parsedEndDate 
+                          ? format(parsedEndDate, 'MMM dd, yyyy')
+                          : translations.checkOut}
+                      </span>
+                    </div>
+                  </div>
+                  
+                  {/* Action buttons */}
+                  <div className="flex gap-2 w-full sm:w-auto mt-2 sm:mt-0">
+                    <button
+                      type="button"
+                      className="px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg font-medium text-sm transition-colors sm:w-auto w-1/2 focus:outline-none focus:ring-2 focus:ring-gray-200"
+                      onClick={() => {
+                        clearSelection();
+                        setIsOpen(false);
+                      }}
+                    >
+                      {translations.clear}
+                    </button>
+                    <button
+                      type="button"
+                      className={twMerge(
+                        "px-4 py-2 rounded-lg font-medium text-sm transition-colors sm:w-auto w-1/2 focus:outline-none focus:ring-2",
+                        colorVariants[primaryColor].primary,
+                        colorVariants[primaryColor].ring
+                      )}
+                      onClick={() => setIsOpen(false)}
+                    >
+                      {translations.apply}
+                    </button>
+                  </div>
+                </div>
+                
+                {/* Additional information about selection */}
+                {parsedStartDate && parsedEndDate && (
+                  <div className="mt-2 pt-2 border-t border-gray-200 flex justify-between items-center text-xs text-gray-500">
+                    <span>
+                      {(() => {
+                        const diff = Math.ceil((parsedEndDate.getTime() - parsedStartDate.getTime()) / (1000 * 60 * 60 * 24));
+                        return `${diff} ${diff === 1 ? translations.night : translations.nights}`;
+                      })()}
+                    </span>
+                    <span className="hidden sm:inline">{format(parsedStartDate, 'EEEE')} - {format(parsedEndDate, 'EEEE')}</span>
+                  </div>
+                )}
+              </div>
+            </Popover.Content>
+          </Popover.Portal>
+        </Popover.Root>
+      )}
     </div>
   );
 }

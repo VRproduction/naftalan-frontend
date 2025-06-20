@@ -4,18 +4,34 @@ import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import Image from 'next/image';
 import { Link } from '@/i18n/navigation';
-import { FaStar, FaMapMarkerAlt, FaArrowRight, FaMedal, FaCheck, FaBath, FaWifi, FaParking, FaConciergeBell, FaHeart, FaShare, FaChevronDown, FaChevronUp, FaTimes } from 'react-icons/fa';
+import {
+  RiStarSFill,
+  RiMapPin2Line,
+  RiCheckLine,
+  RiHeart3Line,
+  RiShareForwardLine,
+  RiMoonClearLine,
+  RiUser3Line,
+  RiUserSmileLine,
+  RiHotelBedLine,
+  RiWallet3Line,
+  RiPhoneLine,
+  RiArrowDownSLine,
+  RiArrowUpSLine,
+  RiArrowRightSLine,
+} from 'react-icons/ri';
 import { Sanatorium } from '@/lib/types/sanatorium.type';
 import { useTranslations } from 'next-intl';
 import { useCurrencyStore } from '@/lib/store/useCurrencyStore';
+import ImageSliderModal from '@/components/common/ImageSliderModal';
 
 interface SanatoriumProps {
   sanatorium: Sanatorium;
   index?: number;
+  nights?: number;
 }
 
-export default function SanatoriumHorizontal({ sanatorium, index = 0 }: SanatoriumProps) {
-  const [isExpanded, setIsExpanded] = useState(false);
+export default function SanatoriumHorizontal({ sanatorium, index = 0, nights = 1 }: SanatoriumProps) {
   const [isHovered, setIsHovered] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
   const { formatPrice } = useCurrencyStore();
@@ -40,7 +56,7 @@ export default function SanatoriumHorizontal({ sanatorium, index = 0 }: Sanatori
     const stars = [];
     for (let i = 1; i <= 5; i++) {
       stars.push(
-        <FaStar 
+        <RiStarSFill 
           key={i} 
           className={`h-4 w-4 ${i <= rating ? 'text-yellow-400' : 'text-gray-300'}`} 
         />
@@ -77,28 +93,6 @@ export default function SanatoriumHorizontal({ sanatorium, index = 0 }: Sanatori
   const showTotal = totalPrice > finalPrice;
   const showDiscount = hasDiscount && discountPercent > 0;
   
-  // Calculate nights dynamically if possible
-  const nights = (() => {
-    if (sanatorium.min_price_details?.season) {
-      const startDate = sanatorium.min_price_details.season.start_date;
-      const endDate = sanatorium.min_price_details.season.end_date;
-      if (startDate && endDate) {
-        try {
-          const start = new Date(startDate);
-          const end = new Date(endDate);
-          // Calculate difference in days
-          const diffTime = Math.abs(end.getTime() - start.getTime());
-          const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-          return diffDays > 0 ? diffDays : 1;
-        } catch (e) {
-          return 1;
-        }
-      }
-    }
-    // Default to 1 night if no data available
-    return 1;
-  })();
-  
   // Simple discount formatter
   const getDiscount = () => {
     if (!hasDiscount) return null;
@@ -133,10 +127,27 @@ export default function SanatoriumHorizontal({ sanatorium, index = 0 }: Sanatori
   // Extract facilities data
   const facilitiesWithIcons = sanatorium.facilities.filter(f => f.facility.icon);
 
- 
+  // Helper to get guest/child/night info as array for icon display
+  const getGuestInfoArray = () => {
+    const criteria = sanatorium.min_price_details?.search_criteria;
+    if (!criteria) return [];
+    const totalGuests = criteria.total_guests || 0;
+    const childrenCount = criteria.children_ages?.length || 0;
+    const adultCount = totalGuests - childrenCount;
+    return [
+      adultCount > 0 ? { icon: <RiUser3Line className="text-blue-600 mr-1" />, value: adultCount, label: commonT?.('adult') || 'büyük' } : null,
+      childrenCount > 0 ? { icon: <RiUserSmileLine className="text-yellow-500 mr-1" />, value: childrenCount, label: commonT?.('child') || 'çocuk' } : null,
+      nights > 0 ? { icon: <RiMoonClearLine className="text-indigo-500 mr-1" />, value: nights, label: commonT?.('night') || 'gecə' } : null,
+    ].filter(Boolean);
+  };
+
+  // Add state for modal
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [modalIndex, setModalIndex] = useState(0);
 
   // Mobile view
   if (isMobile) {
+    // Modern mobile card from scratch
     return (
       <motion.div
         initial="hidden"
@@ -144,182 +155,173 @@ export default function SanatoriumHorizontal({ sanatorium, index = 0 }: Sanatori
         viewport={{ once: true }}
         transition={{ duration: 0.4, delay: index * 0.1 }}
         variants={fadeInUpVariant}
-        className="bg-white rounded-xl shadow-md border border-gray-200 overflow-hidden"
+        className="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden flex flex-col"
       >
-        <div className="flex flex-col">
-          {/* Image Section - similar to desktop but adapted for mobile */}
-          <div className="relative h-48">
-            <div className="absolute inset-0 bg-gradient-to-b from-black/40 to-transparent z-10"></div>
-            <Image 
-              src={sanatorium.main_image?.image || '/images/placeholder.svg'} 
-              alt={sanatorium.name} 
-              fill
-              className="object-cover"
-            />
-            
-            {/* Featured badge */}
-            {sanatorium.in_home && (
-              <div className="absolute top-3 left-3 bg-gradient-to-r from-blue-600 to-blue-800 text-white text-xs py-1.5 px-3 rounded-full flex items-center z-20 shadow-lg">
-                <FaMedal className="mr-1.5" />
-                <span className="font-medium">{t('featured')}</span>
-              </div>
-            )}
-            
-            {/* Location type badge */}
-            {sanatorium.location_type && (
-              <div className="absolute top-3 left-3 mt-8 bg-gradient-to-r from-teal-500 to-teal-700 text-white text-xs py-1 px-2 rounded-full z-20 shadow-sm">
-                {sanatorium.location_type === "naftalan" ? t('location_type.naftalan') : t('location_type.other_city')}
+        {/* Dynamic Image Grid */}
+        <div className="relative w-full" style={{ aspectRatio: '2/1' }}>
+          <div className="absolute inset-0 bg-gradient-to-b from-black/40 to-transparent z-10"></div>
+          {sanatorium.images?.length === 1 ? (
+            <div className="relative w-full h-full rounded-t-2xl overflow-hidden">
+              <Image
+                src={sanatorium.images[0].image || sanatorium.main_image?.image || '/images/placeholder.svg'}
+                alt={sanatorium.name}
+                fill
+                className="object-cover"
+              />
             </div>
-            )}
-            
-            {/* Rating stars */}
-            <div className="absolute top-3 right-3 flex items-center bg-white/80 backdrop-blur-sm rounded-full px-2 py-1 z-20 shadow-sm">
-              <div className="flex items-center">
-                {renderStars(Number(sanatorium.rating))}
+          ) : sanatorium.images?.length === 2 ? (
+            <div className="flex w-full h-full gap-1">
+              <div className="relative flex-1 rounded-tl-2xl overflow-hidden">
+                <Image
+                  src={sanatorium.images[0]?.image || sanatorium.main_image?.image || '/images/placeholder.svg'}
+                  alt={`${sanatorium.name} - 1`}
+                  fill
+                  className="object-cover"
+                />
+              </div>
+              <div className="relative flex-1 rounded-tr-2xl overflow-hidden">
+                <Image
+                  src={sanatorium.images[1]?.image || sanatorium.main_image?.image || '/images/placeholder.svg'}
+                  alt={`${sanatorium.name} - 2`}
+                  fill
+                  className="object-cover"
+                />
               </div>
             </div>
-            
-            {/* Active badge */}
-            {!sanatorium.is_active && (
-              <div className="absolute inset-0 bg-black/50 flex items-center justify-center z-30">
-                <div className="bg-red-600/90 text-white px-4 py-2 rounded-lg shadow-lg rotate-12">
-                  <span className="font-bold text-lg">{t('status.unavailable')}</span>
+          ) : sanatorium.images?.length > 2 ? (
+            <div className="flex w-full h-full gap-1">
+              {/* Main image left, 2/3 width */}
+              <div className="relative" style={{ width: '66.666%' }}>
+                <div className="relative w-full h-full rounded-tl-2xl overflow-hidden" style={{ aspectRatio: '1/1' }}>
+                  <Image
+                    src={sanatorium.images[0]?.image || sanatorium.main_image?.image || '/images/placeholder.svg'}
+                    alt={sanatorium.name}
+                    fill
+                    className="object-cover"
+                  />
                 </div>
               </div>
-            )}
-          </div>
-          
-          {/* Content Section - Similar to desktop middle section */}
-          <div className="p-4 flex flex-col justify-between">
-            <div>
-              <div className="flex flex-wrap items-start justify-between mb-2">
-                <Link href={`/sanatoriums/${sanatorium.slug}`} className="hover:text-blue-700 transition-colors">
-                  <h3 className="text-lg font-bold text-gray-800 hover:text-blue-700 transition-colors">{sanatorium.name}</h3>
-                </Link>
-              </div>
-              
-              <div className="flex items-center text-sm text-gray-500 mb-3">
-                <FaMapMarkerAlt className="mr-1.5 text-blue-600" />
-                <span>{sanatorium.location.region}, {sanatorium.location.country}</span>
-              </div>
-            </div>
-          </div>
-          
-          {/* Price and CTA Section - Similar to desktop right section */}
-          <div className="p-4 bg-gradient-to-br from-gray-50 to-gray-100 border-t border-gray-200">
-            {/* Price information */}
-            <div className="flex items-center p-3 bg-blue-50 rounded-lg mb-3">
-              {hasPrice ? (
-                <div className="flex-1">
-                  {/* Price tag with discount/season info */}
-                  <div className="flex mb-2">
-                    {showDiscount && (
-                      <div className="bg-red-100 text-red-700 text-xs px-2 py-1 rounded-md font-medium mr-2">
-                        {getDiscount()}
-                      </div>
-                    )}
-                    
-                    {seasonName && (
-                      <div className="bg-teal-100 text-teal-800 text-xs px-2 py-1 rounded-md font-medium">
-                        {seasonIsCurrent ? t('season.current_season') : t('season.name', { name: seasonName })}
-                      </div>
-                    )}
-                  </div>
-            
-                  <div className="flex items-center justify-between">
-                    <div>
-                      {showDiscount && basePrice > finalPrice && (
-                        <div className="text-sm line-through text-gray-500 mb-1">{formatPrice(basePrice)}</div>
-                      )}
-                      <div className="text-xl font-bold text-blue-700">
-                        {formatPrice(finalPrice)}
-                      </div>
-                      <div className="text-xs text-gray-600">
-                        {getPriceLabel()}
-                      </div>
-            </div>
-            
-                    {showTotal && (
-                      <div className="text-sm font-semibold text-blue-800 bg-blue-100 rounded px-2 py-1 inline-block">
-                        {showDiscount ? (
-                          <div className="flex flex-col items-end">
-                            <span className="text-xs text-gray-500 line-through">
-                              {formatPrice(Math.round(originalTotalPrice))}
-                            </span>
-                            <span>{formatPrice(totalPrice)}</span>
-                          </div>
-                        ) : (
-                          <>{t('price.total')}: {formatPrice(totalPrice)}</>
-                        )}
-                      </div>
-                    )}
-                  </div>
-                </div>
-              ) : null}
-            </div>
-            
-            {/* Action buttons in a row */}
-            <div className="flex gap-2">
-              <Link 
-                href={`/sanatoriums/${sanatorium.slug}`}
-                className="flex-1 py-2.5 bg-gradient-to-r from-blue-600 to-blue-800 text-white text-center rounded-lg font-medium flex items-center justify-center"
-              >
-                {t('details')}
-                <FaArrowRight className="ml-2" />
-              </Link>
-              
-              {sanatorium.images.length > 1 && (
-                <button
-                  onClick={() => setIsExpanded(!isExpanded)}
-                  className="px-3 py-2.5 border border-blue-600 text-blue-700 text-center rounded-lg text-sm font-medium flex items-center"
-                >
-                  {isExpanded ? <FaTimes /> : <FaChevronDown />}
-                </button>
-              )}
-              </div>
-            </div>
-            
-            {/* Expanded Section */}
-            {isExpanded && (
-              <motion.div
-                initial={{ opacity: 0, height: 0 }}
-                animate={{ opacity: 1, height: 'auto' }}
-                transition={{ duration: 0.3 }}
-              className="border-t border-gray-200 p-4 bg-gradient-to-b from-gray-50 to-white"
-            >
-              {/* Only show photos section if there's more than one image */}
-              {sanatorium.images.length > 1 && (
-                <>
-                  <h4 className="text-base font-semibold mb-3 text-gray-800 flex items-center">
-                    <span className="bg-blue-100 w-6 h-6 rounded-full flex items-center justify-center mr-2">
-                      <FaStar className="text-blue-600 text-xs" />
-                    </span>
-                    {t('photos')}
-                  </h4>
-                  <div className="grid grid-cols-2 gap-3 mb-4">
-                    {sanatorium.images.slice(0, 4).map((image, i) => (
-                      <div key={i} className="relative h-24 rounded-lg overflow-hidden shadow-md">
-                      <Image 
-                        src={image.image} 
-                          alt={`${sanatorium.name} - ${t('photo')} ${i+1}`} 
+              {/* Two stacked images right, 1/3 width */}
+              <div className="flex flex-col gap-1" style={{ width: '33.333%' }}>
+                {[1, 2].map((i) => (
+                  sanatorium.images[i] && (
+                    <div key={i} className={`relative overflow-hidden ${i === 1 ? 'rounded-tr-2xl' : 'rounded-br-2xl'}`} style={{ aspectRatio: '1/1' }}>
+                      <Image
+                        src={sanatorium.images[i].image}
+                        alt={`${sanatorium.name} - ${i+1}`}
                         fill
                         className="object-cover"
                       />
+                      {i === 2 && sanatorium.images.length > 3 && (
+                        <div className="absolute inset-0 bg-black/60 flex items-center justify-center">
+                          <span className="text-white text-lg font-bold">+{sanatorium.images.length - 3}</span>
+                        </div>
+                      )}
                     </div>
-                  ))}
-                </div>
-                </>
-              )}
-                
-                <Link 
-                  href={`/sanatoriums/${sanatorium.slug}`}
-                className="w-full py-3 bg-gradient-to-r from-blue-600 to-blue-800 text-white rounded-lg shadow-md font-medium flex items-center justify-center mt-3"
-                >
-                  {t('book_now')} <FaArrowRight className="ml-2" />
-                </Link>
-              </motion.div>
-            )}
+                  )
+                ))}
+              </div>
+            </div>
+          ) : (
+            <div className="relative w-full h-full rounded-t-2xl overflow-hidden">
+              <Image
+                src={sanatorium.main_image?.image || '/images/placeholder.svg'}
+                alt={sanatorium.name}
+                fill
+                className="object-cover"
+              />
+            </div>
+          )}
+          {/* Featured badge */}
+          {sanatorium.in_home && (
+            <div className="absolute top-3 left-3 bg-gradient-to-r from-blue-600 to-blue-800 text-white text-xs py-1.5 px-3 rounded-full flex items-center z-20 shadow-lg">
+              <RiHeart3Line className="mr-1.5" />
+              <span className="font-medium">{t('featured')}</span>
+            </div>
+          )}
+         
+          {/* Active badge */}
+          {!sanatorium.is_active && (
+            <div className="absolute inset-0 bg-black/50 flex items-center justify-center z-30">
+              <div className="bg-red-600/90 text-white px-4 py-2 rounded-lg shadow-lg rotate-12">
+                <span className="font-bold text-lg">{t('status.unavailable')}</span>
+              </div>
+            </div>
+          )}
         </div>
+        {/* Card Content */}
+        <div className="flex flex-col gap-1 p-3">
+          {/* Name and location */}
+          <div className="flex flex-col gap-0.5">
+            <Link href={`/sanatoriums/${sanatorium.slug}`} className="hover:text-blue-700 transition-colors">
+              <h3 className="text-base font-bold text-gray-800 mb-0.5 line-clamp-1">{sanatorium.name}</h3>
+            </Link>
+            <div className="flex items-center text-[11px] text-gray-500">
+              <RiMapPin2Line className="mr-1 text-blue-600" />
+              <span>{sanatorium.location.region}, {sanatorium.location.country}</span>
+              <span className="mx-1 text-gray-300">•</span>
+              <span className="flex items-center gap-0.5">{renderStars(Number(sanatorium.rating))}</span>
+            </div>
+          </div>
+          {/* Short description */}
+          {sanatorium.short_description && (
+            <p className="text-gray-500 text-xs line-clamp-1 mt-0.5 mb-0.5">{sanatorium.short_description}</p>
+          )}
+          {/* Facilities */}
+          {sanatorium.facilities && sanatorium.facilities.length > 0 && (
+            <div className="flex flex-wrap gap-1 mt-0.5 mb-0.5">
+              {sanatorium.facilities.slice(0, 2).map((facility, i) => (
+                <span key={i} className="flex items-center px-1.5 py-0.5 bg-blue-50 rounded-full text-[11px] text-blue-700">
+                  <RiCheckLine className="mr-1 text-xs" />
+                  {facility.facility.name}
+                </span>
+              ))}
+            </div>
+          )}
+          {/* Price section - compact, price and total in one row */}
+          <div className="flex items-center gap-1 mt-1">
+            {hasPrice && (
+              <>
+                {showDiscount && basePrice > finalPrice && (
+                  <span className="text-xs line-through text-gray-400">{formatPrice(basePrice)}</span>
+                )}
+                <span className="text-base font-bold text-blue-700">{formatPrice(finalPrice)}</span>
+                {showTotal && totalPrice > 0 && (
+                  <span className="inline-block bg-blue-600 text-white text-sm font-semibold rounded px-2 py-1 shadow">
+                    {t('price.total')}: {formatPrice(totalPrice)}
+                  </span>
+                )}
+              </>
+            )}
+          </div>
+          {/* Guest/night info */}
+          <div className="flex items-center gap-1 flex-wrap mt-0.5 min-w-0 overflow-x-auto">
+            {getGuestInfoArray().map((item, idx) => (
+              item && (
+                <span key={idx} className="flex items-center text-[11px] text-gray-600 bg-gray-100 rounded-full px-1.5 py-0.5 mr-0.5 mb-0.5">
+                  {item.icon}
+                  <span className="font-semibold mx-0.5">{item.value}</span>
+                  <span>{item.label}</span>
+                </span>
+              )
+            ))}
+          </div>
+          {/* Details button */}
+          <Link
+            href={`/sanatoriums/${sanatorium.slug}`}
+            className="mt-2 w-full py-2 bg-gradient-to-r from-blue-600 to-blue-800 text-white text-center rounded-lg font-medium flex items-center justify-center shadow-sm hover:from-blue-700 hover:to-blue-900 transition-all text-sm"
+          >
+            {t('details')}
+            <RiArrowRightSLine className="ml-2" />
+          </Link>
+        </div>
+        {/* At the end, render the modal */}
+        <ImageSliderModal
+          images={(sanatorium.images && sanatorium.images.length > 0 ? sanatorium.images : sanatorium.main_image ? [sanatorium.main_image] : [{ image: '/images/placeholder.svg', alt: sanatorium.name }])}
+          isOpen={isModalOpen}
+          initialIndex={modalIndex}
+          onClose={() => setIsModalOpen(false)}
+        />
       </motion.div>
     );
   }
@@ -337,31 +339,84 @@ export default function SanatoriumHorizontal({ sanatorium, index = 0 }: Sanatori
       className="bg-white rounded-xl shadow-md border border-gray-200 overflow-hidden hover:shadow-xl transition-all duration-300"
     >
       <div className="grid md:grid-cols-12 h-full">
-        {/* Left Image Section */}
-        <div className="relative h-72 md:h-full md:col-span-4 lg:col-span-4 overflow-hidden group">
+        {/* Left Image Section (Desktop) */}
+        <div className="relative h-72 md:h-full md:col-span-4 lg:col-span-4 overflow-hidden group cursor-pointer" onClick={() => { setIsModalOpen(true); setModalIndex(0); }}>
           <div className="absolute inset-0 bg-gradient-to-b from-black/30 to-transparent z-10"></div>
-          <Image 
-            src={sanatorium.main_image?.image || '/images/placeholder.svg'} 
-            alt={sanatorium.name} 
-            fill
-            className={`object-cover transition-transform duration-700 ${isHovered ? 'scale-110' : 'scale-100'}`}
-          />
-          
+          {sanatorium.images?.length === 1 ? (
+            // Single image: fill the area
+            <div className="relative w-full h-full rounded-l-xl overflow-hidden">
+              <Image
+                src={sanatorium.images[0].image || sanatorium.main_image?.image || '/images/placeholder.svg'}
+                alt={sanatorium.name}
+                fill
+                className={`object-cover transition-transform duration-700 ${isHovered ? 'scale-110' : 'scale-100'}`}
+              />
+            </div>
+          ) : sanatorium.images?.length === 2 ? (
+            // Two images: side by side
+            <div className="grid grid-cols-2 gap-1 h-full w-full">
+              {[0, 1].map(i => (
+                <div key={i} className="relative rounded-l-xl overflow-hidden h-full">
+                  <Image
+                    src={sanatorium.images[i]?.image || sanatorium.main_image?.image || '/images/placeholder.svg'}
+                    alt={`${sanatorium.name} - ${i+1}`}
+                    fill
+                    className="object-cover"
+                  />
+                </div>
+              ))}
+            </div>
+          ) : sanatorium.images?.length > 2 ? (
+            // Three or more images: grid
+            <div className="grid grid-cols-3 grid-rows-2 gap-1 h-full w-full">
+              {/* Main image (large, left, spans 2 rows) */}
+              <div className="row-span-2 col-span-2 relative rounded-l-xl overflow-hidden">
+                <Image
+                  src={sanatorium.images[0]?.image || sanatorium.main_image?.image || '/images/placeholder.svg'}
+                  alt={sanatorium.name}
+                  fill
+                  className={`object-cover transition-transform duration-700 ${isHovered ? 'scale-110' : 'scale-100'}`}
+                />
+              </div>
+              {/* Up to 2 extra images stacked vertically on the right */}
+              {sanatorium.images.slice(1, 3).map((img, i) => (
+                <div key={i} className="relative rounded-tr-xl rounded-br-xl overflow-hidden h-full">
+                  <Image
+                    src={img.image}
+                    alt={`${sanatorium.name} - ${i+2}`}
+                    fill
+                    className="object-cover"
+                  />
+                  {/* If this is the last slot and there are more images, show overlay */}
+                  {i === 1 && sanatorium.images.length > 3 && (
+                    <div className="absolute inset-0 bg-black/60 flex items-center justify-center">
+                      <span className="text-white text-lg font-bold">+{sanatorium.images.length - 3}</span>
+                    </div>
+                  )}
+                </div>
+              ))}
+              {/* If only 1 extra image, fill the second slot with empty div for grid alignment */}
+              {sanatorium.images.length === 2 && <div></div>}
+            </div>
+          ) : (
+            // Fallback: show main_image or placeholder
+            <div className="relative w-full h-full rounded-l-xl overflow-hidden">
+              <Image
+                src={sanatorium.main_image?.image || '/images/placeholder.svg'}
+                alt={sanatorium.name}
+                fill
+                className={`object-cover transition-transform duration-700 ${isHovered ? 'scale-110' : 'scale-100'}`}
+              />
+            </div>
+          )}
           {/* Featured badge - use in_home instead of is_featured */}
           {sanatorium.in_home && (
             <div className="absolute top-4 left-4 bg-gradient-to-r from-blue-600 to-blue-800 text-white text-xs py-1.5 px-3 rounded-full flex items-center z-20 shadow-lg">
-              <FaMedal className="mr-1.5" />
+              <RiHeart3Line className="mr-1.5" />
               <span className="font-medium">{t('featured')}</span>
             </div>
           )}
-          
-          {/* Location type badge */}
-          {sanatorium.location_type && (
-            <div className="absolute top-4 left-4 mt-8 bg-gradient-to-r from-teal-500 to-teal-700 text-white text-xs py-1 px-2 rounded-full z-20 shadow-sm">
-              {sanatorium.location_type === "naftalan" ? t('location_type.naftalan') : t('location_type.other_city')}
-            </div>
-          )}
-          
+         
           {/* Active/Inactive overlay */}
           {!sanatorium.is_active && (
             <div className="absolute inset-0 bg-black/50 flex items-center justify-center z-30">
@@ -370,23 +425,6 @@ export default function SanatoriumHorizontal({ sanatorium, index = 0 }: Sanatori
               </div>
             </div>
           )}
-          
-          {/* Image counter badge */}
-          <div className="absolute bottom-4 right-4 bg-black/70 text-white text-xs py-1 px-2 rounded-md z-20">
-            {t('photos_count', { count: sanatorium.images.length })}
-          </div>
-          
-          {/* Quick view button */}
-          <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-20">
-            {sanatorium.images.length > 1 && (
-            <button 
-              onClick={() => setIsExpanded(!isExpanded)}
-              className="bg-white/90 hover:bg-white text-blue-800 font-medium py-2 px-4 rounded-lg shadow-lg transform transition-transform duration-300 hover:scale-105"
-            >
-                {t('quick_view')}
-            </button>
-            )}
-          </div>
         </div>
         
         {/* Middle Content Section */}
@@ -404,7 +442,7 @@ export default function SanatoriumHorizontal({ sanatorium, index = 0 }: Sanatori
             </div>
             
             <div className="flex items-center text-sm text-gray-500 mb-4">
-              <FaMapMarkerAlt className="mr-1.5 text-blue-600" />
+              <RiMapPin2Line className="mr-1.5 text-blue-600" />
               <span className="inline-block border-b border-dashed border-gray-300 hover:text-blue-600 cursor-pointer">{sanatorium.location.region}, {sanatorium.location.country}</span>
               <span className="mx-2 text-gray-300">•</span>
               <span className="text-blue-600 hover:text-blue-800 cursor-pointer text-sm font-medium">{t('show_on_map')}</span>
@@ -416,7 +454,7 @@ export default function SanatoriumHorizontal({ sanatorium, index = 0 }: Sanatori
             <div className="hidden md:flex flex-wrap gap-2 mb-3">
               {sanatorium.facilities.slice(0, 5).map((facility, i) => (
                 <div key={i} className="flex items-center px-2.5 py-1.5 bg-gradient-to-r from-blue-50 to-blue-100 rounded-full text-xs text-blue-700 shadow-sm">
-                  <FaCheck className="mr-1 text-xs" />
+                  <RiCheckLine className="mr-1 text-xs" />
                   {facility.facility.name}
                 </div>
               ))}
@@ -424,133 +462,73 @@ export default function SanatoriumHorizontal({ sanatorium, index = 0 }: Sanatori
           </div>
         </div>
         
-        {/* Right Pricing & CTA Section */}
-        <div className="p-5 md:p-6 bg-gradient-to-br from-gray-50 to-gray-100 md:col-span-3 lg:col-span-3 flex flex-col justify-between border-t md:border-t-0 md:border-l border-gray-200">
-          {/* Desktop view price information section */}
-          <div className="flex items-center p-3 bg-blue-50 rounded-lg mb-4">
-            {hasPrice ? (
-              <div className="flex-1 text-center md:text-left">
-                {/* Price tag with discount/season info */}
-                <div className="flex mb-2">
-                  {showDiscount && (
-                    <div className="bg-red-100 text-red-700 text-xs px-2 py-1 rounded-md font-medium mr-2">
-                      {getDiscount()}
-            </div>
-                  )}
-                  
-                  {seasonName && (
-                    <div className="bg-teal-100 text-teal-800 text-xs px-2 py-1 rounded-md font-medium">
-                      {seasonIsCurrent ? t('season.current_season') : t('season.name', { name: seasonName })}
-            </div>
-                  )}
+        {/* Right Pricing & CTA Section - modern, lighter design, with all data */}
+        <div className="p-3 md:p-4 bg-white/80 md:col-span-3 lg:col-span-3 flex flex-col justify-between border-t md:border-t-0 md:border-l border-gray-100 rounded-r-2xl">
+          {/* Discount/season badges and guest/night info in one row */}
+          <div className="flex flex-wrap items-center gap-2 mb-2">
+            {showDiscount && (
+              <span className="bg-red-100 text-red-700 text-xs px-2 py-1 rounded-md font-medium">
+                {getDiscount()}
+              </span>
+            )}
+            {seasonName && (
+              <span className="bg-teal-100 text-teal-800 text-xs px-2 py-1 rounded-md font-medium">
+                {seasonIsCurrent ? t('season.current_season') : t('season.name', { name: seasonName })}
+              </span>
+            )}
+            {getGuestInfoArray().map((item, idx) => (
+              item && (
+                <span key={idx} className="flex items-center text-xs text-gray-600 bg-gray-100 rounded-full px-2 py-1 mr-1 mb-1">
+                  {item.icon}
+                  <span className="font-semibold mx-0.5">{item.value}</span>
+                  <span>{item.label}</span>
+                </span>
+              )
+            ))}
           </div>
-          
-                {showDiscount && basePrice > finalPrice && (
-                  <div className="text-sm line-through text-gray-500 mb-1">{formatPrice(basePrice)}</div>
-                )}
-                <div className="text-2xl font-bold text-blue-700">
-                  {formatPrice(finalPrice)}
+          {/* Price info */}
+          <div className="flex flex-col items-center md:items-start gap-2 mb-2">
+            {hasPrice && (
+              <>
+                <div className="flex items-center gap-1">
+                  {showDiscount && basePrice > finalPrice && (
+                    <span className="text-xs line-through text-gray-400">{formatPrice(basePrice)}</span>
+                  )}
+                  <span className="text-2xl font-bold text-blue-700 leading-tight">{formatPrice(finalPrice)}</span>
                 </div>
-                {showTotal && (
-                  <div className="text-sm font-semibold text-blue-800 bg-blue-100 rounded px-2 py-1 mt-1 inline-block">
-                    {showDiscount ? (
-                      <div className="flex items-center">
-                        <span className="text-xs text-gray-500 line-through mr-2">
-                          {formatPrice(Math.round(originalTotalPrice))}
-                        </span>
-                        <span>{formatPrice(totalPrice)}</span>
-                      </div>
-                    ) : (
-                      <>{t('price.total')}: {formatPrice(totalPrice)}</>
-                    )}
-                  </div>
+                {showTotal && totalPrice > 0 && (
+                  <span className="inline-block bg-blue-600 text-white text-sm font-semibold rounded px-2 py-1 shadow">
+                    {t('price.total')}: {formatPrice(totalPrice)}
+                  </span>
                 )}
-                
-                {roomName && (
-                  <div className="mt-1 text-xs text-gray-700">
-                    <span className="font-medium">{roomName}</span>
-                  
-                </div>
-              )}
-              </div>
-            ) : null}
+              </>
+            )}
+            {roomName && (
+              <span className="text-base text-gray-800 mt-0.5 flex items-center font-medium">
+                <RiHotelBedLine className="mr-1 text-blue-500" />
+                {roomName}
+              </span>
+            )}
           </div>
-          
-          {/* Call-to-action buttons */}
-          <div className="flex flex-col space-y-3">
-            <Link 
+          {/* CTA Button */}
+          <div className="mt-3">
+            <Link
               href={`/sanatoriums/${sanatorium.slug}`}
-              className="px-4 py-2.5 bg-gradient-to-r from-blue-600 to-blue-800 text-white text-center rounded-lg hover:from-blue-700 hover:to-blue-900 transition-all shadow-md font-medium flex items-center justify-center"
+              className="w-full py-2 bg-gradient-to-r from-blue-600 to-blue-800 text-white text-center rounded-lg font-medium flex items-center justify-center shadow-sm hover:from-blue-700 hover:to-blue-900 transition-all text-sm"
             >
               {t('details')}
-              <FaArrowRight className="ml-2" />
+              <RiArrowRightSLine className="ml-2" />
             </Link>
-            
-            {sanatorium.images.length > 1 && (
-            <button
-              onClick={() => setIsExpanded(!isExpanded)}
-              className="px-4 py-2.5 border border-blue-600 text-blue-700 text-center rounded-lg hover:bg-blue-50 transition-colors text-sm font-medium"
-            >
-              {isExpanded ? t('close') : t('show_more')}
-            </button>
-            )}
           </div>
         </div>
       </div>
-      
-      {/* Expanded Section */}
-      {isExpanded && (
-        <motion.div
-          initial={{ opacity: 0, height: 0 }}
-          animate={{ opacity: 1, height: 'auto' }}
-          transition={{ duration: 0.3 }}
-          className="border-t border-gray-200 p-6 bg-gradient-to-b from-gray-50 to-white"
-        >
-          {/* Only show photos section if there's more than one image */}
-          {sanatorium.images.length > 1 && (
-            <>
-          <h4 className="text-lg font-semibold mb-4 text-gray-800 flex items-center">
-            <span className="bg-blue-100 w-8 h-8 rounded-full flex items-center justify-center mr-2">
-              <FaStar className="text-blue-600" />
-            </span>
-            {t('photos')}
-          </h4>
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-6">
-            {sanatorium.images.slice(0, 4).map((image, i) => (
-              <div key={i} className="relative h-32 md:h-40 rounded-lg overflow-hidden shadow-md group">
-                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10"></div>
-                <Image 
-                  src={image.image} 
-                      alt={`${sanatorium.name} - ${t('photo')} ${i+1}`} 
-                  fill
-                  className="object-cover transition-transform duration-500 group-hover:scale-110"
-                />
-                <div className="absolute bottom-2 left-2 text-white text-xs font-medium opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-20">
-                      {t('photo')} {i+1}
-                </div>
-              </div>
-            ))}
-          </div>
-            </>
-          )}
-          
-          <div className="flex flex-col md:flex-row justify-center gap-4 mt-6">
-            <Link 
-              href={`/sanatoriums/${sanatorium.slug}`}
-              className="px-6 py-3 bg-gradient-to-r from-blue-600 to-blue-800 text-white rounded-lg hover:from-blue-700 hover:to-blue-900 transition-all shadow-md font-medium flex items-center justify-center"
-            >
-              {t('book_now')} <FaArrowRight className="ml-2" />
-            </Link>
-            
-            <button
-              onClick={() => setIsExpanded(false)}
-              className="px-6 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors font-medium"
-            >
-              {t('close')}
-            </button>
-          </div>
-        </motion.div>
-      )}
+      {/* At the end, render the modal */}
+      <ImageSliderModal
+        images={(sanatorium.images && sanatorium.images.length > 0 ? sanatorium.images : sanatorium.main_image ? [sanatorium.main_image] : [{ image: '/images/placeholder.svg', alt: sanatorium.name }])}
+        isOpen={isModalOpen}
+        initialIndex={modalIndex}
+        onClose={() => setIsModalOpen(false)}
+      />
     </motion.div>
   );
 }

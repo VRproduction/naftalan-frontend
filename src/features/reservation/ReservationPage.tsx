@@ -13,6 +13,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import DateRangePicker from '@/components/ui/inputs/DateRangePicker';
 import { useRouter } from '@/i18n/navigation';
 import { useLoadingStore } from '@/lib/store/useLoadingStore';
+import { Range, getTrackBackground } from 'react-range';
 
 // Define schema for form validation
 const searchSchema = z.object({
@@ -209,6 +210,16 @@ const GuestSelector = ({
   );
 };
 
+// Helper to calculate nights between two dates
+function getNights(checkIn: string, checkOut: string) {
+  if (!checkIn || !checkOut) return 1;
+  const start = new Date(checkIn);
+  const end = new Date(checkOut);
+  const diffTime = end.getTime() - start.getTime();
+  const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+  return diffDays > 0 ? diffDays : 1;
+}
+
 export default function ReservationPage({ sanatoriums, locations = [], sanatoriumsList = [] }: { sanatoriums: Sanatorium[], locations?: City[], sanatoriumsList?: SanatoriumListType[] }) {
   const t = useTranslations('pages.reservation');
   const tSearch = useTranslations('search');
@@ -230,7 +241,15 @@ export default function ReservationPage({ sanatoriums, locations = [], sanatoriu
     ratings: [] as number[]
   });
   
+  // Add local state for price inputs inside ReservationPage
+  const [minPriceInput, setMinPriceInput] = useState('');
+  const [maxPriceInput, setMaxPriceInput] = useState('');
 
+  // Sync local input state with main state when searchParams changes
+  useEffect(() => {
+    setMinPriceInput(searchParams.minPrice === MIN_PRICE_DEFAULT ? '' : String(searchParams.minPrice));
+    setMaxPriceInput(searchParams.maxPrice === MAX_PRICE_DEFAULT ? '' : String(searchParams.maxPrice));
+  }, [searchParams.minPrice, searchParams.maxPrice]);
   
   // Form handling with react-hook-form
   const { register, control, handleSubmit, formState: { errors }, setValue, watch } = useForm<SearchFormValues>({
@@ -395,18 +414,51 @@ export default function ReservationPage({ sanatoriums, locations = [], sanatoriu
     };
   }, []);  // Empty dependency array - run only on mount/unmount
   
-  // Clear sidebar filters
-  const clearFilters = () => {
-    // Create a copy of current searchParams
-    const updatedParams = { ...searchParams, minPrice: MIN_PRICE_DEFAULT, maxPrice: MAX_PRICE_DEFAULT, ratings: [] };
-    
-    // Update the state
-    setSearchParams(updatedParams);
-    
-    // Update form values
+  // Sadece sidebar filtrelerini sıfırlayan fonksiyon
+  const clearSidebarFilters = () => {
+    setSearchParams(prev => ({
+      ...prev,
+      minPrice: MIN_PRICE_DEFAULT,
+      maxPrice: MAX_PRICE_DEFAULT,
+      ratings: []
+    }));
     setValue('minPrice', MIN_PRICE_DEFAULT);
     setValue('maxPrice', MAX_PRICE_DEFAULT);
     setValue('ratings', []);
+
+    // URL'den sadece sidebar filtrelerini kaldır
+    const urlParams = new URLSearchParams(window.location.search);
+    urlParams.delete('min_total_price');
+    urlParams.delete('max_total_price');
+    urlParams.delete('ratings');
+    router.push(`/reservation/?${urlParams.toString()}`);
+  };
+
+  const clearFilters = () => {
+    // State'i sıfırla
+    setSearchParams({
+      location: "",
+      checkIn: "",
+      checkOut: "",
+      guests: 1,
+      minPrice: MIN_PRICE_DEFAULT,
+      maxPrice: MAX_PRICE_DEFAULT,
+      ratings: []
+    });
+
+    // Formu sıfırla
+    setValue('location', '');
+    setValue('sanatorium', '');
+    setValue('checkIn', '');
+    setValue('checkOut', '');
+    setValue('adults', 2);
+    setValue('children', 0);
+    setValue('childrenAges', []);
+    // Sidebar filtrelerini de sıfırla
+    clearSidebarFilters();
+
+    // URL'deki parametreleri temizle
+    router.push('/reservation/');
   };
   
   // Handle rating filter toggle
@@ -625,12 +677,127 @@ export default function ReservationPage({ sanatoriums, locations = [], sanatoriu
                 
                 <div className="divide-y divide-gray-200">
 
+                  {/* Price Range Filter */}
+                  <div className="p-4 space-y-4">
+                    <h4 className="text-base font-bold text-gray-800 flex items-center">
+                      <FaTags className="mr-2 text-blue-600" />
+                      {tSearch('price_range') || 'Fiyat aralığı'}
+                    </h4>
+                    <div className="flex flex-col gap-3">
+                      <Range
+                        values={[searchParams.minPrice, searchParams.maxPrice]}
+                        step={100}
+                        min={MIN_PRICE_DEFAULT}
+                        max={MAX_PRICE_DEFAULT}
+                        onChange={([min, max]) => {
+                          setValue('minPrice', min);
+                          setValue('maxPrice', max);
+                          setSearchParams(prev => ({ ...prev, minPrice: min, maxPrice: max }));
+                        }}
+                        renderTrack={({ props, children }) => (
+                          <div
+                            {...props}
+                            style={{
+                              ...props.style,
+                              height: '6px',
+                              width: '100%',
+                              background: getTrackBackground({
+                                values: [searchParams.minPrice, searchParams.maxPrice],
+                                colors: ['#d1d5db', '#2563eb', '#d1d5db'],
+                                min: MIN_PRICE_DEFAULT,
+                                max: MAX_PRICE_DEFAULT
+                              }),
+                              borderRadius: '4px',
+                              margin: '16px 0'
+                            }}
+                          >
+                            {children}
+                          </div>
+                        )}
+                        renderThumb={({ props, index, isDragged }) => {
+                          const { key, ...restProps } = props;
+                          return (
+                            <div
+                              key={key}
+                              {...restProps}
+                              style={{
+                                ...restProps.style,
+                                height: '24px',
+                                width: '24px',
+                                borderRadius: '50%',
+                                backgroundColor: '#2563eb',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                boxShadow: isDragged ? '0 0 0 4px #bfdbfe' : '0 1px 4px rgba(0,0,0,0.12)'
+                              }}
+                            >
+                              <span className="text-xs text-white font-bold select-none">
+                                {index === 0 ? searchParams.minPrice : searchParams.maxPrice}
+                              </span>
+                            </div>
+                          );
+                        }}
+                      />
+                      <div className="flex items-center gap-2">
+                        <input
+                          type="number"
+                          min={MIN_PRICE_DEFAULT}
+                          max={searchParams.maxPrice}
+                          value={minPriceInput}
+                          onChange={e => {
+                            const val = e.target.value;
+                            setMinPriceInput(val);
+                          }}
+                          onBlur={() => {
+                            if (minPriceInput === '' || isNaN(Number(minPriceInput))) {
+                              setValue('minPrice', MIN_PRICE_DEFAULT);
+                              setSearchParams(prev => ({ ...prev, minPrice: MIN_PRICE_DEFAULT }));
+                              setMinPriceInput('');
+                            } else {
+                              const value = Math.min(Number(minPriceInput), searchParams.maxPrice);
+                              setValue('minPrice', value);
+                              setSearchParams(prev => ({ ...prev, minPrice: value }));
+                              setMinPriceInput(String(value));
+                            }
+                          }}
+                          className="w-1/2 p-2 border border-gray-200 rounded focus:outline-none"
+                          placeholder={tSearch('min_price') || 'Min'}
+                        />
+                        <span>-</span>
+                        <input
+                          type="number"
+                          min={searchParams.minPrice}
+                          max={MAX_PRICE_DEFAULT}
+                          value={maxPriceInput}
+                          onChange={e => {
+                            const val = e.target.value;
+                            setMaxPriceInput(val);
+                          }}
+                          onBlur={() => {
+                            if (maxPriceInput === '' || isNaN(Number(maxPriceInput))) {
+                              setValue('maxPrice', MAX_PRICE_DEFAULT);
+                              setSearchParams(prev => ({ ...prev, maxPrice: MAX_PRICE_DEFAULT }));
+                              setMaxPriceInput('');
+                            } else {
+                              const value = Math.max(Number(maxPriceInput), searchParams.minPrice);
+                              setValue('maxPrice', value);
+                              setSearchParams(prev => ({ ...prev, maxPrice: value }));
+                              setMaxPriceInput(String(value));
+                            }
+                          }}
+                          className="w-1/2 p-2 border border-gray-200 rounded focus:outline-none"
+                          placeholder={tSearch('max_price') || 'Max'}
+                        />
+                      </div>
+                    </div>
+                  </div>
                   
                   {/* Star rating section */}
                   <div className="p-4 space-y-4">
                     <h4 className="text-base font-bold text-gray-800 flex items-center">
                       <FaStar className="mr-2 text-blue-600" />
-                      Star Rating
+                      Reytinq
                     </h4>
                     <div className="space-y-3">
                       {[5, 4, 3, 2, 1].map((stars) => (
@@ -658,7 +825,7 @@ export default function ReservationPage({ sanatoriums, locations = [], sanatoriu
                   <div className="grid grid-cols-2 gap-3">
                     <button 
                       onClick={() => {
-                        clearFilters();
+                        clearSidebarFilters();
                         setShowMobileFilters(false);
                       }}
                       className="py-3 border border-gray-300 text-gray-700 rounded-lg font-medium"
@@ -692,12 +859,127 @@ export default function ReservationPage({ sanatoriums, locations = [], sanatoriu
               
               <div className="divide-y divide-gray-200">
 
+                {/* Price Range Filter */}
+                <div className="p-5 space-y-4">
+                  <h4 className="text-sm font-bold text-gray-800 uppercase tracking-wider flex items-center">
+                    <FaTags className="mr-2 text-blue-600" />
+                    {tSearch('price_range') || 'Fiyat aralığı'}
+                  </h4>
+                  <div className="flex flex-col gap-3">
+                    <Range
+                      values={[searchParams.minPrice, searchParams.maxPrice]}
+                      step={100}
+                      min={MIN_PRICE_DEFAULT}
+                      max={MAX_PRICE_DEFAULT}
+                      onChange={([min, max]) => {
+                        setValue('minPrice', min);
+                        setValue('maxPrice', max);
+                        setSearchParams(prev => ({ ...prev, minPrice: min, maxPrice: max }));
+                      }}
+                      renderTrack={({ props, children }) => (
+                        <div
+                          {...props}
+                          style={{
+                            ...props.style,
+                            height: '6px',
+                            width: '100%',
+                            background: getTrackBackground({
+                              values: [searchParams.minPrice, searchParams.maxPrice],
+                              colors: ['#d1d5db', '#2563eb', '#d1d5db'],
+                              min: MIN_PRICE_DEFAULT,
+                              max: MAX_PRICE_DEFAULT
+                            }),
+                            borderRadius: '4px',
+                            margin: '16px 0'
+                          }}
+                        >
+                          {children}
+                        </div>
+                      )}
+                      renderThumb={({ props, index, isDragged }) => {
+                        const { key, ...restProps } = props;
+                        return (
+                          <div
+                            key={key}
+                            {...restProps}
+                            style={{
+                              ...restProps.style,
+                              height: '24px',
+                              width: '24px',
+                              borderRadius: '50%',
+                              backgroundColor: '#2563eb',
+                              display: 'flex',
+                              alignItems: 'center',
+                              justifyContent: 'center',
+                              boxShadow: isDragged ? '0 0 0 4px #bfdbfe' : '0 1px 4px rgba(0,0,0,0.12)'
+                            }}
+                          >
+                            <span className="text-xs text-white font-bold select-none">
+                              {index === 0 ? searchParams.minPrice : searchParams.maxPrice}
+                            </span>
+                          </div>
+                        );
+                      }}
+                    />
+                    <div className="flex items-center gap-2">
+                      <input
+                        type="number"
+                        min={MIN_PRICE_DEFAULT}
+                        max={searchParams.maxPrice}
+                        value={minPriceInput}
+                        onChange={e => {
+                          const val = e.target.value;
+                          setMinPriceInput(val);
+                        }}
+                        onBlur={() => {
+                          if (minPriceInput === '' || isNaN(Number(minPriceInput))) {
+                            setValue('minPrice', MIN_PRICE_DEFAULT);
+                            setSearchParams(prev => ({ ...prev, minPrice: MIN_PRICE_DEFAULT }));
+                            setMinPriceInput('');
+                          } else {
+                            const value = Math.min(Number(minPriceInput), searchParams.maxPrice);
+                            setValue('minPrice', value);
+                            setSearchParams(prev => ({ ...prev, minPrice: value }));
+                            setMinPriceInput(String(value));
+                          }
+                        }}
+                        className="w-1/2 p-2 border border-gray-200 rounded focus:outline-none"
+                        placeholder={tSearch('min_price') || 'Min'}
+                      />
+                      <span>-</span>
+                      <input
+                        type="number"
+                        min={searchParams.minPrice}
+                        max={MAX_PRICE_DEFAULT}
+                        value={maxPriceInput}
+                        onChange={e => {
+                          const val = e.target.value;
+                          setMaxPriceInput(val);
+                        }}
+                        onBlur={() => {
+                          if (maxPriceInput === '' || isNaN(Number(maxPriceInput))) {
+                            setValue('maxPrice', MAX_PRICE_DEFAULT);
+                            setSearchParams(prev => ({ ...prev, maxPrice: MAX_PRICE_DEFAULT }));
+                            setMaxPriceInput('');
+                          } else {
+                            const value = Math.max(Number(maxPriceInput), searchParams.minPrice);
+                            setValue('maxPrice', value);
+                            setSearchParams(prev => ({ ...prev, maxPrice: value }));
+                            setMaxPriceInput(String(value));
+                          }
+                        }}
+                        className="w-1/2 p-2 border border-gray-200 rounded focus:outline-none"
+                        placeholder={tSearch('max_price') || 'Max'}
+                      />
+                    </div>
+                  </div>
+                </div>
                 
                 {/* Star rating section */}
                 <div className="p-5 space-y-4">
                   <h4 className="text-sm font-bold text-gray-800 uppercase tracking-wider flex items-center">
                     <FaStar className="mr-2 text-blue-600" />
-                    Star Rating
+                    Reytinq
                   </h4>
                   <div className="space-y-2">
                     {[5, 4, 3, 2, 1].map((stars) => (
@@ -718,7 +1000,7 @@ export default function ReservationPage({ sanatoriums, locations = [], sanatoriu
                   </div>
                   <div className="flex gap-2 pt-2">
                     <button
-                      onClick={clearFilters}
+                      onClick={clearSidebarFilters}
                       className="px-3 py-2 border border-gray-300 text-gray-700 rounded-lg text-xs font-medium flex-1"
                     >
                       {tSearch('clear')}
@@ -777,10 +1059,11 @@ export default function ReservationPage({ sanatoriums, locations = [], sanatoriu
             ) : (
               <div className="space-y-4">
                 {sanatoriums.map((sanatorium, index) => (
-                  <SanatoriumHorizontal 
+                  <SanatoriumHorizontal
                     key={sanatorium.id}
                     sanatorium={sanatorium}
                     index={index}
+                    nights={getNights(watch('checkIn'), watch('checkOut'))}
                   />
                 ))}
                 

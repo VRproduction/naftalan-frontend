@@ -12,7 +12,12 @@
       "submitting": "Göndərilir...",
       "processing": "İşlənir...",
       "please_wait": "Zəhmət olmasa, gözləyin..."
-    }
+    },
+    "adult": "Böyük",
+    "child": "Uşaq",
+    "night": "gecə",
+    "share": "Paylaş",
+    "copy": "Kopyala"
   },
   "header": {
     "home": "Ana səhifə",
@@ -79,8 +84,11 @@
     "check_in_date": "Giriş tarixi",
     "check_out_date": "Çıxış tarixi",
     "select_year": "İl seçin",
-      "hotel": "Otel",
-      "select_hotel": "Otel seçin"
+    "hotel": "Otel",
+    "select_hotel": "Otel seçin",
+    "price_range": "Qiymət aralığı",
+    "min_price": "Minimum qiymət",
+    "max_price": "Maksimum qiymət"
   },
   "validation": {
     "check_in_required": "Giriş tarixi tələb olunur",
@@ -160,7 +168,8 @@
     },
     "packages": {
       "all_packages": "Bütün paketlər"
-    }
+    },
+    "all_sanatoriums": "Sanatoriyalar"
   },
   "pages": {
     "home": {
@@ -329,6 +338,7 @@
     }
   },
   "sanatoriums": {
+    "home": "Ana səhifə",
     "not_found": "Sanatoriya tapılmadı",
     "not_found_description": "Axtardığınız sanatoriya haqqında məlumat tapılmadı.",
     "all_sanatoriums": "Bütün sanatoriyalar",
@@ -370,7 +380,9 @@
     "price_note_1": "* Qiymətlər otaq növündən və mövsümdən asılı olaraq dəyişə bilər",
     "price_note_2": "* Müalicə paketlərinin qiyməti əlavə olaraq hesablanır",
     "similar_sanatoriums": "Oxşar sanatoriyalar",
-    "max": "maksimum"
+    "max": "maksimum",
+    "photo": "Şəkil",
+    "photograph": "Fotoğraf"
   },
   "sanatorium": {
     "featured": "Seçilmiş",
@@ -434,7 +446,7 @@
     "close": "Bağla",
     "days": "Gün",
     "photos": "Şəkillər",
-    "photo": "Şəkil"
+    "photo": "şəkil"
   },
   "blog": {
     "read_more": "Ətraflı oxu"

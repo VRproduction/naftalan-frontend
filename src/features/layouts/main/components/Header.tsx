@@ -348,8 +348,8 @@ const Header = ({ siteSettings }: HeaderProps) => {
   );
 
   return (
-    <header className={`fixed top-0 w-full z-[50] flex items-center h-[65px] transition-all duration-300 ${
-      scrolled ? 'bg-white/95 shadow-md py-2' : 'bg-white/90 py-2.5'
+    <header className={`fixed top-0 w-full z-[50] flex items-center h-[65px] transition-all duration-300 bg-gradient-to-b from-white/95 to-white/80 backdrop-blur-md border-b border-gray-100 shadow-md ${
+      scrolled ? 'py-2' : 'py-2.5'
     }`}>
       <div className="container mx-auto px-3 md:px-4 flex justify-between items-center">
         <IntlLink 

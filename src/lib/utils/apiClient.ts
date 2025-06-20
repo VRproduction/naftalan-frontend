@@ -104,7 +104,6 @@ export async function apiClient<T>(endpoint: string, options: RequestOptions = {
   
   try {
     const response = await fetch(url.toString(), fetchOptions);
-
     if (!response.ok) {
         const errorData = await response.json();
         throw { status: response.status, data: errorData };
