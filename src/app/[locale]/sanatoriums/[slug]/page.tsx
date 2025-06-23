@@ -8,6 +8,9 @@ interface Props {
   params: Promise<{
     slug: string;
     locale: SupportedLocale
+  }>,
+  searchParams: Promise<{
+    [key: string]: string | string[] | undefined;
   }>;
 }
 
@@ -99,15 +102,40 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   }
 }
 
-const page = async ({ params }: Props) => {
+const page = async ({ params, searchParams }: Props) => {
   const { slug, locale } = await params;
+  const {
+    city,
+    check_in,
+    check_out,
+    occupancy,
+    children_ages,
+    ratings,
+    min_price,
+    max_price,
+    min_total_price,
+    max_total_price,
+    id
+  } = await searchParams;
 
   const [
     sanatorium,
   ] = await Promise.all([
-    getSanatorium(locale, slug),
+    getSanatorium(locale, slug, {
+      location: String(city),
+      check_in: String(check_in),
+      check_out: String(check_out),
+      occupancy: String(occupancy),
+      children_ages: String(children_ages),
+      ratings: String(ratings),
+      min_price: String(min_price),
+      max_price: String(max_price),
+      min_total_price: String(min_total_price),
+      max_total_price: String(max_total_price),
+      id: String(id)
+    }),
   ]);
-
+  console.log(sanatorium)
   return <SanatoriumDetailPage sanatorium={sanatorium} />;
 };
 

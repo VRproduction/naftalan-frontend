@@ -8,6 +8,7 @@ import { twMerge } from 'tailwind-merge';
 import * as Popover from '@radix-ui/react-popover';
 import * as Dialog from '@radix-ui/react-dialog';
 import { VisuallyHidden } from '@radix-ui/react-visually-hidden';
+import { useTranslations } from 'next-intl';
 
 type ColorOption = 'slate' | 'zinc' | 'blue' | 'indigo' | 'violet' | 'purple' | 'teal';
 
@@ -20,19 +21,7 @@ interface DateRangePickerProps {
   label?: string;
   placeholder?: string;
   className?: string;
-  translations?: {
-    checkIn?: string;
-    checkOut?: string;
-    selectDates?: string;
-    apply?: string;
-    clear?: string;
-    night?: string;
-    nights?: string;
-    today?: string;
-    checkInDate?: string;
-    checkOutDate?: string;
-    selectYear?: string;
-  };
+  hasError?: boolean;
 }
 
 const colorVariants = {
@@ -102,23 +91,12 @@ export default function DateRangePicker({
   onChange,
   primaryColor = 'indigo',
   secondaryColor = 'violet',
-  label = 'Check-in — Check-out',
-  placeholder = 'Select dates',
+  label,
+  placeholder,
   className = '',
-  translations = {
-    checkIn: 'Check-in',
-    checkOut: 'Check-out',
-    selectDates: 'Select dates',
-    apply: 'Apply',
-    clear: 'Clear',
-    night: 'night',
-    nights: 'nights',
-    today: 'Today',
-    checkInDate: 'Check-in date',
-    checkOutDate: 'Check-out date',
-    selectYear: 'Select year'
-  }
+  hasError
 }: DateRangePickerProps) {
+  const t = useTranslations('search');
   const [isOpen, setIsOpen] = useState(false);
   const [currentMonth, setCurrentMonth] = useState(
     startDate && isValid(parseISO(startDate)) ? parseISO(startDate) : new Date()
@@ -138,7 +116,7 @@ export default function DateRangePicker({
   // Format for display
   const displayValue = parsedStartDate && parsedEndDate 
     ? `${format(parsedStartDate, 'MMM dd, yyyy')} — ${format(parsedEndDate, 'MMM dd, yyyy')}`
-    : translations.selectDates || placeholder;
+    : t('select_dates') || placeholder;
   
   // Close calendar when clicking outside
   useEffect(() => {
@@ -281,7 +259,7 @@ export default function DateRangePicker({
               className="text-base font-medium text-gray-800 bg-white border border-gray-200 rounded-md p-1 focus:outline-none focus:ring-2 focus:ring-blue-500"
               value={currentYear}
               onChange={(e) => handleYearChange(parseInt(e.target.value), monthIndex)}
-              aria-label={translations.selectYear}
+              aria-label={t('select_year')}
             >
               {yearOptions.map(year => (
                 <option key={year} value={year}>{year}</option>
@@ -382,7 +360,8 @@ export default function DateRangePicker({
             <div ref={inputRef} className="relative h-full w-full">
               <div
                 className={twMerge(
-                  "w-full flex items-center border-2 border-gray-200 rounded-lg py-3 pl-12 pr-4 bg-white shadow-sm cursor-pointer transition-all duration-200",
+                  `w-full flex items-center border-2 rounded-lg py-3 pl-12 pr-4 bg-white shadow-sm cursor-pointer transition-all duration-200`,
+                  hasError ? 'border-red-500' : 'border-gray-200',
                   `hover:${colorVariants[primaryColor].border}`,
                   isOpen && `ring-2 ${colorVariants[primaryColor].ring} ${colorVariants[primaryColor].border}`,
                   `${className}`
@@ -440,7 +419,7 @@ export default function DateRangePicker({
                       className="text-base font-semibold text-blue-700 bg-white border border-blue-100 rounded-lg py-1 px-2 focus:outline-none focus:ring-2 focus:ring-blue-300"
                       value={getYear(currentMonth)}
                       onChange={(e) => handleYearChange(parseInt(e.target.value), 0)}
-                      aria-label={translations.selectYear}
+                      aria-label={t('select_year')}
                     >
                       {yearOptions.map(year => (
                         <option key={year} value={year}>{year}</option>
@@ -464,7 +443,7 @@ export default function DateRangePicker({
                       colorVariants[primaryColor].primary
                     )} />
                     <span className="text-sm font-medium text-gray-700 truncate">
-                      {parsedStartDate ? format(parsedStartDate, 'MMM dd') : translations.checkIn}
+                      {parsedStartDate ? format(parsedStartDate, 'MMM dd') : t('check_in')}
                     </span>
                   </div>
                   
@@ -476,7 +455,7 @@ export default function DateRangePicker({
                       colorVariants[secondaryColor].primary
                     )} />
                     <span className="text-sm font-medium text-gray-700 truncate">
-                      {parsedEndDate ? format(parsedEndDate, 'MMM dd') : translations.checkOut}
+                      {parsedEndDate ? format(parsedEndDate, 'MMM dd') : t('check_out')}
                     </span>
                   </div>
                 </div>
@@ -499,7 +478,7 @@ export default function DateRangePicker({
                       <span className="text-sm font-medium text-gray-700 truncate">
                         {parsedStartDate 
                           ? format(parsedStartDate, 'MMM dd, yyyy')
-                          : translations.checkIn}
+                          : t('check_in')}
                       </span>
                     </div>
                     
@@ -514,7 +493,7 @@ export default function DateRangePicker({
                       <span className="text-sm font-medium text-gray-700 truncate">
                         {parsedEndDate 
                           ? format(parsedEndDate, 'MMM dd, yyyy')
-                          : translations.checkOut}
+                          : t('check_out')}
                       </span>
                     </div>
                   </div>
@@ -528,7 +507,7 @@ export default function DateRangePicker({
                         clearSelection();
                       }}
                     >
-                      {translations.clear}
+                      {t('clear')}
                     </button>
                     <button
                       type="button"
@@ -539,7 +518,7 @@ export default function DateRangePicker({
                       )}
                       onClick={() => setIsOpen(false)}
                     >
-                      {translations.apply}
+                      {t('apply')}
                     </button>
                   </div>
                 </div>
@@ -550,7 +529,7 @@ export default function DateRangePicker({
                     <span>
                       {(() => {
                         const diff = Math.ceil((parsedEndDate.getTime() - parsedStartDate.getTime()) / (1000 * 60 * 60 * 24));
-                        return `${diff} ${diff === 1 ? translations.night : translations.nights}`;
+                        return `${diff} ${diff === 1 ? t('night') : t('nights')}`;
                       })()}
                     </span>
                     <span className="hidden sm:inline">{format(parsedStartDate, 'EEEE')} - {format(parsedEndDate, 'EEEE')}</span>
@@ -576,6 +555,7 @@ export default function DateRangePicker({
               <div 
                 className={twMerge(
                   "w-full flex items-center border-2 border-gray-200 rounded-lg py-3 pl-12 pr-4 bg-white  cursor-pointer transition-all duration-200",
+                  hasError ? 'border-red-500' : 'border-gray-200',
                   `hover:${colorVariants[primaryColor].border}`,
                   isOpen && `ring-2 ${colorVariants[primaryColor].ring} ${colorVariants[primaryColor].border}`,
                   `${className}`
@@ -631,15 +611,15 @@ export default function DateRangePicker({
               <div className="hidden sm:flex px-5 py-3 border-t border-gray-200 bg-gray-50 justify-center gap-6">
                 <div className="flex items-center gap-2">
                   <div className={twMerge("h-3 w-3 rounded-full", colorVariants[primaryColor].primary)} />
-                  <span className="text-xs text-gray-600">{translations.checkInDate}</span>
+                  <span className="text-xs text-gray-600">{t('check_in_date')}</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <div className={twMerge("h-3 w-3 rounded-full", colorVariants[secondaryColor].primary)} />
-                  <span className="text-xs text-gray-600">{translations.checkOutDate}</span>
+                  <span className="text-xs text-gray-600">{t('check_out_date')}</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <div className={twMerge("h-3 w-3 rounded-full bg-gray-100 ring-2 ring-blue-400")} />
-                  <span className="text-xs text-gray-600">{translations.today}</span>
+                  <span className="text-xs text-gray-600">{t('today')}</span>
                 </div>
               </div>
               {/* Selection controls */}
@@ -655,7 +635,7 @@ export default function DateRangePicker({
                       <span className="text-sm font-medium text-gray-700 truncate">
                         {parsedStartDate 
                           ? format(parsedStartDate, 'MMM dd, yyyy')
-                          : translations.checkIn}
+                          : t('check_in')}
                       </span>
                     </div>
                     
@@ -670,7 +650,7 @@ export default function DateRangePicker({
                       <span className="text-sm font-medium text-gray-700 truncate">
                         {parsedEndDate 
                           ? format(parsedEndDate, 'MMM dd, yyyy')
-                          : translations.checkOut}
+                          : t('check_out')}
                       </span>
                     </div>
                   </div>
@@ -685,7 +665,7 @@ export default function DateRangePicker({
                         setIsOpen(false);
                       }}
                     >
-                      {translations.clear}
+                      {t('clear')}
                     </button>
                     <button
                       type="button"
@@ -696,7 +676,7 @@ export default function DateRangePicker({
                       )}
                       onClick={() => setIsOpen(false)}
                     >
-                      {translations.apply}
+                      {t('apply')}
                     </button>
                   </div>
                 </div>
@@ -707,7 +687,7 @@ export default function DateRangePicker({
                     <span>
                       {(() => {
                         const diff = Math.ceil((parsedEndDate.getTime() - parsedStartDate.getTime()) / (1000 * 60 * 60 * 24));
-                        return `${diff} ${diff === 1 ? translations.night : translations.nights}`;
+                        return `${diff} ${diff === 1 ? t('night') : t('nights')}`;
                       })()}
                     </span>
                     <span className="hidden sm:inline">{format(parsedStartDate, 'EEEE')} - {format(parsedEndDate, 'EEEE')}</span>

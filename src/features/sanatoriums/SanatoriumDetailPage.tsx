@@ -27,17 +27,17 @@ export default function SanatoriumDetailPage({ sanatorium }: PageProps) {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
-  const validTabs = ["overview", "treatments", "rooms", "reviews"];
+  const validTabs = ["overview", "treatments", "rooms", "reviews", "reservation"];
   const tabParam = searchParams.get('tab');
-  const initialTab: "overview" | "treatments" | "rooms" | "reviews" = (tabParam && validTabs.includes(tabParam)) ? (tabParam as any) : "overview";
-  const [activeTab, setActiveTab] = useState<"overview" | "treatments" | "rooms" | "reviews">(initialTab);
+  const initialTab: "overview" | "treatments" | "rooms" | "reviews" | "reservation" = (tabParam && validTabs.includes(tabParam)) ? (tabParam as any) : "overview";
+  const [activeTab, setActiveTab] = useState<"overview" | "treatments" | "rooms" | "reviews" | "reservation">(initialTab);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalImages, setModalImages] = useState<{ image: string; alt?: string }[]>([]);
   const [modalIndex, setModalIndex] = useState(0);
   const { formatPrice } = useCurrencyStore();
 
   // When tab changes, update URL (client only)
-  const handleTabChange = (tab: "overview" | "treatments" | "rooms" | "reviews") => {
+  const handleTabChange = (tab: "overview" | "treatments" | "rooms" | "reviews" | "reservation") => {
     setActiveTab(tab);
     if (typeof window !== 'undefined') {
       const params = new URLSearchParams(window.location.search);
@@ -85,7 +85,7 @@ export default function SanatoriumDetailPage({ sanatorium }: PageProps) {
           </li>
           <li>/</li>
           <li>
-            <Link href="/sanatoriums" className="hover:text-blue-600 font-medium">{t('all_sanatoriums')}</Link>
+            <Link href="/sanatoriums/naftalan" className="hover:text-blue-600 font-medium">{t('all_sanatoriums')}</Link>
           </li>
           <li>/</li>
           <li className="text-gray-800 font-semibold truncate max-w-[120px] md:max-w-md" title={sanatorium.name}>{sanatorium.name}</li>
@@ -131,9 +131,9 @@ export default function SanatoriumDetailPage({ sanatorium }: PageProps) {
 
       {/* Main Content */}
       <div className="container mx-auto px-4 py-4">
-        <div className="grid grid-cols-1 lg:grid-cols-[1.7fr_1fr] gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-[2.4fr_1fr] gap-6">
           {/* Left Column - Images */}
-          <div className="max-w-3xl w-full">
+          <div className="w-full">
             {/* Responsive gallery: mobile = big image + horizontal thumbnails, desktop = grid */}
             {sanatorium.images && sanatorium.images.length > 0 && (
               <div className="w-full mb-8">
@@ -342,6 +342,19 @@ export default function SanatoriumDetailPage({ sanatorium }: PageProps) {
                 </button>
                 <button
                   className={`flex-shrink-0 px-4 md:px-6 py-3 text-sm font-medium transition-colors duration-200 border-b-2 rounded-t-lg ${
+                    activeTab === "reservation"
+                      ? "border-blue-500 text-blue-600"
+                      : "border-transparent text-gray-500 hover:text-blue-600 hover:border-blue-200"
+                  }`}
+                  onClick={() => handleTabChange("reservation")}
+                  role="tab"
+                  aria-selected={activeTab === "reservation"}
+                  tabIndex={activeTab === "reservation" ? 0 : -1}
+                >
+                  {t('reservation')}
+                </button>
+                <button
+                  className={`flex-shrink-0 px-4 md:px-6 py-3 text-sm font-medium transition-colors duration-200 border-b-2 rounded-t-lg ${
                     activeTab === "treatments"
                       ? "border-blue-500 text-blue-600"
                       : "border-transparent text-gray-500 hover:text-blue-600 hover:border-blue-200"
@@ -461,12 +474,12 @@ export default function SanatoriumDetailPage({ sanatorium }: PageProps) {
                                     </p>
                                   )}
                                   {roomType.max_extra_beds &&
-                                    roomType.max_extra_beds > 0 && (
+                                    roomType.max_extra_beds > 0 ? (
                                       <p className="text-gray-600">
                                         <strong>{t('extra_beds')}:</strong> {t('max')}{" "}
                                         {roomType.max_extra_beds}
                                       </p>
-                                    )}
+                                  ): ''}
                                   {roomType.size && (
                                     <p className="text-gray-600">
                                       <strong>{t('area')}:</strong> {roomType.size} m²
@@ -731,68 +744,181 @@ export default function SanatoriumDetailPage({ sanatorium }: PageProps) {
                   </div>
                 </div>
               )}
+
+              {activeTab === "reservation" && (
+                <div>
+                  <h2 className="text-xl font-bold mb-6">{t('make_reservation')}</h2>
+                  
+                  <div className="bg-white rounded-xl shadow-lg border border-gray-200 p-6">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      {/* Date Selection */}
+                      <div>
+                        <h3 className="text-lg font-semibold mb-4 text-gray-800">{t('select_dates')}</h3>
+                        <div className="bg-gray-50 rounded-lg p-4">
+                          <p className="text-gray-600 text-sm mb-3">{t('reservation_note')}</p>
+                          <div className="flex items-center gap-2 text-sm text-gray-500">
+                            <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                            </svg>
+                            <span>{t('check_in_out_info')}</span>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Guest Information */}
+                      <div>
+                        <h3 className="text-lg font-semibold mb-4 text-gray-800">{t('guest_information')}</h3>
+                        <div className="bg-gray-50 rounded-lg p-4">
+                          <div className="space-y-3">
+                            <div className="flex justify-between items-center">
+                              <span className="text-gray-700">{t('adults')}</span>
+                              <span className="font-semibold text-gray-800">2 {t('person')}</span>
+                            </div>
+                            <div className="flex justify-between items-center">
+                              <span className="text-gray-700">{t('children')}</span>
+                              <span className="font-semibold text-gray-800">0 {t('person')}</span>
+                            </div>
+                            <div className="flex justify-between items-center">
+                              <span className="text-gray-700">{t('nights')}</span>
+                              <span className="font-semibold text-gray-800">1 {t('night')}</span>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Booking Button */}
+                    <div className="mt-6 pt-6 border-t border-gray-200">
+                      <Link
+                        href={`/booking?snt=${sanatorium.slug}`}
+                        className="w-full bg-gradient-to-r from-blue-600 to-blue-800 text-white py-4 px-6 rounded-xl font-semibold text-lg flex items-center justify-center gap-3 hover:from-blue-700 hover:to-blue-900 transition-all shadow-lg hover:shadow-xl"
+                      >
+                        <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                        {t('book_now')}
+                      </Link>
+                      
+                      <p className="text-center text-sm text-gray-500 mt-3">
+                        {t('booking_redirect_note')}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
 
           {/* Right Column - Booking Card */}
-          {sanatorium.min_price && (
-            <div>
-              <div className="bg-white rounded-2xl shadow-2xl border border-gray-100 overflow-hidden sticky top-24 max-w-md mx-auto lg:mx-0">
-                <div className="p-6 border-b border-gray-50">
-                  <h2 className="text-xl font-bold text-gray-900 mb-2 flex items-center gap-2">
-                    <span>{t('price_booking')}</span>
-                  </h2>
-                  <div className="flex items-center gap-2">
-                    <span className="inline-block bg-blue-50 text-blue-700 text-xs font-semibold rounded-full px-3 py-1 shadow-sm">
-                      {t('starting_price')}
-                    </span>
-                    <span className="text-3xl font-extrabold text-blue-600 tracking-tight">
+          <div>
+            <div className="bg-white/90 backdrop-blur rounded-2xl shadow-lg border border-gray-100 overflow-hidden sticky top-24 max-w-md mx-auto lg:mx-0 transition-all">
+              <div className="p-4 border-b border-gray-50">
+                <h2 className="text-lg font-bold text-gray-900 mb-2 flex items-center gap-2">
+                  <span>{t('price_booking')}</span>
+                </h2>
+                <div className="flex items-end gap-2 mb-1 flex-wrap">
+                  <span className="inline-block bg-gradient-to-r from-blue-500 to-blue-700 text-white text-xs font-bold rounded-lg px-3 py-1 shadow tracking-wide">
+                    {t('starting_price')}
+                  </span>
+                  {sanatorium.price_info?.discount && sanatorium.price_info.discount.discount_amount > 0 ? (
+                    <>
+                      <span className="text-base font-semibold text-gray-400 line-through">
+                        {formatPrice(sanatorium.price_info.min_price)}
+                      </span>
+                      <span className="text-2xl font-extrabold text-blue-700 tracking-tight">
+                        {formatPrice(sanatorium.price_info.discount.min_discount_price)}
+                      </span>
+                      <span className="ml-1 text-xs font-bold bg-gradient-to-r from-green-400 to-green-600 text-white px-2 py-0.5 rounded shadow flex items-center gap-1">
+                        <svg className="w-3 h-3" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M9 14l2 2 4-4" /></svg>
+                        -{sanatorium.price_info.discount.discount_type === "percentage"
+                          ? `${sanatorium.price_info.discount.discount_value}%`
+                          : formatPrice(sanatorium.price_info.discount.discount_value)
+                        } {t('discount')}
+                      </span>
+                    </>
+                  ) : (
+                    <span className="text-2xl font-extrabold text-blue-700 tracking-tight">
                       {formatPrice(
-                        sanatorium.room_types.reduce((minPrice, roomType) => {
-                          if (!roomType.prices || roomType.prices.length === 0) {
-                            return minPrice;
-                          }
-                          const roomMinPrice = roomType.prices.reduce((roomMin, price) => {
-                            const priceValue = typeof price.price === 'number' 
-                              ? price.price 
-                              : parseFloat(price.price);
-                            return !isNaN(priceValue) && priceValue < roomMin 
-                              ? priceValue 
-                              : roomMin;
-                          }, Infinity);
-                          return roomMinPrice < minPrice ? roomMinPrice : minPrice;
-                        }, Infinity) || 0
+                        sanatorium.price_info?.min_price ?? (
+                          sanatorium.room_types.reduce((minPrice, roomType) => {
+                            if (!roomType.prices || roomType.prices.length === 0) {
+                              return minPrice;
+                            }
+                            const roomMinPrice = roomType.prices.reduce((roomMin, price) => {
+                              const priceValue = typeof price.price === 'number'
+                                ? price.price
+                                : parseFloat(price.price);
+                              return !isNaN(priceValue) && priceValue < roomMin
+                                ? priceValue
+                                : roomMin;
+                            }, Infinity);
+                            return roomMinPrice < minPrice ? roomMinPrice : minPrice;
+                          }, Infinity) || 0
+                        )
                       )}
                     </span>
-                  </div>
-                  <div className="text-xs text-gray-500 mt-1">
-                    {t('per_person_night')}
-                  </div>
+                  )}
                 </div>
-                <div className="p-6">
-                  <Link
-                    href={`/booking?snt=${sanatorium.slug}`}
-                    className="block w-full py-2.5 px-3 bg-gradient-to-r from-blue-500 to-blue-700 text-white text-center font-semibold rounded-lg shadow-md hover:from-blue-600 hover:to-blue-800 transition-all text-base mb-2"
-                  >
-                    {t('book_now')}
-                  </Link>
-                  <Link
-                    href="/contact"
-                    className="block w-full py-2.5 px-3 border border-blue-500 text-blue-600 text-center font-semibold rounded-lg hover:bg-blue-50 transition-all text-base mb-3"
-                  >
-                    {t('ask_question')}
-                  </Link>
-                  <div className="mt-4 bg-gray-50 rounded-lg p-4 flex items-start gap-3 text-gray-600 text-sm">
-                    <svg className="w-5 h-5 text-blue-400 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M13 16h-1v-4h-1m1-4h.01M12 20a8 8 0 100-16 8 8 0 000 16z" /></svg>
-                    <div>
-                      <p className="mb-1">{t('price_note_1')}</p>
-                      <p>{t('price_note_2')}</p>
-                    </div>
+                <div className="text-xs text-gray-500 mt-1 mb-1">
+                  {t('per_person_night')}
+                </div>
+                {/* Price Details */}
+                <div className="mt-3 bg-gray-50/80 rounded-lg p-3">
+                  <ul className="space-y-2 text-sm">
+                    {sanatorium.price_info?.nights > 0 && (
+                      <li className="flex justify-between items-center">
+                        <span className="text-gray-600 font-medium">{t('nights')}</span>
+                        <span className="font-bold text-gray-800">{sanatorium.price_info.nights}</span>
+                      </li>
+                    )}
+                    {sanatorium.price_info?.occupancy > 0 && (
+                      <li className="flex justify-between items-center">
+                        <span className="text-gray-600 font-medium">{t('occupancy')}</span>
+                        <span className="font-bold text-gray-800">{sanatorium.price_info.occupancy} {t('person')}</span>
+                      </li>
+                    )}
+                    {sanatorium.price_info?.extra_bed_count > 0 && (
+                      <li className="flex justify-between items-center">
+                        <span className="text-gray-600 font-medium">{t('extra_bed')}</span>
+                        <span className="font-bold text-gray-800">{sanatorium.price_info.extra_bed_count}</span>
+                      </li>
+                    )}
+                    {/* Divider */}
+                    {(sanatorium.price_info?.total_price > 0 || (sanatorium.price_info?.total_discount_price > 0 && sanatorium.price_info?.discount && sanatorium.price_info.discount.discount_amount > 0)) && (
+                      <li className="!my-2 border-t border-gray-200/80"></li>
+                    )}
+                    {sanatorium.price_info?.total_price > 0 && (
+                      <li className="flex justify-between items-center">
+                        <span className="text-gray-600 font-medium">{t('price_detail.total')}</span>
+                        <span className="text-lg font-bold text-blue-700">{formatPrice(sanatorium.price_info.total_price)}</span>
+                      </li>
+                    )}
+                    {sanatorium.price_info?.total_discount_price > 0 && sanatorium.price_info?.discount && sanatorium.price_info.discount.discount_amount > 0 && (
+                      <li className="flex justify-between items-center">
+                        <span className="text-green-600 font-medium">{t('price_detail.total_discount')}</span>
+                        <span className="text-lg font-bold text-green-700">{formatPrice(sanatorium.price_info.total_discount_price)}</span>
+                      </li>
+                    )}
+                  </ul>
+                </div>
+              </div>
+              <div className="p-3 flex flex-col gap-2">
+                <Link
+                  href={`/booking?snt=${sanatorium.slug}`}
+                  className="block w-full py-2 px-3 bg-gradient-to-r from-blue-500 to-blue-700 text-white text-center font-semibold rounded-lg shadow hover:from-blue-600 hover:to-blue-800 transition-all text-sm active:scale-95 focus:outline-none focus:ring-2 focus:ring-blue-300"
+                >
+                  {t('book_now')}
+                </Link>
+                <div className="mt-2 bg-gray-50/80 border border-gray-100 rounded p-2 flex items-start gap-2 text-gray-600 text-xs">
+                  <svg className="w-4 h-4 text-blue-400 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M13 16h-1v-4h-1m1-4h.01M12 20a8 8 0 100-16 8 8 0 000 16z" /></svg>
+                  <div>
+                    <p className="mb-0.5">{t('price_note_1')}</p>
+                    <p>{t('price_note_2')}</p>
                   </div>
                 </div>
               </div>
             </div>
-          )}
+          </div>
         </div>
       </div>
 

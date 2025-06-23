@@ -61,6 +61,8 @@
     "children": "Uşaq",
     "city": "Şəhər",
     "select_city": "Şəhər seçin",
+    "select": "Seçin",
+    "min_adults": "Ən azı 1 böyük olmalıdır",
     "search_button": "Axtarış et",
     "view_all_offers": "Bütün təkliflər",
     "apply": "Təsdiqlə",
@@ -88,7 +90,8 @@
     "select_hotel": "Otel seçin",
     "price_range": "Qiymət aralığı",
     "min_price": "Minimum qiymət",
-    "max_price": "Maksimum qiymət"
+    "max_price": "Maksimum qiymət",
+    "check_in_required":"Giriş tarixi seçilməlidir"
   },
   "validation": {
     "check_in_required": "Giriş tarixi tələb olunur",
@@ -243,9 +246,7 @@
       "naftalan_sanatoriums": "Naftalan sanatoriyaları",
       "how_to_come": "Naftalana necə gəlmək olar"
     },
-    "sanatoriums": {
-      "title": "Sanatoriyalar"
-    },
+
     "reservation": {
       "title": "Rezervasiya",
       "subtitle": "Uyğun sanatoriyaları tapın və sağlamlığınızı bərpa edin",
@@ -367,6 +368,13 @@
     "with_treatment": "Müalicə ilə",
     "without_treatment": "Müalicəsiz",
     "price": "Qiymət",
+    "title": "Sanatoriyalar",
+    "price_detail": {
+      "total": "Cəmi",
+      "total_discount": "Endirimli cəmi"
+    },
+    "nights": "Gecə",
+    "extra_bed": "Əlavə çarpayı",
     "extra_bed_prices": "Əlavə yataq qiymətləri",
     "age_group": "Yaş qrupu",
     "customer_reviews": "Müştəri rəyləri",
@@ -382,7 +390,19 @@
     "similar_sanatoriums": "Oxşar sanatoriyalar",
     "max": "maksimum",
     "photo": "Şəkil",
-    "photograph": "Fotoğraf"
+    "photograph": "Fotoğraf",
+    "you_save": "Siz qənaət edirsiniz",
+    "discount": "Endirim",
+    "make_reservation": "Rezervasiya et",
+    "select_dates": "Tarixləri seçin",
+    "reservation_note": "Rezervasiya etmək üçün tarix və qonaq məlumatlarını daxil edin",
+    "check_in_out_info": "Giriş və çıxış tarixləri booking səhifəsində seçiləcək",
+    "guest_information": "Qonaq məlumatları",
+    "booking_redirect_note": "Rezervasiya səhifəsinə yönləndiriləcəksiniz",
+    "adults":"Böyüklər",
+    "children":"Uşaqlar",
+    "reservation":"Rezervasiya et",
+    "night": "Gecə"
   },
   "sanatorium": {
     "featured": "Seçilmiş",

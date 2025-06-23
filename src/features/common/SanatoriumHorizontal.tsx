@@ -29,14 +29,27 @@ interface SanatoriumProps {
   sanatorium: Sanatorium;
   index?: number;
   nights?: number;
+  checkIn?: string;
+  checkOut?: string;
+  adults?: number;
+  childrenAges?: number[];
 }
 
-export default function SanatoriumHorizontal({ sanatorium, index = 0, nights = 1 }: SanatoriumProps) {
+export default function SanatoriumHorizontal({ sanatorium, index = 0, nights = 1, checkIn, checkOut, adults, childrenAges }: SanatoriumProps) {
   const [isHovered, setIsHovered] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
   const { formatPrice } = useCurrencyStore();
   const t = useTranslations('sanatorium');
   const commonT = useTranslations('common');
+
+  const detailPageParams = new URLSearchParams();
+  if (checkIn) detailPageParams.set('check_in', checkIn);
+  if (checkOut) detailPageParams.set('check_out', checkOut);
+  if (adults) detailPageParams.set('occupancy', String(adults));
+  if (childrenAges && childrenAges.length > 0) detailPageParams.set('children_ages', childrenAges.join(','));
+  
+  const queryString = detailPageParams.toString();
+  const detailPageHref = `/sanatoriums/${sanatorium.slug}${queryString ? `?${queryString}` : ''}`;
 
   // Check if we're on mobile
   useEffect(() => {
@@ -145,6 +158,21 @@ export default function SanatoriumHorizontal({ sanatorium, index = 0, nights = 1
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalIndex, setModalIndex] = useState(0);
 
+  const openModal = (index = 0) => {
+    setModalIndex(index);
+    setIsModalOpen(true);
+    if (typeof window !== "undefined") {
+      document.body.style.overflow = 'hidden';
+    }
+  };
+
+  const closeModal = () => {
+    setIsModalOpen(false);
+    if (typeof window !== "undefined") {
+      document.body.style.overflow = 'auto';
+    }
+  };
+
   // Mobile view
   if (isMobile) {
     // Modern mobile card from scratch
@@ -158,7 +186,11 @@ export default function SanatoriumHorizontal({ sanatorium, index = 0, nights = 1
         className="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden flex flex-col"
       >
         {/* Dynamic Image Grid */}
-        <div className="relative w-full" style={{ aspectRatio: '2/1' }}>
+        <div 
+          className="relative w-full cursor-pointer" 
+          style={{ aspectRatio: '2/1' }}
+          onClick={() => openModal(0)}
+        >
           <div className="absolute inset-0 bg-gradient-to-b from-black/40 to-transparent z-10"></div>
           {sanatorium.images?.length === 1 ? (
             <div className="relative w-full h-full rounded-t-2xl overflow-hidden">
@@ -253,7 +285,7 @@ export default function SanatoriumHorizontal({ sanatorium, index = 0, nights = 1
         <div className="flex flex-col gap-1 p-3">
           {/* Name and location */}
           <div className="flex flex-col gap-0.5">
-            <Link href={`/sanatoriums/${sanatorium.slug}`} className="hover:text-blue-700 transition-colors">
+            <Link href={detailPageHref} className="hover:text-blue-700 transition-colors">
               <h3 className="text-base font-bold text-gray-800 mb-0.5 line-clamp-1">{sanatorium.name}</h3>
             </Link>
             <div className="flex items-center text-[11px] text-gray-500">
@@ -308,7 +340,7 @@ export default function SanatoriumHorizontal({ sanatorium, index = 0, nights = 1
           </div>
           {/* Details button */}
           <Link
-            href={`/sanatoriums/${sanatorium.slug}`}
+            href={detailPageHref}
             className="mt-2 w-full py-2 bg-gradient-to-r from-blue-600 to-blue-800 text-white text-center rounded-lg font-medium flex items-center justify-center shadow-sm hover:from-blue-700 hover:to-blue-900 transition-all text-sm"
           >
             {t('details')}
@@ -320,7 +352,7 @@ export default function SanatoriumHorizontal({ sanatorium, index = 0, nights = 1
           images={(sanatorium.images && sanatorium.images.length > 0 ? sanatorium.images : sanatorium.main_image ? [sanatorium.main_image] : [{ image: '/images/placeholder.svg', alt: sanatorium.name }])}
           isOpen={isModalOpen}
           initialIndex={modalIndex}
-          onClose={() => setIsModalOpen(false)}
+          onClose={closeModal}
         />
       </motion.div>
     );
@@ -340,7 +372,7 @@ export default function SanatoriumHorizontal({ sanatorium, index = 0, nights = 1
     >
       <div className="grid md:grid-cols-12 h-full">
         {/* Left Image Section (Desktop) */}
-        <div className="relative h-72 md:h-full md:col-span-4 lg:col-span-4 overflow-hidden group cursor-pointer" onClick={() => { setIsModalOpen(true); setModalIndex(0); }}>
+        <div className="relative h-72 md:h-full md:col-span-4 lg:col-span-4 overflow-hidden group cursor-pointer" onClick={() => openModal(0)}>
           <div className="absolute inset-0 bg-gradient-to-b from-black/30 to-transparent z-10"></div>
           {sanatorium.images?.length === 1 ? (
             // Single image: fill the area
@@ -431,7 +463,7 @@ export default function SanatoriumHorizontal({ sanatorium, index = 0, nights = 1
         <div className="p-5 md:p-6 md:col-span-5 lg:col-span-5 flex flex-col justify-between bg-gradient-to-b from-white to-gray-50">
           <div>
             <div className="flex flex-wrap items-start justify-between mb-3">
-              <Link href={`/sanatoriums/${sanatorium.slug}`} className="hover:text-blue-700 transition-colors">
+              <Link href={detailPageHref} className="hover:text-blue-700 transition-colors">
                 <h3 className="text-xl md:text-2xl font-bold text-gray-800 hover:text-blue-700 transition-colors">{sanatorium.name}</h3>
               </Link>
               
@@ -513,7 +545,7 @@ export default function SanatoriumHorizontal({ sanatorium, index = 0, nights = 1
           {/* CTA Button */}
           <div className="mt-3">
             <Link
-              href={`/sanatoriums/${sanatorium.slug}`}
+              href={detailPageHref}
               className="w-full py-2 bg-gradient-to-r from-blue-600 to-blue-800 text-white text-center rounded-lg font-medium flex items-center justify-center shadow-sm hover:from-blue-700 hover:to-blue-900 transition-all text-sm"
             >
               {t('details')}
@@ -527,7 +559,7 @@ export default function SanatoriumHorizontal({ sanatorium, index = 0, nights = 1
         images={(sanatorium.images && sanatorium.images.length > 0 ? sanatorium.images : sanatorium.main_image ? [sanatorium.main_image] : [{ image: '/images/placeholder.svg', alt: sanatorium.name }])}
         isOpen={isModalOpen}
         initialIndex={modalIndex}
-        onClose={() => setIsModalOpen(false)}
+        onClose={closeModal}
       />
     </motion.div>
   );
