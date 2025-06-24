@@ -38,8 +38,8 @@ export default function Loading({
   };
 
   const variantClasses = {
-    default: 'fixed inset-0 bg-white/80 backdrop-blur-sm z-[1200]',
-    fullscreen: 'fixed inset-0 bg-white z-50',
+    default: 'fixed inset-0 bg-white/80 backdrop-blur-sm z-[10000]',
+    fullscreen: 'fixed inset-0 bg-white z-[10000]',
     inline: 'relative'
   };
 
@@ -60,7 +60,7 @@ export default function Loading({
       <div className={containerClasses[currentVariant || 'default']}>
         <div className="text-center">
           <motion.div
-            animate={{ rotate: 360 }}
+            animate={{ rotate: 760 }}
             transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
             className={`${sizeClasses[currentSize || 'md']} text-blue-500 mx-auto`}
           >
