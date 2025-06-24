@@ -135,7 +135,6 @@ const page = async ({ params, searchParams }: Props) => {
       id: String(id)
     }),
   ]);
-  console.log(sanatorium)
   return <SanatoriumDetailPage sanatorium={sanatorium} />;
 };
 

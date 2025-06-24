@@ -54,8 +54,8 @@ const GuestSelector = ({ value, onChange, errors, className }: GuestSelectorProp
   // Update children count and manage children ages array
   const handleChildrenChange = (increment: boolean) => {
     if (increment) {
-      // Add a child with age 0
-      const newChildrenAges = [...(value.childrenAges || []), 0];
+      // Add a child with age 7
+      const newChildrenAges = [...(value.childrenAges || []), 7];
       onChange({
         ...value,
         children: value.children + 1,
@@ -107,7 +107,7 @@ const GuestSelector = ({ value, onChange, errors, className }: GuestSelectorProp
           <span className="text-gray-800">
             {value.adults === 0 && value.children === 0
               ? t("select")
-              : `${totalGuests} ${t(totalGuests === 1 ? "guest" : "guests")}${
+              : `${value.adults} ${t(value.adults === 1 ? "adult" : "adults")}${
                   value.children > 0
                     ? ` • ${value.children} ${t(
                         value.children === 1 ? "child" : "children"
@@ -172,7 +172,7 @@ const GuestSelector = ({ value, onChange, errors, className }: GuestSelectorProp
             <div className="flex items-center justify-between py-3 border-b border-gray-100">
               <div>
                 <div className="font-medium">{t("children")}</div>
-                <div className="text-sm text-gray-500">{t("age")} 0-18</div>
+                <div className="text-sm text-gray-500">{t("age")} 7-18</div>
               </div>
               <div className="flex items-center gap-3">
                 <button
@@ -204,21 +204,17 @@ const GuestSelector = ({ value, onChange, errors, className }: GuestSelectorProp
                 <div className="grid grid-cols-2 gap-2">
                   {Array.from({ length: value.children }).map((_, index) => (
                     <div key={index} className="flex items-center gap-2">
-                      {(value.childrenAges?.[index] || 0) < 2 ? (
-                        <FaBaby className="text-blue-400" />
-                      ) : (
-                        <FaChild className="text-blue-400" />
-                      )}
+                      <FaChild className="text-blue-400" />
                       <select
-                        value={value.childrenAges?.[index] || 0}
+                        value={value.childrenAges?.[index] || 7}
                         onChange={(e) =>
                           handleChildAgeChange(index, parseInt(e.target.value))
                         }
                         className="flex-1 p-2 border border-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                       >
-                        {Array.from({ length: 18 }).map((_, age) => (
-                          <option key={age} value={age}>
-                            {age} {t("years")}
+                        {Array.from({ length: 11 }).map((_, age) => (
+                          <option key={age + 7} value={age + 7}>
+                            {age + 7} {t("years")}
                           </option>
                         ))}
                       </select>

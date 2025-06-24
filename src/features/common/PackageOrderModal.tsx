@@ -126,7 +126,7 @@ export const PackageOrderModal = ({ isOpen, onClose, pkg }: PackageOrderModalPro
   return (
     <AnimatePresence>
       {isOpen && (
-        <div className="fixed inset-0 z-[1200] flex items-center justify-center p-0 sm:p-6 md:p-8 bg-black/50 overflow-y-auto">
+        <div className="fixed inset-0 z-[4400]  flex items-center justify-center p-0 sm:p-6 md:p-8 bg-black/50 overflow-y-auto">
           <motion.div
             initial={{ opacity: 0, y: 100, scale: 0.95 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}

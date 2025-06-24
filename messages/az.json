@@ -383,7 +383,7 @@
     "price_booking": "Qiymət və rezervasiya",
     "starting_price": "Başlanğıc qiyməti:",
     "per_person_night": "bir nəfər / gecə",
-    "book_now": "İndi rezervasiya et",
+    "book_now": "Rezervasiya et",
     "ask_question": "Sual vermək",
     "price_note_1": "* Qiymətlər otaq növündən və mövsümdən asılı olaraq dəyişə bilər",
     "price_note_2": "* Müalicə paketlərinin qiyməti əlavə olaraq hesablanır",
@@ -402,7 +402,10 @@
     "adults":"Böyüklər",
     "children":"Uşaqlar",
     "reservation":"Rezervasiya et",
-    "night": "Gecə"
+    "night": "Gecə",
+    "search_button":"Axtarış et",
+    "check_in_required": "Giriş tarixi tələb olunur",
+    "check_out_required": "Çıxış tarixi tələb olunur"
   },
   "sanatorium": {
     "featured": "Seçilmiş",
@@ -432,7 +435,7 @@
       "name": "{name} mövsümü"
     },
     "limited_time_offer": "Məhdud müddətli təklif",
-    "book_now": "İndi rezervasiya et",
+    "book_now": "Rezervasiya et",
     "view_details": "Ətraflı bax",
     "location_type": {
       "naftalan": "Naftalan",
@@ -616,5 +619,8 @@
     "description": "Təəssüf ki, bir xəta baş verdi. Zəhmət olmasa, bir az sonra yenidən cəhd edin.",
     "try_again": "Yenidən cəhd et",
     "back_to_home": "Ana səhifəyə qayıt"
+  },
+  "select": {
+    "clear": "Seçimi ləğv et"
   }
 }

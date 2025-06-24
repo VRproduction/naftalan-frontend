@@ -55,8 +55,13 @@ const SearchForm = ({locations, sanatoriums}: Props) => {
   
   // Filter sanatoriums based on selected location
   const filteredSanatoriums = selectedLocation 
-    ? sanatoriums.filter(s => s.location === Number(selectedLocation))
+    ? sanatoriums.filter(s => String(s.location) === selectedLocation)
     : sanatoriums; // Show all sanatoriums when no city is selected
+
+  // Reset sanatorium when location changes
+  useEffect(() => {
+    setValue('sanatorium', '');
+  }, [selectedLocation, setValue]);
 
   const onSubmit = (data: SearchFormValues) => {
     setLoading(true);
@@ -93,6 +98,7 @@ const SearchForm = ({locations, sanatoriums}: Props) => {
                   name={name}
                   className="w-full pl-7 pr-3 min-h-[48px]"
                   placeholder={t('select_city')}
+                  clearable
                   icon={<FaMapMarkerAlt />}
                 >
                   {locations.map(location => (
@@ -121,6 +127,7 @@ const SearchForm = ({locations, sanatoriums}: Props) => {
                   name={name}
                   className="w-full pl-7 pr-3 min-h-[48px]"
                   placeholder={t('select_hotel')}
+                  clearable
                   icon={<FaHotel />}
                 >
                   {filteredSanatoriums.map(sanatorium => (

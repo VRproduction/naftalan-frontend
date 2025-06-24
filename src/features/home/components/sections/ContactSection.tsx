@@ -50,7 +50,6 @@ const ContactSection = ({ contactSection }: ContactSectionProps) => {
     // Simulate API call
     try {
       await new Promise(resolve => setTimeout(resolve, 1000));
-      console.log('Form data:', data);
       setIsSuccess(true);
       reset();
       

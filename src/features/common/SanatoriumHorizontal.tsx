@@ -47,9 +47,10 @@ export default function SanatoriumHorizontal({ sanatorium, index = 0, nights = 1
   if (checkOut) detailPageParams.set('check_out', checkOut);
   if (adults) detailPageParams.set('occupancy', String(adults));
   if (childrenAges && childrenAges.length > 0) detailPageParams.set('children_ages', childrenAges.join(','));
+  if (childrenAges && childrenAges.length > 0) detailPageParams.set('children', String(childrenAges.length));
   
   const queryString = detailPageParams.toString();
-  const detailPageHref = `/sanatoriums/${sanatorium.slug}${queryString ? `?${queryString}` : ''}`;
+  const detailPageHref = `/sanatoriums/${sanatorium.slug}${queryString ? `?${queryString}&tab=reservation` : ''}`;
 
   // Check if we're on mobile
   useEffect(() => {
@@ -505,7 +506,7 @@ export default function SanatoriumHorizontal({ sanatorium, index = 0, nights = 1
             )}
             {seasonName && (
               <span className="bg-teal-100 text-teal-800 text-xs px-2 py-1 rounded-md font-medium">
-                {seasonIsCurrent ? t('season.current_season') : t('season.name', { name: seasonName })}
+                {seasonIsCurrent ? t('season.current_season') : seasonName}
               </span>
             )}
             {getGuestInfoArray().map((item, idx) => (
@@ -523,7 +524,7 @@ export default function SanatoriumHorizontal({ sanatorium, index = 0, nights = 1
             {hasPrice && (
               <>
                 <div className="flex items-center gap-1">
-                  {showDiscount && basePrice > finalPrice && (
+                  {showDiscount && discountedPrice > finalPrice && (
                     <span className="text-xs line-through text-gray-400">{formatPrice(basePrice)}</span>
                   )}
                   <span className="text-2xl font-bold text-blue-700 leading-tight">{formatPrice(finalPrice)}</span>

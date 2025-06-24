@@ -2,7 +2,7 @@
 
 import { useState, useRef, useEffect } from 'react';
 import { format, isToday, isAfter, isBefore, addMonths, startOfMonth, endOfMonth, 
-  eachDayOfInterval, getDay, parseISO, isValid, addYears, subYears, getYear } from 'date-fns';
+  eachDayOfInterval, getDay, parseISO, isValid, addYears, subYears, getYear, setMonth, setYear } from 'date-fns';
 import { FaCalendarAlt, FaChevronLeft, FaChevronRight, FaTimes } from 'react-icons/fa';
 import { twMerge } from 'tailwind-merge';
 import * as Popover from '@radix-ui/react-popover';
@@ -295,11 +295,15 @@ export default function DateRangePicker({
             const isEnd = parsedEndDate && format(parsedEndDate, 'yyyy-MM-dd') === dateKey;
             const isHighlighted = isDayHighlighted(day);
             const isCurrentDay = isToday(day);
+            const today = new Date();
+            today.setHours(0,0,0,0);
+            const isPast = isBefore(day, today);
             
             return (
               <button
                 key={`${monthDate}-${dateKey}`}
                 type="button"
+                disabled={isPast}
                 className={twMerge(
                   "relative text-center aspect-square w-full h-auto rounded-md text-xs sm:text-sm transition-all font-medium border border-transparent text-gray-800 bg-gray-100 flex items-center justify-center p-0 overflow-visible",
                   isStart && `${colorVariants[primaryColor].primary} border-2 border-${primaryColor}-500 z-10 !aspect-square !w-full !h-auto flex items-center justify-center`,
@@ -307,11 +311,12 @@ export default function DateRangePicker({
                   isHighlighted && `${colorVariants[secondaryColor].light} border border-${secondaryColor}-300 !aspect-square !w-full !h-auto flex items-center justify-center`,
                   !isStart && !isEnd && !isHighlighted && colorVariants[primaryColor].hover,
                   isCurrentDay && !isStart && !isEnd && !isHighlighted && "ring-1 ring-blue-400 font-bold",
+                  isPast && "bg-gray-50 text-gray-300 cursor-not-allowed opacity-60 pointer-events-none",
                   "relative group"
                 )}
-                onClick={() => handleDayClick(day)}
-                onMouseEnter={() => setHoverDate(day)}
-                onMouseLeave={() => setHoverDate(null)}
+                onClick={() => !isPast && handleDayClick(day)}
+                onMouseEnter={() => !isPast && setHoverDate(day)}
+                onMouseLeave={() => !isPast && setHoverDate(null)}
               >
                 {/* Date indicator */}
                 <div className="relative z-10">
@@ -325,18 +330,18 @@ export default function DateRangePicker({
                 </div>
                 
                 {/* Hover effect */}
-                {!isStart && !isEnd && !isHighlighted && (
+                {!isStart && !isEnd && !isHighlighted && !isPast && (
                   <span className="absolute inset-0 rounded-lg opacity-0 group-hover:opacity-20 bg-current transition-opacity" />
                 )}
                 
                 {/* Range connector - left side */}
-                {(isStart || isHighlighted) && (
+                {(isStart || isHighlighted) && !isPast && (
                   <span className="absolute top-0 bottom-0 right-0 w-1/2 bg-opacity-50 z-0" 
                     style={{ backgroundColor: isStart ? `var(--${primaryColor}-200)` : `var(--${secondaryColor}-200)` }} />
                 )}
                 
                 {/* Range connector - right side */}
-                {(isEnd || isHighlighted) && (
+                {(isEnd || isHighlighted) && !isPast && (
                   <span className="absolute top-0 bottom-0 left-0 w-1/2 bg-opacity-50 z-0" 
                     style={{ backgroundColor: isEnd ? `var(--${secondaryColor}-200)` : `var(--${primaryColor}-200)` }} />
                 )}
@@ -354,119 +359,90 @@ export default function DateRangePicker({
   return (
     <div className={`relative`}>
       {/* Input field */}
-      {isMobile ? (
-        <Dialog.Root open={isOpen} onOpenChange={setIsOpen}>
-          <Dialog.Trigger asChild>
-            <div ref={inputRef} className="relative h-full w-full">
-              <div
-                className={twMerge(
-                  `w-full flex items-center border-2 rounded-lg py-3 pl-12 pr-4 bg-white shadow-sm cursor-pointer transition-all duration-200`,
-                  hasError ? 'border-red-500' : 'border-gray-200',
-                  `hover:${colorVariants[primaryColor].border}`,
-                  isOpen && `ring-2 ${colorVariants[primaryColor].ring} ${colorVariants[primaryColor].border}`,
-                  `${className}`
-                )}
-              >
-                <div className={`absolute inset-y-0 left-0 flex items-center pl-4 pointer-events-none ${colorVariants[primaryColor].text}`}>
-                  <FaCalendarAlt className="w-4 h-4 text-gray-500" />
-                </div>
-                <span className={twMerge(
-                  "block w-full truncate text-base",
-                  startDate && endDate ? "text-gray-800 font-medium" : "text-gray-400"
-                )}>
-                  {displayValue}
-                </span>
-                {(startDate || endDate) && (
-                  <button
-                    type="button"
-                    className="absolute right-4 text-gray-400 hover:text-gray-600 hover:bg-gray-100 p-1.5 rounded-full transition-colors"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      clearSelection();
-                    }}
-                  >
-                    <FaTimes className="w-4 h-4" />
-                  </button>
-                )}
-              </div>
-            </div>
-          </Dialog.Trigger>
-          <Dialog.Portal>
-            <Dialog.Overlay className="fixed inset-0 bg-black/50 z-[9998]" />
-            <Dialog.Content
-              ref={calendarRef}
-              className="fixed inset-x-0 bottom-0 top-20 z-[9999] w-full bg-gradient-to-b from-white via-blue-50 to-white rounded-t-3xl shadow-2xl border border-gray-100 overflow-hidden animate-slideUp"
-              onOpenAutoFocus={e => e.preventDefault()}
+      <Dialog.Root open={isOpen} onOpenChange={setIsOpen}>
+        <Dialog.Trigger asChild>
+          <div ref={inputRef} className="relative h-full w-full">
+            <div
+              className={twMerge(
+                `w-full flex items-center border-2 rounded-lg  pl-12 pr-4 bg-white cursor-pointer transition-all duration-200`,
+                hasError ? 'border-red-500' : 'border-gray-200',
+                `hover:${colorVariants[primaryColor].border}`,
+                isOpen && `ring-2 ${colorVariants[primaryColor].ring} ${colorVariants[primaryColor].border}`,
+                `${className}`
+              )}
             >
+              <div className={`absolute inset-y-0 left-0 flex items-center pl-4 pointer-events-none ${colorVariants[primaryColor].text}`}>
+                <FaCalendarAlt className="w-4 h-4 text-gray-500" />
+              </div>
+              <span className={twMerge(
+                "block w-full truncate text-sm",
+                startDate && endDate ? "text-gray-800 font-medium" : "text-gray-400"
+              )}>
+                {displayValue}
+              </span>
+              {(startDate || endDate) && (
+                <button
+                  type="button"
+                  className="absolute right-4 text-gray-400 hover:text-gray-600 hover:bg-gray-100 p-1.5 rounded-full transition-colors"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    clearSelection();
+                  }}
+                >
+                  <FaTimes className="w-4 h-4" />
+                </button>
+              )}
+            </div>
+          </div>
+        </Dialog.Trigger>
+        <Dialog.Portal>
+          <Dialog.Overlay className="fixed inset-0 bg-black/50 z-[9998]" />
+          <Dialog.Content
+            ref={calendarRef}
+            className="fixed inset-0 z-[9999] flex items-center justify-center p-2 sm:p-0"
+            onOpenAutoFocus={e => e.preventDefault()}
+          >
+            <div className="relative w-full max-w-md sm:max-w-2xl bg-gradient-to-b from-white via-blue-50 to-white rounded-2xl shadow-2xl border border-gray-100 overflow-hidden animate-slideUp">
+              {/* Drag handle */}
+              <div className="flex justify-center py-2">
+                <div className="w-12 h-1.5 rounded-full bg-gray-200" />
+              </div>
               <Dialog.Title>
                 <VisuallyHidden>{label || 'Select date range'}</VisuallyHidden>
               </Dialog.Title>
-              {/* Mobile month navigation */}
-              <div className="sm:hidden bg-gray-50 border-b border-gray-100 p-2 sticky top-0 z-10 rounded-t-3xl">
-                <div className="flex items-center justify-between">
-                  <button
-                    type="button"
-                    className="p-1.5 rounded-full hover:bg-blue-100 transition-colors"
-                    onClick={() => navigateMonth('prev', 0)}
+              {/* Month navigation and calendars */}
+              <div className="flex flex-col sm:flex-row w-full">
+                {/* Mobile: month/year selector */}
+                <div className="sm:hidden flex w-full gap-2 mb-2 px-3">
+                  <select
+                    className="flex-1 rounded-lg border border-blue-100 bg-white py-2 px-3 text-base font-semibold text-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-300 max-w-full"
+                    value={currentMonth.getMonth()}
+                    onChange={e => setCurrentMonth(setMonth(currentMonth, parseInt(e.target.value)))}
                   >
-                    <FaChevronLeft className="h-5 w-5 text-blue-500" />
-                  </button>
-                  <div className="flex items-center gap-2">
-                    <h2 className="text-lg font-bold text-blue-700 tracking-tight">
-                      {format(currentMonth, 'MMMM')}
-                    </h2>
-                    <select
-                      className="text-base font-semibold text-blue-700 bg-white border border-blue-100 rounded-lg py-1 px-2 focus:outline-none focus:ring-2 focus:ring-blue-300"
-                      value={getYear(currentMonth)}
-                      onChange={(e) => handleYearChange(parseInt(e.target.value), 0)}
-                      aria-label={t('select_year')}
-                    >
-                      {yearOptions.map(year => (
-                        <option key={year} value={year}>{year}</option>
-                      ))}
-                    </select>
-                  </div>
-                  <button
-                    type="button"
-                    className="p-1.5 rounded-full hover:bg-blue-100 transition-colors"
-                    onClick={() => navigateMonth('next', 0)}
+                    {Array.from({ length: 12 }).map((_, i) => (
+                      <option key={i} value={i}>{format(new Date(2000, i, 1), 'MMMM')}</option>
+                    ))}
+                  </select>
+                  <select
+                    className="flex-1 rounded-lg border border-blue-100 bg-white py-2 px-3 text-base font-semibold text-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-300 max-w-full"
+                    value={getYear(currentMonth)}
+                    onChange={e => setCurrentMonth(setYear(currentMonth, parseInt(e.target.value)))}
                   >
-                    <FaChevronRight className="h-5 w-5 text-blue-500" />
-                  </button>
+                    {yearOptions.map(year => (
+                      <option key={year} value={year}>{year}</option>
+                    ))}
+                  </select>
                 </div>
-                
-                {/* Date range summary (mobile) */}
-                <div className="flex mt-2 pt-2 border-t border-gray-200 items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <div className={twMerge(
-                      "h-3 w-3 rounded-full flex-shrink-0",
-                      colorVariants[primaryColor].primary
-                    )} />
-                    <span className="text-sm font-medium text-gray-700 truncate">
-                      {parsedStartDate ? format(parsedStartDate, 'MMM dd') : t('check_in')}
-                    </span>
-                  </div>
-                  
-                  <div className="flex items-center text-gray-400">→</div>
-                  
-                  <div className="flex items-center gap-2">
-                    <div className={twMerge(
-                      "h-3 w-3 rounded-full flex-shrink-0",
-                      colorVariants[secondaryColor].primary
-                    )} />
-                    <span className="text-sm font-medium text-gray-700 truncate">
-                      {parsedEndDate ? format(parsedEndDate, 'MMM dd') : t('check_out')}
-                    </span>
-                  </div>
-                </div>
-              </div>
-              <div className="flex flex-col w-full">
-                <div className="w-full p-3 sm:p-5 bg-white/80 rounded-2xl shadow-md mx-auto mt-2 mb-3">
+                {/* Mobile: single month, Desktop: two months */}
+                <div className="w-full sm:w-1/2 p-3 sm:p-5 bg-white/80 rounded-2xl shadow-md mx-auto mt-2 mb-3 sm:mt-0 sm:mb-0 sm:rounded-none sm:shadow-none sm:border-r border-gray-100">
                   {renderCalendarMonth(currentMonth, 0)}
+                </div>
+                <div className="hidden sm:block w-1/2 p-5">
+                  {renderCalendarMonth(secondCurrentMonth, 1)}
                 </div>
               </div>
               {/* Selection controls */}
-              <div className="bg-white/80 p-4 border-t border-gray-100 sticky bottom-0 rounded-b-2xl shadow-md">
+              <div className="bg-white/80 p-4 border-t border-gray-100 rounded-b-2xl shadow-md">
                 <div className="flex flex-col items-stretch gap-4">
                   <div className="flex flex-row items-center justify-between w-full gap-6">
                     {/* Start date */}
@@ -536,7 +512,7 @@ export default function DateRangePicker({
                   </div>
                 )}
               </div>
-              {/* Close button for mobile */}
+              {/* Close button for modal */}
               <button
                 type="button"
                 className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 bg-white rounded-full p-2 shadow"
@@ -545,159 +521,10 @@ export default function DateRangePicker({
               >
                 <FaTimes className="w-5 h-5" />
               </button>
-            </Dialog.Content>
-          </Dialog.Portal>
-        </Dialog.Root>
-      ) : (
-        <Popover.Root open={isOpen} onOpenChange={setIsOpen}>
-          <Popover.Trigger asChild>
-            <div ref={inputRef} className="relative h-full w-full">
-              <div 
-                className={twMerge(
-                  "w-full flex items-center border-2 border-gray-200 rounded-lg py-3 pl-12 pr-4 bg-white  cursor-pointer transition-all duration-200",
-                  hasError ? 'border-red-500' : 'border-gray-200',
-                  `hover:${colorVariants[primaryColor].border}`,
-                  isOpen && `ring-2 ${colorVariants[primaryColor].ring} ${colorVariants[primaryColor].border}`,
-                  `${className}`
-                )}
-              >
-                <div className={`absolute inset-y-0 left-0 flex items-center pl-4 pointer-events-none ${colorVariants[primaryColor].text}`}>
-                  <FaCalendarAlt className="w-4 h-4 text-gray-500" />
-                </div>
-                <span className={twMerge(
-                  "block w-full truncate text-sm", // text-xs for smaller text
-                  startDate && endDate ? "text-gray-800 font-medium" : "text-gray-400"
-                )}>
-                  {displayValue}
-                </span>
-                {(startDate || endDate) && (
-                  <button 
-                    type="button"
-                    className="absolute right-4 text-gray-400 hover:text-gray-600 hover:bg-gray-100 p-1.5 rounded-full transition-colors"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      clearSelection();
-                    }}
-                  >
-                    <FaTimes className="w-4 h-4" />
-                  </button>
-                )}
-              </div>
             </div>
-          </Popover.Trigger>
-          <Popover.Portal>
-            <Popover.Content
-              ref={calendarRef}
-              sideOffset={8}
-              className="z-[9999] mt-2 w-full sm:w-auto sm:min-w-[680px] max-w-full bg-white rounded-t-xl sm:rounded-xl shadow-2xl border border-gray-200 overflow-hidden"
-              style={{
-                maxHeight: typeof window !== 'undefined' && window.innerWidth < 640 ? '80vh' : 'calc(100vh - 100px)',
-                overflowY: 'auto',
-              }}
-              onOpenAutoFocus={e => e.preventDefault()}
-            >
-              {/* Desktop calendar */}
-              <div className="flex flex-col sm:flex-row w-full">
-                {/* First month */}
-                <div className="w-full sm:w-1/2 p-3 sm:p-5 sm:border-r border-gray-200">
-                  {renderCalendarMonth(currentMonth, 0)}
-                </div>
-                {/* Second month */}
-                <div className="hidden sm:block w-1/2 p-5">
-                  {renderCalendarMonth(secondCurrentMonth, 1)}
-                </div>
-              </div>
-              {/* Calendar legend */}
-              <div className="hidden sm:flex px-5 py-3 border-t border-gray-200 bg-gray-50 justify-center gap-6">
-                <div className="flex items-center gap-2">
-                  <div className={twMerge("h-3 w-3 rounded-full", colorVariants[primaryColor].primary)} />
-                  <span className="text-xs text-gray-600">{t('check_in_date')}</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <div className={twMerge("h-3 w-3 rounded-full", colorVariants[secondaryColor].primary)} />
-                  <span className="text-xs text-gray-600">{t('check_out_date')}</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <div className={twMerge("h-3 w-3 rounded-full bg-gray-100 ring-2 ring-blue-400")} />
-                  <span className="text-xs text-gray-600">{t('today')}</span>
-                </div>
-              </div>
-              {/* Selection controls */}
-              <div className="bg-gray-50 p-3 border-t border-gray-200 sticky bottom-0">
-                <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2">
-                  <div className="flex flex-row items-center justify-between w-full sm:w-auto sm:justify-start gap-4 sm:gap-8">
-                    {/* Start date */}
-                    <div className="flex items-center gap-2">
-                      <div className={twMerge(
-                        "h-4 w-4 rounded-full shadow-sm flex-shrink-0",
-                        colorVariants[primaryColor].primary
-                      )} />
-                      <span className="text-sm font-medium text-gray-700 truncate">
-                        {parsedStartDate 
-                          ? format(parsedStartDate, 'MMM dd, yyyy')
-                          : t('check_in')}
-                      </span>
-                    </div>
-                    
-                    <div className="flex items-center text-gray-400">→</div>
-                    
-                    {/* End date */}
-                    <div className="flex items-center gap-2">
-                      <div className={twMerge(
-                        "h-4 w-4 rounded-full shadow-sm flex-shrink-0",
-                        colorVariants[secondaryColor].primary
-                      )} />
-                      <span className="text-sm font-medium text-gray-700 truncate">
-                        {parsedEndDate 
-                          ? format(parsedEndDate, 'MMM dd, yyyy')
-                          : t('check_out')}
-                      </span>
-                    </div>
-                  </div>
-                  
-                  {/* Action buttons */}
-                  <div className="flex gap-2 w-full sm:w-auto mt-2 sm:mt-0">
-                    <button
-                      type="button"
-                      className="px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg font-medium text-sm transition-colors sm:w-auto w-1/2 focus:outline-none focus:ring-2 focus:ring-gray-200"
-                      onClick={() => {
-                        clearSelection();
-                        setIsOpen(false);
-                      }}
-                    >
-                      {t('clear')}
-                    </button>
-                    <button
-                      type="button"
-                      className={twMerge(
-                        "px-4 py-2 rounded-lg font-medium text-sm transition-colors sm:w-auto w-1/2 focus:outline-none focus:ring-2",
-                        colorVariants[primaryColor].primary,
-                        colorVariants[primaryColor].ring
-                      )}
-                      onClick={() => setIsOpen(false)}
-                    >
-                      {t('apply')}
-                    </button>
-                  </div>
-                </div>
-                
-                {/* Additional information about selection */}
-                {parsedStartDate && parsedEndDate && (
-                  <div className="mt-2 pt-2 border-t border-gray-200 flex justify-between items-center text-xs text-gray-500">
-                    <span>
-                      {(() => {
-                        const diff = Math.ceil((parsedEndDate.getTime() - parsedStartDate.getTime()) / (1000 * 60 * 60 * 24));
-                        return `${diff} ${diff === 1 ? t('night') : t('nights')}`;
-                      })()}
-                    </span>
-                    <span className="hidden sm:inline">{format(parsedStartDate, 'EEEE')} - {format(parsedEndDate, 'EEEE')}</span>
-                  </div>
-                )}
-              </div>
-            </Popover.Content>
-          </Popover.Portal>
-        </Popover.Root>
-      )}
+          </Dialog.Content>
+        </Dialog.Portal>
+      </Dialog.Root>
     </div>
   );
 }

@@ -10,6 +10,7 @@ import {
   RiCheckLine,
   RiCloseLine,
   RiHeart3Line,
+  RiImageLine,
 } from 'react-icons/ri';
 import { SanatoriumDetail } from "@/lib/types/sanatorium.type";
 import SanatoriumCard from "../common/SanatoriumCard";
@@ -17,6 +18,13 @@ import { useTranslations } from "next-intl";
 import { useCurrencyStore } from "@/lib/store/useCurrencyStore";
 import ImageSliderModal from '@/components/common/ImageSliderModal';
 import SharePopover from '@/components/common/SharePopover';
+import DateRangePicker from '@/components/ui/inputs/DateRangePicker';
+import GuestSelector from '@/components/ui/inputs/GuestSelector';
+import { useForm, Controller } from 'react-hook-form';
+import { z } from 'zod';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useLoadingStore } from '@/lib/store/useLoadingStore';
+import MatchedRoomHorizontalCard from "./components/MatchedRoomHorizontalCard";
 
 interface PageProps {
   sanatorium: SanatoriumDetail;
@@ -35,6 +43,59 @@ export default function SanatoriumDetailPage({ sanatorium }: PageProps) {
   const [modalImages, setModalImages] = useState<{ image: string; alt?: string }[]>([]);
   const [modalIndex, setModalIndex] = useState(0);
   const { formatPrice } = useCurrencyStore();
+  const [roomModalOpen, setRoomModalOpen] = useState(false);
+  const [roomModalImages, setRoomModalImages] = useState<{ image: string; alt?: string }[]>([]);
+  const [roomModalIndex, setRoomModalIndex] = useState(0);
+  const { setLoading } = useLoadingStore();
+
+  // Zod schema for reservation form
+  const reservationSchema = z.object({
+    checkIn: z.string().min(1, { message: 'check_in_required' }),
+    checkOut: z.string().min(1, { message: 'check_out_required' }),
+    adults: z.number().min(1, { message: 'min_adults' }),
+    children: z.number().min(0),
+    childrenAges: z.array(z.number()).optional(),
+  });
+
+  type ReservationFormValues = z.infer<typeof reservationSchema>;
+
+  const {
+    control,
+    handleSubmit,
+    formState: { errors },
+    setValue,
+    clearErrors,
+    watch,
+  } = useForm<ReservationFormValues>({
+    resolver: zodResolver(reservationSchema),
+    defaultValues: {
+      checkIn: searchParams.get('check_in') || "",
+      checkOut: searchParams.get('check_out') || "",
+      adults: searchParams.get('occupancy') ? Number(searchParams.get('occupancy')) : 1,
+      children: searchParams.get('children') ? Number(searchParams.get('children')) : 0,
+      childrenAges: searchParams.get('children_ages')
+        ? searchParams.get('children_ages')!.split(',').map(Number)
+        : [],
+    },
+  });
+
+  // On form submit, update the URL with form values
+  const onReservationSubmit = (data: ReservationFormValues) => {
+    setLoading(true);
+    const params = new URLSearchParams(searchParams.toString());
+    params.set('tab', 'reservation');
+    params.set('check_in', data.checkIn);
+    params.set('check_out', data.checkOut);
+    params.set('occupancy', String(data.adults));
+    params.set('children', String(data.children));
+    if (data.childrenAges && data.childrenAges.length > 0) {
+      params.set('children_ages', data.childrenAges.join(','));
+    } else {
+      params.delete('children_ages');
+    }
+    router.push(`${pathname}?${params.toString()}`, { scroll: false });
+    setTimeout(() => setLoading(false), 800);
+  };
 
   // When tab changes, update URL (client only)
   const handleTabChange = (tab: "overview" | "treatments" | "rooms" | "reviews" | "reservation") => {
@@ -53,6 +114,21 @@ export default function SanatoriumDetailPage({ sanatorium }: PageProps) {
     document.body.style.overflow = 'hidden';
   };
 
+  const openRoomModal = (images: { image: string; alt?: string }[], index: number) => {
+    setRoomModalImages(images);
+    setRoomModalIndex(index);
+    setRoomModalOpen(true);
+    if (typeof window !== 'undefined') {
+      document.body.style.overflow = 'hidden';
+    }
+  };
+
+  const closeRoomModal = () => {
+    setRoomModalOpen(false);
+    if (typeof window !== 'undefined') {
+      document.body.style.overflow = 'auto';
+    }
+  };
 
   if (!sanatorium) {
     return (
@@ -594,7 +670,19 @@ export default function SanatoriumDetailPage({ sanatorium }: PageProps) {
                                               )}
                                             </td>
                                             <td className="px-4 py-3 text-sm font-medium text-gray-900">
-                                              {formatPrice(price.price)}
+                                              {typeof price.discounted_price !== 'undefined' && price.discounted_price < price.price ? (
+                                                <div className="flex flex-row items-center gap-2">
+                                                  <span className="text-gray-400 line-through text-xs">{formatPrice(price.price)}</span>
+                                                  <span className="text-green-700 font-bold text-base">{formatPrice(price.discounted_price)}</span>
+                                                  {price.discount_value && (
+                                                    <span className="inline-block px-2 py-0.5 bg-red-100 text-red-700 text-xs font-semibold rounded-full">
+                                                      -{price.discount_type === 'percentage' ? `${price.discount_value}%` : formatPrice(price.discount_value)}
+                                                    </span>
+                                                  )}
+                                                </div>
+                                              ) : (
+                                                <span className="font-bold text-blue-800 text-base">{formatPrice(price.price)}</span>
+                                              )}
                                             </td>
                                           </tr>
                                         ))}
@@ -670,7 +758,19 @@ export default function SanatoriumDetailPage({ sanatorium }: PageProps) {
                                                     )}
                                                   </td>
                                                   <td className="px-4 py-3 text-sm font-medium text-gray-900">
-                                                    {formatPrice(price.price)}
+                                                    {typeof price.discounted_price !== 'undefined' && price.discounted_price < price.price ? (
+                                                      <div className="flex flex-row items-center gap-2">
+                                                        <span className="text-gray-400 line-through text-xs">{formatPrice(price.price)}</span>
+                                                        <span className="text-green-700 font-bold text-base">{formatPrice(price.discounted_price)}</span>
+                                                        {price.discount_value && price.discount_value > 0 && (
+                                                          <span className="inline-block px-2 py-0.5 bg-red-100 text-red-700 text-xs font-semibold rounded-full">
+                                                            -{price.discount_type === 'percentage' ? `${price.discount_value}%` : formatPrice(price.discount_value)}
+                                                          </span>
+                                                        )}
+                                                      </div>
+                                                    ) : (
+                                                      <span className="font-bold text-blue-800 text-base">{formatPrice(price.price)}</span>
+                                                    )}
                                                   </td>
                                                 </tr>
                                               )
@@ -748,62 +848,106 @@ export default function SanatoriumDetailPage({ sanatorium }: PageProps) {
               {activeTab === "reservation" && (
                 <div>
                   <h2 className="text-xl font-bold mb-6">{t('make_reservation')}</h2>
-                  
-                  <div className="bg-white rounded-xl shadow-lg border border-gray-200 p-6">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                      {/* Date Selection */}
-                      <div>
-                        <h3 className="text-lg font-semibold mb-4 text-gray-800">{t('select_dates')}</h3>
-                        <div className="bg-gray-50 rounded-lg p-4">
-                          <p className="text-gray-600 text-sm mb-3">{t('reservation_note')}</p>
-                          <div className="flex items-center gap-2 text-sm text-gray-500">
-                            <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                            </svg>
-                            <span>{t('check_in_out_info')}</span>
-                          </div>
-                        </div>
-                      </div>
-
-                      {/* Guest Information */}
-                      <div>
-                        <h3 className="text-lg font-semibold mb-4 text-gray-800">{t('guest_information')}</h3>
-                        <div className="bg-gray-50 rounded-lg p-4">
-                          <div className="space-y-3">
-                            <div className="flex justify-between items-center">
-                              <span className="text-gray-700">{t('adults')}</span>
-                              <span className="font-semibold text-gray-800">2 {t('person')}</span>
-                            </div>
-                            <div className="flex justify-between items-center">
-                              <span className="text-gray-700">{t('children')}</span>
-                              <span className="font-semibold text-gray-800">0 {t('person')}</span>
-                            </div>
-                            <div className="flex justify-between items-center">
-                              <span className="text-gray-700">{t('nights')}</span>
-                              <span className="font-semibold text-gray-800">1 {t('night')}</span>
-                            </div>
-                          </div>
-                        </div>
+                  {/* Reservation Form with react-hook-form and zod */}
+                  <form onSubmit={handleSubmit(onReservationSubmit)}>
+                    <div className="mb-6 grid grid-cols-1 md:grid-cols-3 gap-4">
+                      <Controller
+                        control={control}
+                        name="checkIn"
+                        render={({ field: { value: checkInValue, onChange: onCheckInChange } }) => (
+                          <Controller
+                            control={control}
+                            name="checkOut"
+                            render={({ field: { value: checkOutValue, onChange: onCheckOutChange } }) => (
+                              <div className="flex flex-col">
+                                <DateRangePicker
+                                  startDate={checkInValue}
+                                  endDate={checkOutValue}
+                                  onChange={(start, end) => {
+                                    onCheckInChange(start);
+                                    onCheckOutChange(end);
+                                    clearErrors(["checkIn", "checkOut"]);
+                                  }}
+                                  className="w-full min-h-[48px]"
+                                  primaryColor="blue"
+                                  secondaryColor="blue"
+                                  placeholder={`Tarix seçin`}
+                                  hasError={!!errors.checkIn || !!errors.checkOut}
+                                />
+                                {(errors.checkIn?.message || errors.checkOut?.message) && (
+                                  <div className="min-h-[22px]">
+                                    <p className="text-red-500 text-sm">
+                                      {errors.checkIn?.message
+                                        ? t(errors.checkIn.message as string)
+                                        : t(errors.checkOut?.message as string)}
+                                    </p>
+                                  </div>
+                                )}
+                              </div>
+                            )}
+                          />
+                        )}
+                      />
+                      <Controller
+                        control={control}
+                        name="adults"
+                        render={({ field: { value: adultsValue, onChange: onAdultsChange } }) => (
+                          <Controller
+                            control={control}
+                            name="children"
+                            render={({ field: { value: childrenValue, onChange: onChildrenChange } }) => (
+                              <Controller
+                                control={control}
+                                name="childrenAges"
+                                render={({ field: { value: childrenAgesValue = [], onChange: onChildrenAgesChange } }) => (
+                                  <GuestSelector
+                                    value={{
+                                      adults: adultsValue,
+                                      children: childrenValue,
+                                      childrenAges: childrenAgesValue,
+                                    }}
+                                    onChange={({ adults, children, childrenAges }) => {
+                                      onAdultsChange(adults);
+                                      onChildrenChange(children);
+                                      onChildrenAgesChange(childrenAges);
+                                      clearErrors(["adults", "children", "childrenAges"]);
+                                    }}
+                                    errors={errors}
+                                    className="w-full min-h-[48px]"
+                                  />
+                                )}
+                              />
+                            )}
+                          />
+                        )}
+                      />
+                      <div className="flex items-start">
+                        <button
+                          type="submit"
+                          className="w-full py-2 px-6 bg-gradient-to-r from-blue-600 to-blue-800 text-white rounded-lg font-medium shadow hover:from-blue-700 hover:to-blue-900 transition-all text-sm min-h-[48px]"
+                        >
+                          {t('search_button')}
+                        </button>
                       </div>
                     </div>
-
-                    {/* Booking Button */}
-                    <div className="mt-6 pt-6 border-t border-gray-200">
-                      <Link
-                        href={`/booking?snt=${sanatorium.slug}`}
-                        className="w-full bg-gradient-to-r from-blue-600 to-blue-800 text-white py-4 px-6 rounded-xl font-semibold text-lg flex items-center justify-center gap-3 hover:from-blue-700 hover:to-blue-900 transition-all shadow-lg hover:shadow-xl"
-                      >
-                        <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                        </svg>
-                        {t('book_now')}
-                      </Link>
-                      
-                      <p className="text-center text-sm text-gray-500 mt-3">
-                        {t('booking_redirect_note')}
-                      </p>
+                  </form>
+                  {/* End Reservation Form */}
+                  {sanatorium.matched_room_types && sanatorium.matched_room_types.length > 0 ? (
+                    <div className="space-y-6">
+                      {sanatorium.matched_room_types.map((matched, idx) => (
+                        <div key={`matched-room-${matched.room_type.id}`}> 
+                          <div className="hidden md:block">
+                            <MatchedRoomHorizontalCard matched={matched} sanatorium={sanatorium} openRoomModal={openRoomModal} t={t} formatPrice={formatPrice} />
+                          </div>
+                          <div className="md:hidden">
+                            {/* ...existing mobile card code here... */}
+                          </div>
+                        </div>
+                      ))}
                     </div>
-                  </div>
+                  ) : (
+                    <div className="text-gray-500 text-center py-8">{t('no_rooms')}</div>
+                  )}
                 </div>
               )}
             </div>
@@ -944,6 +1088,13 @@ export default function SanatoriumDetailPage({ sanatorium }: PageProps) {
         isOpen={isModalOpen}
         initialIndex={modalIndex}
         onClose={() => { setIsModalOpen(false); document.body.style.overflow = 'auto'; }}
+      />
+      {/* Room Image Modal */}
+      <ImageSliderModal
+        images={roomModalImages}
+        isOpen={roomModalOpen}
+        initialIndex={roomModalIndex}
+        onClose={closeRoomModal}
       />
     </div>
   );

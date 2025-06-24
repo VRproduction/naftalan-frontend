@@ -90,21 +90,9 @@ export default function ReservationPage({
   // Define dynamic price range limits (still needed for form defaults)
   const MIN_PRICE_DEFAULT = 0;
   const MAX_PRICE_DEFAULT = 30000;
-
+  
   const params = useSearchParams();
   
-  // Main search form state that includes all parameters
-  const [searchParams, setSearchParams] = useState({
-    location: "",
-    sanatorium: "",
-    checkIn: "",
-    checkOut: "",
-    guests: 1,
-    minPrice: MIN_PRICE_DEFAULT,
-    maxPrice: MAX_PRICE_DEFAULT,
-    ratings: [] as number[],
-  });
-
   // Add local state for price inputs inside ReservationPage
   const [minPriceInput, setMinPriceInput] = useState("");
   const [maxPriceInput, setMaxPriceInput] = useState("");
@@ -112,16 +100,16 @@ export default function ReservationPage({
   // Sync local input state with main state when searchParams changes
   useEffect(() => {
     setMinPriceInput(
-      searchParams.minPrice === MIN_PRICE_DEFAULT
+      MIN_PRICE_DEFAULT === MIN_PRICE_DEFAULT
         ? ""
-        : String(searchParams.minPrice)
+        : String(MIN_PRICE_DEFAULT)
     );
     setMaxPriceInput(
-      searchParams.maxPrice === MAX_PRICE_DEFAULT
+      MAX_PRICE_DEFAULT === MAX_PRICE_DEFAULT
         ? ""
-        : String(searchParams.maxPrice)
+        : String(MAX_PRICE_DEFAULT)
     );
-  }, [searchParams.minPrice, searchParams.maxPrice]);
+  }, []);
   
   // Form handling with react-hook-form
   const {
@@ -135,88 +123,22 @@ export default function ReservationPage({
   } = useForm<SearchFormValues>({
     resolver: zodResolver(searchSchema),
     defaultValues: {
-      checkIn: "",
-      checkOut: "",
-      adults: 0,
-      children: 0,
-      childrenAges: [],
-      location: "",
-      sanatorium: "",
-      minPrice: MIN_PRICE_DEFAULT,
-      maxPrice: MAX_PRICE_DEFAULT,
-      ratings: [],
+      checkIn: params.get("check_in") || "",
+      checkOut: params.get("check_out") || "",
+      adults: params.get("occupancy") ? parseInt(params.get("occupancy")!) : 0,
+      children: params.get("children_ages") ? params.get("children_ages")!.split(",").length : 0,
+      childrenAges: params.get("children_ages") ? params.get("children_ages")!.split(",").map((age) => parseInt(age)) : [],
+      location: params.get("city") || "",
+      sanatorium: params.get("id") || "",
+      minPrice: params.get("min_total_price") ? parseInt(params.get("min_total_price")!) : MIN_PRICE_DEFAULT,
+      maxPrice: params.get("max_total_price") ? parseInt(params.get("max_total_price")!) : MAX_PRICE_DEFAULT,
+      ratings: params.get("ratings") ? params.get("ratings")!.split(",").map((r) => parseInt(r)) : [],
     },
   });
-
-  // Initialize form from URL params
-  useEffect(() => {
-    // Get URL search params
-    const urlParams = new URLSearchParams(window.location.search);
-    const city = urlParams.get("city");
-    const sanatorium = urlParams.get("id");
-    const checkIn = urlParams.get("check_in");
-    const checkOut = urlParams.get("check_out");
-    const occupancy = urlParams.get("occupancy");
-    const childrenAges = urlParams.get("children_ages");
-    const minPrice = urlParams.get("min_total_price");
-    const maxPrice = urlParams.get("max_total_price");
-    const ratings = urlParams.get("ratings");
-    
-    // Parse ratings properly
-    const parsedRatings = ratings
-      ? ratings.split(",").map((r) => parseInt(r))
-      : [];
-    
-    // Set form values from URL
-    if (city !== undefined && city !== null) setValue("location", String(city));
-    if (sanatorium !== undefined && sanatorium !== null) setValue("sanatorium", String(sanatorium));
-    if (checkIn) setValue("checkIn", checkIn);
-    if (checkOut) setValue("checkOut", checkOut);
-    if (occupancy) setValue("adults", parseInt(occupancy));
-    if (minPrice) setValue("minPrice", parseInt(minPrice));
-    if (maxPrice) setValue("maxPrice", parseInt(maxPrice));
-    if (ratings) setValue("ratings", parsedRatings);
-    
-    // Handle children ages
-    if (childrenAges) {
-      const ages = childrenAges.split(",").map((age) => parseInt(age));
-      setValue("children", ages.length);
-      setValue("childrenAges", ages);
-    }
-    
-    // Update searchParams state with all parameters
-    setSearchParams({
-      location: city ? String(city) : "",
-      sanatorium: sanatorium ? String(sanatorium) : "",
-      checkIn: checkIn || "",
-      checkOut: checkOut || "",
-      guests: occupancy ? parseInt(occupancy) : 1,
-      minPrice: minPrice ? parseInt(minPrice) : MIN_PRICE_DEFAULT,
-      maxPrice: maxPrice ? parseInt(maxPrice) : MAX_PRICE_DEFAULT,
-      ratings: parsedRatings,
-    });
-  }, [setValue, searchParams.location, searchParams.sanatorium]);
-
-  
-
- 
   
   // Handle main search form submission
   const onSubmit = (data: SearchFormValues) => {
     setLoading(true);
-    
-    
-    // Update searchParams for existing code compatibility
-    setSearchParams({
-      location: data.location || "",
-      sanatorium: data.sanatorium || "",
-      checkIn: data.checkIn || "",
-      checkOut: data.checkOut || "",
-      guests: data.adults || 1,
-      minPrice: data.minPrice || MIN_PRICE_DEFAULT,
-      maxPrice: data.maxPrice || MAX_PRICE_DEFAULT,
-      ratings: data.ratings || [],
-    });
     
     // Build URL parameters including ratings
     let url = `/reservation/?city=${data.location}&id=${
@@ -250,12 +172,13 @@ export default function ReservationPage({
     const urlParams = new URLSearchParams(window.location.search);
     
     // Update price range parameters
-    urlParams.set("min_total_price", searchParams.minPrice.toString());
-    urlParams.set("max_total_price", searchParams.maxPrice.toString());
+    urlParams.set("min_total_price", String(watch('minPrice')));
+    urlParams.set("max_total_price", String(watch('maxPrice')));
     
     // Update ratings parameter
-    if (searchParams.ratings.length > 0) {
-      urlParams.set("ratings", searchParams.ratings.join(","));
+    const ratings = watch('ratings') ?? [];
+    if (ratings.length > 0) {
+      urlParams.set("ratings", ratings.join(","));
     } else {
       urlParams.delete("ratings");
     }
@@ -282,15 +205,9 @@ export default function ReservationPage({
       
       // Update searchParams with new values from URL
       if (minPrice || maxPrice || ratings) {
-        setSearchParams((prev) => ({
-          ...prev,
-          minPrice: minPrice ? parseInt(minPrice) : prev.minPrice,
-          maxPrice: maxPrice ? parseInt(maxPrice) : prev.maxPrice,
-          ratings: parsedRatings,
-        }));
-        
-        // Also update the form values to keep them in sync
-        if (ratings) setValue("ratings", parsedRatings);
+        setValue("minPrice", minPrice ? parseInt(minPrice) : MIN_PRICE_DEFAULT);
+        setValue("maxPrice", maxPrice ? parseInt(maxPrice) : MAX_PRICE_DEFAULT);
+        setValue("ratings", parsedRatings);
       }
     };
 
@@ -308,12 +225,6 @@ export default function ReservationPage({
 
   // Sadece sidebar filtrelerini sıfırlayan fonksiyon
   const clearSidebarFilters = () => {
-    setSearchParams((prev) => ({
-      ...prev,
-      minPrice: MIN_PRICE_DEFAULT,
-      maxPrice: MAX_PRICE_DEFAULT,
-      ratings: [],
-    }));
     setValue("minPrice", MIN_PRICE_DEFAULT);
     setValue("maxPrice", MAX_PRICE_DEFAULT);
     setValue("ratings", []);
@@ -327,24 +238,12 @@ export default function ReservationPage({
   };
 
   const clearFilters = () => {
-    // State'i sıfırla
-    setSearchParams({
-      location: "",
-      sanatorium: "",
-      checkIn: "",
-      checkOut: "",
-      guests: 1,
-      minPrice: MIN_PRICE_DEFAULT,
-      maxPrice: MAX_PRICE_DEFAULT,
-      ratings: [],
-    });
-
     // Formu sıfırla
     setValue("location", "");
     setValue("sanatorium", "");
     setValue("checkIn", "");
     setValue("checkOut", "");
-    setValue("adults", 2);
+    setValue("adults", 0);
     setValue("children", 0);
     setValue("childrenAges", []);
     // Sidebar filtrelerini de sıfırla
@@ -356,41 +255,29 @@ export default function ReservationPage({
   
   // Handle rating filter toggle
   const toggleRating = (rating: number) => {
-    const newRatings = [...searchParams.ratings];
+    const ratings = watch('ratings') ?? [];
+    const newRatings = [...ratings];
     
     if (newRatings.includes(rating)) {
       // Remove rating
       const updatedRatings = newRatings.filter((r) => r !== rating);
-      setSearchParams({ ...searchParams, ratings: updatedRatings });
       setValue("ratings", updatedRatings);
     } else {
       // Add rating
       const updatedRatings = [...newRatings, rating];
-      setSearchParams({ ...searchParams, ratings: updatedRatings });
       setValue("ratings", updatedRatings);
     }
   };
 
   const [showMobileFilters, setShowMobileFilters] = useState(false);
-  const [showDatePicker, setShowDatePicker] = useState(false);
-  const datePickerRef = useRef<HTMLDivElement>(null);
   
-  // Remove unused scroll position effect
+  // Watch location value to filter sanatoriums
+  const selectedLocation = watch('location');
+
+  // Reset sanatorium when location changes
   useEffect(() => {
-    const handleOutsideClick = (event: MouseEvent) => {
-      if (
-        datePickerRef.current &&
-        !datePickerRef.current.contains(event.target as Node)
-      ) {
-        setShowDatePicker(false);
-      }
-    };
-    
-    document.addEventListener("mousedown", handleOutsideClick);
-    return () => {
-      document.removeEventListener("mousedown", handleOutsideClick);
-    };
-  }, []);
+    setValue('sanatorium', '');
+  }, [selectedLocation, setValue]);
 
   return (
     <div className="bg-gray-50 min-h-screen pb-5">
@@ -415,6 +302,7 @@ export default function ReservationPage({
                       className="w-full pl-7 pr-3 min-h-[48px]"
                       placeholder={tSearch("select_city")}
                       icon={<FaMapMarkerAlt />}
+                      clearable
                       hasError={!!errors.location}
                     >
                       {locations?.map((location) => (
@@ -452,8 +340,12 @@ export default function ReservationPage({
                       placeholder={tSearch("select_hotel")}
                       icon={<FaHotel />}
                       hasError={!!errors.sanatorium}
+                      clearable
                     >
-                      {sanatoriumsList?.map((sanatorium) => (
+                      {(watch('location')
+                        ? sanatoriumsList?.filter(s => String(s.location) === watch('location'))
+                        : sanatoriumsList
+                      )?.map((sanatorium) => (
                         <Select.Item
                           key={sanatorium.id}
                           value={String(sanatorium.id)}
@@ -621,18 +513,13 @@ export default function ReservationPage({
                     </h4>
                     <div className="flex flex-col gap-3">
                       <Range
-                        values={[searchParams.minPrice, searchParams.maxPrice]}
+                        values={[watch('minPrice') ?? MIN_PRICE_DEFAULT, watch('maxPrice') ?? MAX_PRICE_DEFAULT]}
                         step={100}
                         min={MIN_PRICE_DEFAULT}
                         max={MAX_PRICE_DEFAULT}
                         onChange={([min, max]) => {
                           setValue("minPrice", min);
                           setValue("maxPrice", max);
-                          setSearchParams((prev) => ({
-                            ...prev,
-                            minPrice: min,
-                            maxPrice: max,
-                          }));
                         }}
                         renderTrack={({ props, children }) => (
                           <div
@@ -643,8 +530,8 @@ export default function ReservationPage({
                               width: "100%",
                               background: getTrackBackground({
                                 values: [
-                                  searchParams.minPrice,
-                                  searchParams.maxPrice,
+                                  watch('minPrice') ?? MIN_PRICE_DEFAULT,
+                                  watch('maxPrice') ?? MAX_PRICE_DEFAULT,
                                 ],
                                 colors: ["#d1d5db", "#2563eb", "#d1d5db"],
                                 min: MIN_PRICE_DEFAULT,
@@ -679,8 +566,8 @@ export default function ReservationPage({
                             >
                               <span className="text-xs text-white font-bold select-none">
                                 {index === 0
-                                  ? searchParams.minPrice
-                                  : searchParams.maxPrice}
+                                  ? (watch('minPrice') ?? MIN_PRICE_DEFAULT)
+                                  : (watch('maxPrice') ?? MAX_PRICE_DEFAULT)}
                               </span>
                             </div>
                           );
@@ -690,7 +577,7 @@ export default function ReservationPage({
                         <input
                           type="number"
                           min={MIN_PRICE_DEFAULT}
-                          max={searchParams.maxPrice}
+                          max={watch('maxPrice') ?? MAX_PRICE_DEFAULT}
                           value={minPriceInput}
                           onChange={(e) => {
                             const val = e.target.value;
@@ -702,21 +589,15 @@ export default function ReservationPage({
                               isNaN(Number(minPriceInput))
                             ) {
                               setValue("minPrice", MIN_PRICE_DEFAULT);
-                              setSearchParams((prev) => ({
-                                ...prev,
-                                minPrice: MIN_PRICE_DEFAULT,
-                              }));
+                              setValue("maxPrice", MAX_PRICE_DEFAULT);
                               setMinPriceInput("");
                             } else {
                               const value = Math.min(
                                 Number(minPriceInput),
-                                searchParams.maxPrice
+                                watch('maxPrice') ?? MAX_PRICE_DEFAULT
                               );
                               setValue("minPrice", value);
-                              setSearchParams((prev) => ({
-                                ...prev,
-                                minPrice: value,
-                              }));
+                              setValue("maxPrice", value);
                               setMinPriceInput(String(value));
                             }
                           }}
@@ -726,7 +607,7 @@ export default function ReservationPage({
                         <span>-</span>
                         <input
                           type="number"
-                          min={searchParams.minPrice}
+                          min={watch('minPrice') ?? MIN_PRICE_DEFAULT}
                           max={MAX_PRICE_DEFAULT}
                           value={maxPriceInput}
                           onChange={(e) => {
@@ -738,22 +619,16 @@ export default function ReservationPage({
                               maxPriceInput === "" ||
                               isNaN(Number(maxPriceInput))
                             ) {
+                              setValue("minPrice", MIN_PRICE_DEFAULT);
                               setValue("maxPrice", MAX_PRICE_DEFAULT);
-                              setSearchParams((prev) => ({
-                                ...prev,
-                                maxPrice: MAX_PRICE_DEFAULT,
-                              }));
                               setMaxPriceInput("");
                             } else {
                               const value = Math.max(
                                 Number(maxPriceInput),
-                                searchParams.minPrice
+                                watch('minPrice') ?? MIN_PRICE_DEFAULT
                               );
+                              setValue("minPrice", value);
                               setValue("maxPrice", value);
-                              setSearchParams((prev) => ({
-                                ...prev,
-                                maxPrice: value,
-                              }));
                               setMaxPriceInput(String(value));
                             }
                           }}
@@ -779,7 +654,7 @@ export default function ReservationPage({
                           <input 
                             type="checkbox" 
                             className="rounded text-blue-600 mr-3 focus:ring-blue-500 h-5 w-5" 
-                            checked={searchParams.ratings.includes(stars)}
+                            checked={(watch('ratings') ?? []).includes(stars)}
                             onChange={() => toggleRating(stars)}
                           />
                           <div className="flex items-center">
@@ -841,18 +716,13 @@ export default function ReservationPage({
                   </h4>
                   <div className="flex flex-col gap-3">
                     <Range
-                      values={[searchParams.minPrice, searchParams.maxPrice]}
+                      values={[watch('minPrice') ?? MIN_PRICE_DEFAULT, watch('maxPrice') ?? MAX_PRICE_DEFAULT]}
                       step={100}
                       min={MIN_PRICE_DEFAULT}
                       max={MAX_PRICE_DEFAULT}
                       onChange={([min, max]) => {
                         setValue("minPrice", min);
                         setValue("maxPrice", max);
-                        setSearchParams((prev) => ({
-                          ...prev,
-                          minPrice: min,
-                          maxPrice: max,
-                        }));
                       }}
                       renderTrack={({ props, children }) => (
                         <div
@@ -863,8 +733,8 @@ export default function ReservationPage({
                             width: "100%",
                             background: getTrackBackground({
                               values: [
-                                searchParams.minPrice,
-                                searchParams.maxPrice,
+                                watch('minPrice') ?? MIN_PRICE_DEFAULT,
+                                watch('maxPrice') ?? MAX_PRICE_DEFAULT,
                               ],
                               colors: ["#d1d5db", "#2563eb", "#d1d5db"],
                               min: MIN_PRICE_DEFAULT,
@@ -899,8 +769,8 @@ export default function ReservationPage({
                           >
                             <span className="text-xs text-white font-bold select-none">
                               {index === 0
-                                ? searchParams.minPrice
-                                : searchParams.maxPrice}
+                                ? (watch('minPrice') ?? MIN_PRICE_DEFAULT)
+                                : (watch('maxPrice') ?? MAX_PRICE_DEFAULT)}
                             </span>
                           </div>
                         );
@@ -910,7 +780,7 @@ export default function ReservationPage({
                       <input
                         type="number"
                         min={MIN_PRICE_DEFAULT}
-                        max={searchParams.maxPrice}
+                        max={watch('maxPrice') ?? MAX_PRICE_DEFAULT}
                         value={minPriceInput}
                         onChange={(e) => {
                           const val = e.target.value;
@@ -922,21 +792,15 @@ export default function ReservationPage({
                             isNaN(Number(minPriceInput))
                           ) {
                             setValue("minPrice", MIN_PRICE_DEFAULT);
-                            setSearchParams((prev) => ({
-                              ...prev,
-                              minPrice: MIN_PRICE_DEFAULT,
-                            }));
+                            setValue("maxPrice", MAX_PRICE_DEFAULT);
                             setMinPriceInput("");
                           } else {
                             const value = Math.min(
                               Number(minPriceInput),
-                              searchParams.maxPrice
+                              watch('maxPrice') ?? MAX_PRICE_DEFAULT
                             );
                             setValue("minPrice", value);
-                            setSearchParams((prev) => ({
-                              ...prev,
-                              minPrice: value,
-                            }));
+                            setValue("maxPrice", value);
                             setMinPriceInput(String(value));
                           }
                         }}
@@ -946,7 +810,7 @@ export default function ReservationPage({
                       <span>-</span>
                       <input
                         type="number"
-                        min={searchParams.minPrice}
+                        min={watch('minPrice') ?? MIN_PRICE_DEFAULT}
                         max={MAX_PRICE_DEFAULT}
                         value={maxPriceInput}
                         onChange={(e) => {
@@ -958,22 +822,16 @@ export default function ReservationPage({
                             maxPriceInput === "" ||
                             isNaN(Number(maxPriceInput))
                           ) {
+                            setValue("minPrice", MIN_PRICE_DEFAULT);
                             setValue("maxPrice", MAX_PRICE_DEFAULT);
-                            setSearchParams((prev) => ({
-                              ...prev,
-                              maxPrice: MAX_PRICE_DEFAULT,
-                            }));
                             setMaxPriceInput("");
                           } else {
                             const value = Math.max(
                               Number(maxPriceInput),
-                              searchParams.minPrice
+                              watch('minPrice') ?? MIN_PRICE_DEFAULT
                             );
+                            setValue("minPrice", value);
                             setValue("maxPrice", value);
-                            setSearchParams((prev) => ({
-                              ...prev,
-                              maxPrice: value,
-                            }));
                             setMaxPriceInput(String(value));
                           }
                         }}
@@ -999,7 +857,7 @@ export default function ReservationPage({
                         <input 
                           type="checkbox" 
                           className="rounded text-blue-600 mr-3 focus:ring-blue-500 h-5 w-5" 
-                          checked={searchParams.ratings.includes(stars)}
+                          checked={(watch('ratings') ?? []).includes(stars)}
                           onChange={() => toggleRating(stars)}
                         />
                         <div className="flex items-center">
@@ -1061,16 +919,9 @@ export default function ReservationPage({
                 </p>
                 <button
                   onClick={() => {
-                    setSearchParams({
-                      location: "",
-                      sanatorium: "",
-                      checkIn: "",
-                      checkOut: "",
-                      guests: 1,
-                      minPrice: MIN_PRICE_DEFAULT,
-                      maxPrice: MAX_PRICE_DEFAULT,
-                      ratings: [],
-                    });
+                    setValue("minPrice", MIN_PRICE_DEFAULT);
+                    setValue("maxPrice", MAX_PRICE_DEFAULT);
+                    setValue("ratings", []);
                     clearFilters();
                   }}
                   className="px-6 py-3 bg-gradient-to-r from-blue-600 to-blue-800 text-white rounded-lg shadow-md hover:from-blue-700 hover:to-blue-900 transition-all font-medium"
@@ -1104,26 +955,7 @@ export default function ReservationPage({
                   />
                   ));
                 })()}
-                
-                {/* Pagination */}
-                {/* <div className="flex justify-center mt-6">
-                  <div className="inline-flex overflow-hidden rounded-lg shadow-sm">
-                    <button className="w-12 h-12 border border-r-0 border-gray-300 bg-white text-blue-600 font-medium hover:bg-blue-50 flex items-center justify-center">
-                      &lt;
-                    </button>
-                    {[1, 2, 3].map((page) => (
-                      <button 
-                        key={page}
-                        className={`w-12 h-12 border border-r-0 border-gray-300 ${page === 1 ? 'bg-blue-600 text-white' : 'bg-white text-blue-600'} font-medium hover:bg-blue-50 flex items-center justify-center`}
-                      >
-                        {page}
-                      </button>
-                    ))}
-                    <button className="w-12 h-12 border border-gray-300 bg-white text-blue-600 font-medium hover:bg-blue-50 flex items-center justify-center">
-                      &gt;
-                    </button>
-                  </div>
-                </div> */}
+               
               </div>
             )}
           </div>

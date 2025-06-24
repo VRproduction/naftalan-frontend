@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom';
 import * as RadixSelect from '@radix-ui/react-select';
 import { ChevronUpIcon, CheckIcon } from '@radix-ui/react-icons';
 import { FaChevronDown } from 'react-icons/fa';
+import { useTranslations } from 'next-intl';
 
 // Component props
 interface SelectProps {
@@ -16,6 +17,8 @@ interface SelectProps {
   className?: string;
   icon?: React.ReactNode; // Optional left icon
   hasError?: boolean; // Error state for border
+  clearable?: boolean; // Show clear (reset) item
+  clearLabel?: string; // Label for clear/reset item
 }
 
 // SelectItem props
@@ -68,7 +71,10 @@ const SelectRoot: React.FC<SelectProps> = ({
   className = '',
   icon,
   hasError = false,
+  clearable = false,
+  clearLabel,
 }) => {
+  const t = useTranslations('select');
   const [open, setOpen] = React.useState(false);
   // Detect mobile
   const isMobile = typeof window !== 'undefined' && window.innerWidth < 640;
@@ -166,12 +172,39 @@ const SelectRoot: React.FC<SelectProps> = ({
     touchAction: 'none',
   } : undefined;
 
+  // children'ı diziye çevir
+  const items = React.Children.toArray(children);
+  const clearText = clearLabel ?? t('clear');
+  const finalItems = clearable && value
+    ? [
+        <SelectItem
+          value="_all"
+          key="__clear__"
+          className="flex items-center gap-2 px-4 py-2 my-1 rounded-lg bg-blue-50 hover:bg-blue-100 text-blue-700 font-semibold shadow-sm transition-all duration-150 border border-blue-100"
+        >
+          <span className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-blue-100 text-blue-600 shadow mr-1">
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </span>
+          {clearText}
+        </SelectItem>,
+        ...items,
+      ]
+    : items;
+
   return (
     <>
       {overlay}
       <RadixSelect.Root
         value={value}
-        onValueChange={onValueChange}
+        onValueChange={val => {
+          if (clearable && val === "_all") {
+            onValueChange?.("");
+          } else {
+            onValueChange?.(val);
+          }
+        }}
         disabled={disabled}
         required={required}
         name={name}
@@ -245,7 +278,7 @@ const SelectRoot: React.FC<SelectProps> = ({
             </RadixSelect.ScrollUpButton>
 
             <RadixSelect.Viewport className="p-1 sm:pt-0 pt-10">
-              {children}
+              {finalItems}
             </RadixSelect.Viewport>
 
             <RadixSelect.ScrollDownButton className="flex cursor-default items-center justify-center py-1">

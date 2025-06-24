@@ -48,7 +48,6 @@ export interface Sanatorium {
         room_discount_amount: number;
         room_discounted_price: number;
       };
-      
     };
     season: {
       name: string;
@@ -121,9 +120,9 @@ export interface SanatoriumDetail {
     total_discount_price: number;
     nights: number;
     occupancy: number;
-    extra_bed_count: number
+    extra_bed_count: number;
     discount: {
-      discount_type: 'percentage' | 'amount';
+      discount_type: "percentage" | "amount";
       discount_value: number;
       discount_amount: number;
       min_discount_price: number;
@@ -170,13 +169,16 @@ export interface SanatoriumDetail {
         name: string;
         description: string;
       };
-      price: string;
+      price: number;
       currency: {
         id: number;
         code: string;
         name: string;
         symbol: string;
       };
+      discount_type?: "percentage" | "fixed";
+      discount_value?: number;
+      discounted_price?: number;
     }[];
     extra_bed_prices: {
       id: number;
@@ -199,13 +201,16 @@ export interface SanatoriumDetail {
         name: string;
         description: string;
       };
-      price: string;
+      price: number;
       currency: {
         id: number;
         code: string;
         name: string;
         symbol: string;
       };
+      discount_type?: "percentage" | "fixed";
+      discount_value?: number;
+      discounted_price?: number;
     }[];
   }[];
   reviews: {
@@ -238,45 +243,54 @@ export interface SanatoriumDetail {
     no_follow: boolean;
   };
 
-  matched_room_types: {
-    room_type: {
-        id: number;
-        name: string;
-        description: string;
-        min_capacity: number;
-        max_capacity: number;
-        max_extra_beds: number;
-        size: number;
-        images: {
-            id: number;
-            image: string;
-            priority: number;
-        }[];
-    };
-    base_price: number;
-    discounted_price: number;
+  matched_room_types: MathedRoom[];
+}
+
+export interface MathedRoom {
+  room_type: {
+    id: number;
+    name: string;
+    description: string;
+    min_capacity: number;
+    max_capacity: number;
+    max_extra_beds: number;
+    size: number;
+    images: {
+      id: number;
+      image: string;
+      priority: number;
+    }[];
+  };
+  currency: {
+    id: number;
+    code: string;
+    name: string;
+    symbol: string;
+  };
+  season: number;
+  extra_bed_total: number;
+  extra_bed_details: {
+    child_age: number;
+    price_added: number;
     currency: {
-        id: number;
-        code: string;
-        name: string;
-        symbol: string;
+      id: number;
+      code: string;
+      name: string;
+      symbol: string;
     };
-    season: number;
-    extra_bed_total: number;
-    extra_bed_details: any[];
-    final_price: number;
-    nights: number;
-    total_price: number;
-    total_discounted_price: number;
-    discount: {
-        discount_type: 'percentage' | 'amount';
-        discount_value: number;
-        discount_amount: number;
-        discounted_price: number;
-    };
-    occupancy: number;
-    extra_bed_count: number;
-}[];
+  }[];
+  price: number;
+  nights: number;
+  total_price: number;
+  total_discounted_price: number;
+  discount: {
+    discount_type: "percentage" | "fixed";
+    discount_value: number;
+    discount_amount: number;
+    discounted_price: number;
+  } | null;
+  occupancy: number;
+  extra_bed_count: number;
 }
 
 export interface NaftalanSanatoriumsPage {
