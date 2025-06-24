@@ -10,6 +10,9 @@ import { getMessages, setRequestLocale } from "next-intl/server";
 import Script from "next/script";
 import { getSiteSettings } from "@/lib/services/core.service";
 import { AppInitializer } from "@/lib/providers/AppInitializer";
+import LoadingProvider from "@/lib/providers/LoadingProvider";
+import { Suspense } from "react";
+import RouteProgressBar from "@/components/common/RouteProgressBar";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -216,12 +219,19 @@ export default async function RootLayout({
             `}
           </Script>
         )}
+        <Suspense fallback={null}>
+          <RouteProgressBar
+            height={3}
+            color="#3b82f6"
+            showOnShallow={true}
+            className="custom-progress"
+          />
+        </Suspense>
           <NextIntlClientProvider messages={messages}>
             <AppInitializer setting={siteSettings}>
               <MainLayout siteSettings={siteSettings}>{children}</MainLayout>
             </AppInitializer>
           </NextIntlClientProvider>
-
         {/* Cookie policy popup */}
         {siteSettings.cookie_policy_popup && (
           <div
