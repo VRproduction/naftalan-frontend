@@ -58,7 +58,6 @@ const ContactSection = ({ contactSection }: ContactSectionProps) => {
         setIsSuccess(false);
       }, 5000);
     } catch (error) {
-      console.error('Error submitting form:', error);
     } finally {
       setIsSubmitting(false);
     }

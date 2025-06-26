@@ -31,7 +31,6 @@ const getInitialCurrency = (currencies: Currency[]) => {
       if (found) return found;
     }
   } catch (error) {
-    console.error('Cookie okuma hatası:', error);
   }
   
   return currencies[0];
@@ -88,7 +87,6 @@ const useCurrencyStore = create<CurrencyState>((set, get) => ({
       
       set({ isInitialized: true, isLoading: false });
     } catch (error) {
-      console.error('Para birimi başlatma hatası:', error);
       set({ isInitialized: true, isLoading: false });
     }
   },
@@ -201,7 +199,6 @@ const useCurrencyStore = create<CurrencyState>((set, get) => ({
         }
       }
     } catch (error) {
-      console.error('Kur bilgisi alınamadı:', error);
     } finally {
       set({ isFetching: false });
     }

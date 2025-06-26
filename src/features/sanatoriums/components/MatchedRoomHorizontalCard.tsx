@@ -1,5 +1,5 @@
 import Image from 'next/image';
-import { RiImageLine, RiCheckLine, RiUser3Line, RiHotelBedLine, RiMoonClearLine } from 'react-icons/ri';
+import { RiImageLine, RiCheckLine, RiUser3Line, RiHotelBedLine, RiMoonClearLine, RiCloseLine } from 'react-icons/ri';
 import { Link } from '@/i18n/navigation';
 import React from 'react';
 import { MathedRoom as MatchedRoomType, SanatoriumDetail } from '@/lib/types/sanatorium.type';
@@ -10,9 +10,45 @@ interface MatchedRoomHorizontalCardProps {
   openRoomModal: (images: { image: string; alt?: string }[], index: number) => void;
   t: (key: string) => string;
   formatPrice: (price: number | string) => string;
+  checkIn?: string;
+  checkOut?: string;
+  occupancy?: number;
+  children?: number;
+  childrenAges?: number[];
 }
 
-const MatchedRoomHorizontalCard = ({ matched, sanatorium, openRoomModal, t, formatPrice }: MatchedRoomHorizontalCardProps) => {
+const MatchedRoomHorizontalCard = ({ 
+  matched, 
+  sanatorium, 
+  openRoomModal, 
+  t, 
+  formatPrice,
+  checkIn,
+  checkOut,
+  occupancy,
+  children,
+  childrenAges,
+}: MatchedRoomHorizontalCardProps) => {
+  const buildBookingUrl = () => {
+    const params = new URLSearchParams();
+    
+    params.set('room_type', matched.room_type.id.toString());
+    params.set('sanatoriumPk', sanatorium.id.toString());
+    params.set('roomPk', matched.room_type.id.toString());
+    params.set('with_treatment', matched.with_treatment.toString());
+    
+    
+    if (checkIn) params.set('check_in', checkIn);
+    if (checkOut) params.set('check_out', checkOut);
+    if (occupancy) params.set('occupancy', occupancy.toString());
+    if (children) params.set('children', children.toString());
+    if (childrenAges && childrenAges.length > 0) {
+      params.set('children_ages', childrenAges.join(','));
+    }
+    
+    return `/booking?${params.toString()}`;
+  };
+
   return (
     <div className="bg-white rounded-xl shadow-md border border-gray-200 overflow-hidden hover:shadow-xl transition-all duration-300">
       {/* Desktop Layout */}
@@ -26,6 +62,7 @@ const MatchedRoomHorizontalCard = ({ matched, sanatorium, openRoomModal, t, form
                 src={matched.room_type.images[0].image} 
                 alt={matched.room_type.name} 
                 fill 
+                sizes="100vw"
                 className="object-cover transition-transform duration-700 group-hover:scale-105" 
               />
             </div>
@@ -37,6 +74,7 @@ const MatchedRoomHorizontalCard = ({ matched, sanatorium, openRoomModal, t, form
                     src={matched.room_type.images[i].image} 
                     alt={`${matched.room_type.name} - ${i+1}`} 
                     fill 
+                    sizes="50vw"
                     className="object-cover" 
                   />
                 </div>
@@ -49,6 +87,7 @@ const MatchedRoomHorizontalCard = ({ matched, sanatorium, openRoomModal, t, form
                   src={matched.room_type.images[0].image} 
                   alt={matched.room_type.name} 
                   fill 
+                  sizes="100vw"
                   className="object-cover transition-transform duration-700 group-hover:scale-105" 
                 />
               </div>
@@ -58,6 +97,7 @@ const MatchedRoomHorizontalCard = ({ matched, sanatorium, openRoomModal, t, form
                     src={img.image} 
                     alt={`${matched.room_type.name} - ${i+2}`} 
                     fill 
+                    sizes="50vw"
                     className="object-cover" 
                   />
                   {i === 1 && matched.room_type.images.length > 3 && (
@@ -139,8 +179,8 @@ const MatchedRoomHorizontalCard = ({ matched, sanatorium, openRoomModal, t, form
             )}
             {matched.extra_bed_count > 0 && (
               <span className="flex items-center bg-green-50 text-green-700 text-xs rounded-full px-2 py-1">
-                <RiHotelBedLine className="w-4 h-4 mr-1" />
-                +{matched.extra_bed_count} {t('extra_bed')}
+                <RiUser3Line className="w-4 h-4 mr-1" />
+                {matched.extra_bed_count} {t('children')}
               </span>
             )}
             {matched.nights > 0 && (
@@ -149,29 +189,40 @@ const MatchedRoomHorizontalCard = ({ matched, sanatorium, openRoomModal, t, form
                 {matched.nights} {t('night')}
               </span>
             )}
+            {typeof matched.with_treatment !== 'undefined' && (
+              <span className={`flex items-center text-xs rounded-full px-2 py-1 ${matched.with_treatment ? 'bg-green-50 text-green-700' : 'bg-red-50 text-red-700'}`}>
+                {matched.with_treatment 
+                    ? <RiCheckLine className="w-4 h-4 mr-1" /> 
+                    : <RiCloseLine className="w-4 h-4 mr-1" />
+                }
+                {matched.with_treatment ? t('with_treatment') : t('without_treatment')}
+              </span>
+            )}
           </div>
           <Link
-            href={`/booking?snt=${sanatorium.slug}&room_type=${matched.room_type.id}`}
+            href={buildBookingUrl()}
             className="w-full py-1.5 sm:py-2 md:py-2 px-2 bg-gradient-to-r from-blue-600 to-blue-800 text-white text-center rounded-lg font-semibold text-xs sm:text-sm shadow-lg hover:from-blue-700 hover:to-blue-900 transition-all active:scale-95 focus:outline-none focus:ring-2 focus:ring-blue-300"
           >
             {t('book_now')}
           </Link>
           {/* Total price - always at the bottom, prominent */}
-          <div className="mt-4 pt-3 border-t border-gray-200 w-full text-center">
-            <div className="text-xs text-gray-500 mb-1">{t('price_detail.total')}</div>
-            {matched.total_discounted_price > 0 && matched.total_discounted_price < matched.total_price ? (
-              <>
-                <span className="text-gray-400 font-bold text-base line-through block mb-1">
-                  {formatPrice(matched.total_price)}
-                </span>
-                <span className="text-green-700 font-extrabold text-xl sm:text-2xl drop-shadow block">
-                  {formatPrice(matched.total_discounted_price)}
-                </span>
-              </>
-            ) : (
-              <span className="font-extrabold text-blue-800 text-xl sm:text-2xl drop-shadow block">{formatPrice(matched.total_price)}</span>
-            )}
-          </div>
+          {matched.total_price > 0 && (
+            <div className="mt-4 pt-3 border-t border-gray-200 w-full text-center">
+              <div className="text-xs text-gray-500 mb-1">{t('price_detail.total')}</div>
+              {matched.total_discounted_price > 0 && matched.total_discounted_price < matched.total_price ? (
+                <div className="flex flex-row items-center justify-center gap-2">
+                  <span className="text-gray-400 whitespace-nowrap font-bold text-sm sm:text-base line-through">
+                    {formatPrice(matched.total_price)}
+                  </span>
+                  <span className="text-green-700 whitespace-nowrap font-extrabold text-lg sm:text-2xl drop-shadow">
+                    {formatPrice(matched.total_discounted_price)}
+                  </span>
+                </div>
+              ) : (
+                <span className="font-extrabold text-blue-800 text-lg sm:text-xl drop-shadow block">{formatPrice(matched.total_price)}</span>
+              )}
+            </div>
+          )}
         </div>
       </div>
 
@@ -186,6 +237,7 @@ const MatchedRoomHorizontalCard = ({ matched, sanatorium, openRoomModal, t, form
                 src={matched.room_type.images[0].image} 
                 alt={matched.room_type.name} 
                 fill 
+                sizes="100vw"
                 className="object-cover transition-transform duration-700 group-hover:scale-105" 
               />
               {matched.room_type.images.length > 1 && (
@@ -226,48 +278,59 @@ const MatchedRoomHorizontalCard = ({ matched, sanatorium, openRoomModal, t, form
           <div className="text-gray-600 text-sm mb-3 line-clamp-2">{matched.room_type.description}</div>
           
           <div className="flex flex-wrap gap-2 mb-4">
-            {matched.room_type.min_capacity > 0 && matched.room_type.max_capacity > 0 && (
-              <span className="inline-flex items-center gap-1 bg-blue-50 text-blue-700 text-xs rounded-full px-2 py-1">
-                <RiCheckLine className="text-blue-500 w-3 h-3" /> 
-                {matched.room_type.min_capacity}-{matched.room_type.max_capacity} kişi
+            {matched.occupancy > 0 && (
+              <span className="flex items-center bg-blue-50 text-blue-700 text-xs rounded-full px-2 py-1">
+                <RiUser3Line className="w-3 h-3 mr-1" />
+                {matched.occupancy} {t('person')}
               </span>
             )}
-            {matched.room_type.max_extra_beds > 0 && (
-              <span className="inline-flex items-center gap-1 bg-green-50 text-green-700 text-xs rounded-full px-2 py-1">
-                <RiCheckLine className="text-green-500 w-3 h-3" /> 
-                +{matched.room_type.max_extra_beds} yatak
+            {matched.extra_bed_count > 0 && (
+              <span className="flex items-center bg-green-50 text-green-700 text-xs rounded-full px-2 py-1">
+                <RiUser3Line className="w-3 h-3 mr-1" />
+                {matched.extra_bed_count} {t('children')}
               </span>
             )}
-            {matched.room_type.size && (
-              <span className="inline-flex items-center gap-1 bg-gray-50 text-gray-700 text-xs rounded-full px-2 py-1">
-                <RiCheckLine className="text-gray-500 w-3 h-3" /> 
-                {matched.room_type.size} m²
+            {matched.nights > 0 && (
+              <span className="flex items-center bg-indigo-50 text-indigo-700 text-xs rounded-full px-2 py-1">
+                <RiMoonClearLine className="w-3 h-3 mr-1" />
+                {matched.nights} {t('night')}
+              </span>
+            )}
+            {typeof matched.with_treatment !== 'undefined' && (
+              <span className={`flex items-center text-xs rounded-full px-2 py-1 ${matched.with_treatment ? 'bg-green-50 text-green-700' : 'bg-red-50 text-red-700'}`}>
+                {matched.with_treatment 
+                    ? <RiCheckLine className="w-3 h-3 mr-1" /> 
+                    : <RiCloseLine className="w-3 h-3 mr-1" />
+                }
+                {matched.with_treatment ? t('with_treatment') : t('without_treatment')}
               </span>
             )}
           </div>
 
           <Link
-            href={`/booking?snt=${sanatorium.slug}&room_type=${matched.room_type.id}`}
+            href={buildBookingUrl()}
             className="block w-full py-3 bg-gradient-to-r from-blue-600 to-blue-800 text-white text-center rounded-lg font-semibold shadow-lg hover:from-blue-700 hover:to-blue-900 transition-all active:scale-95 focus:outline-none focus:ring-2 focus:ring-blue-300"
           >
             {t('book_now')}
           </Link>
           {/* Total price - always at the bottom, prominent */}
-          <div className="mt-4 pt-3 border-t border-gray-200 w-full text-center">
-            <div className="text-xs text-gray-500 mb-1">{t('price_detail.total')}</div>
-            {matched.total_discounted_price > 0 && matched.total_discounted_price < matched.total_price ? (
-              <>
-                <span className="text-gray-400 font-bold text-base line-through block mb-1">
-                  {formatPrice(matched.total_price)}
-                </span>
-                <span className="text-green-700 font-extrabold text-xl drop-shadow block">
-                  {formatPrice(matched.total_discounted_price)}
-                </span>
-              </>
-            ) : (
-              <span className="font-extrabold text-blue-800 text-xl drop-shadow block">{formatPrice(matched.total_price)}</span>
-            )}
-          </div>
+          {matched.total_price > 0 && (
+            <div className="mt-4 pt-3 border-t border-gray-200 w-full text-center">
+              <div className="text-xs text-gray-500 mb-1">{t('price_detail.total')}</div>
+              {matched.total_discounted_price > 0 && matched.total_discounted_price < matched.total_price ? (
+                <div className="flex flex-row items-center justify-center gap-2">
+                  <span className="text-gray-400 font-bold text-base line-through">
+                    {formatPrice(matched.total_price)}
+                  </span>
+                  <span className="text-green-700 font-extrabold text-xl drop-shadow">
+                    {formatPrice(matched.total_discounted_price)}
+                  </span>
+                </div>
+              ) : (
+                <span className="font-extrabold text-blue-800 text-xl drop-shadow block">{formatPrice(matched.total_price)}</span>
+              )}
+            </div>
+          )}
         </div>
       </div>
     </div>

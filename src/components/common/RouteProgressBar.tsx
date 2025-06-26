@@ -1,8 +1,10 @@
 // components/RouteProgressBar.tsx
 'use client';
 
+import { usePathname } from '@/i18n/navigation';
+import { useSearchParams } from 'next/navigation';
+// import { usePathname, useSearchParams } from 'next/navigation';
 import { useEffect, useState, useCallback } from 'react';
-import { usePathname, useSearchParams } from 'next/navigation';
 
 interface ProgressStep {
   delay: number;
@@ -22,11 +24,15 @@ const RouteProgressBar: React.FC<ProgressBarProps> = ({
   color = '#3b82f6',
   className = '',
 }) => {
-  const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [progress, setProgress] = useState<number>(0);
   const pathname = usePathname();
   const searchParams = useSearchParams();
 
+  const IGNORE_PATHS = ['/login', '/admin', '/dashboard', '/booking'];
+  const shouldIgnore = pathname && IGNORE_PATHS.some(p => pathname.startsWith(p));
+
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [progress, setProgress] = useState<number>(0);
+  
   const startLoading = useCallback((): void => {
     setIsLoading(true);
     setProgress(0);
@@ -71,6 +77,7 @@ const RouteProgressBar: React.FC<ProgressBarProps> = ({
   }, [pathname, searchParams, showOnShallow, startLoading, completeLoading]);
 
   // Don't render if not loading
+  if (shouldIgnore) return null;
   if (!isLoading && progress === 0) return null;
 
   return (

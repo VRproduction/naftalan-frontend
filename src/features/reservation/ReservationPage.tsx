@@ -343,7 +343,7 @@ export default function ReservationPage({
                       clearable
                     >
                       {(watch('location')
-                        ? sanatoriumsList?.filter(s => String(s.location) === watch('location'))
+                        ? sanatoriumsList?.filter(s => String(s.location.id) === watch('location'))
                         : sanatoriumsList
                       )?.map((sanatorium) => (
                         <Select.Item

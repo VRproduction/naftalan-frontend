@@ -91,7 +91,6 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       },
     };
   } catch (error) {
-    console.error("Error generating metadata for blog post:", error);
     
     // Fallback metadata if blog post data cannot be fetched
     return {

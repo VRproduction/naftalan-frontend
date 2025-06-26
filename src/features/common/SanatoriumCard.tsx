@@ -24,6 +24,40 @@ export default function SanatoriumCard({
   const t = useTranslations('sanatorium');
   const { formatPrice } = useCurrencyStore();
 
+  // Pricing logic - rewritten from scratch
+  const pricing = sanatorium.min_price_details?.pricing;
+  const discount = pricing?.discount;
+  
+  // Calculate base prices
+  const originalPrice = pricing?.total_price || pricing?.final_price || 0;
+  const discountedPrice = pricing?.total_discount_price || discount?.discounted_price || 0;
+  
+  // Determine if there's a valid discount
+  const hasValidDiscount = discount && 
+    (discount.amount || 0) > 0 && 
+    discountedPrice > 0 && 
+    discountedPrice < originalPrice;
+  
+  // Final price to display
+  const displayPrice = hasValidDiscount ? discountedPrice : originalPrice;
+  
+  // Price display flags
+  const hasPrice = originalPrice > 0;
+  const showDiscount = hasValidDiscount;
+  
+  // Discount formatter
+  const getDiscountLabel = () => {
+    if (!hasValidDiscount) return null;
+    
+    const discountType = discount?.type || 'percentage';
+    const discountValue = discount?.value || 0;
+    
+    if (discountType === 'percentage') {
+      return `-${discountValue}%`;
+    }
+    return t('discount.special_offer');
+  };
+
   const renderStars = (rating: number) => {
     const stars = [];
     for (let i = 1; i <= 5; i++) {
@@ -72,19 +106,38 @@ export default function SanatoriumCard({
           <span>{Number(sanatorium.rating).toFixed(1)}</span>
         </div>
         
-        {/* Price Badge */}
-        {
-          sanatorium.min_price && (
-           <div className="absolute bottom-4 left-4">
-            <span className={colorScheme === 'blue' 
-              ? "bg-blue-500/90 backdrop-blur-sm text-white px-3 py-1 rounded-full text-sm font-medium shadow-sm"
-              : "bg-green-500/90 backdrop-blur-sm text-white px-3 py-1 rounded-full text-sm font-medium shadow-sm"
-            }>
-              {formatPrice(sanatorium.min_price)}
-            </span>
-          </div> 
-          )
-        }
+        {/* Price Badge - Modern Design */}
+        {hasPrice && (
+          <div className="absolute bottom-4 right-4 flex flex-col items-end gap-1">
+            {/* Discount Badge */}
+            {showDiscount && (
+              <div className="bg-gradient-to-r from-red-500 to-red-600 text-white px-3 py-1.5 rounded-full text-xs font-bold shadow-lg transform -rotate-2">
+                {getDiscountLabel()}
+              </div>
+            )}
+            
+            {/* Main Price Badge */}
+            <div className="bg-white/95 backdrop-blur-md rounded-2xl shadow-xl border border-white/20 overflow-hidden">
+              {showDiscount && displayPrice < originalPrice && (
+                <div className="px-4 py-1 bg-gray-100 border-b border-gray-200">
+                  <span className="text-xs text-gray-500 line-through font-medium">
+                    {formatPrice(originalPrice)}
+                  </span>
+                </div>
+              )}
+              <div className="px-4 py-2">
+                <span className={`text-lg font-bold ${
+                  colorScheme === 'blue' ? 'text-blue-600' : 'text-green-600'
+                }`}>
+                  {formatPrice(displayPrice)}
+                </span>
+                <div className="text-xs text-gray-500 mt-0.5">
+                  {t('starting_price')}
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
         
       </div>
 

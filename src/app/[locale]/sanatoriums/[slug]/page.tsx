@@ -88,7 +88,6 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       },
     };
   } catch (error) {
-    console.error("Error generating metadata for sanatorium:", error);
     
     // Fallback metadata if sanatorium data cannot be fetched
     return {

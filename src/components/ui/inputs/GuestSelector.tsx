@@ -19,15 +19,16 @@ export interface GuestSelectorProps {
   }) => void;
   errors: any;
   className?: string;
+  maxAdults?: number;
+  maxChildren?: number;
 }
 
-const GuestSelector = ({ value, onChange, errors, className }: GuestSelectorProps) => {
+const GuestSelector = ({ value, onChange, errors, className, maxAdults, maxChildren }: GuestSelectorProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const t = useTranslations("search");
 
   // Calculate total guests
-  const totalGuests = value.adults + value.children;
 
   // Close dropdown when clicking outside
   useEffect(() => {
@@ -45,15 +46,23 @@ const GuestSelector = ({ value, onChange, errors, className }: GuestSelectorProp
 
   // Update adults count
   const handleAdultsChange = (increment: boolean) => {
-    const newValue = increment
-      ? value.adults + 1
-      : Math.max(1, value.adults - 1);
+    let newValue = value.adults;
+    if (increment) {
+      if (typeof maxAdults === 'number') {
+        newValue = Math.min(value.adults + 1, maxAdults);
+      } else {
+        newValue = value.adults + 1;
+      }
+    } else {
+      newValue = Math.max(1, value.adults - 1);
+    }
     onChange({ ...value, adults: newValue });
   };
 
   // Update children count and manage children ages array
   const handleChildrenChange = (increment: boolean) => {
     if (increment) {
+      if (typeof maxChildren === 'number' && value.children >= maxChildren) return;
       // Add a child with age 7
       const newChildrenAges = [...(value.childrenAges || []), 7];
       onChange({
@@ -161,8 +170,13 @@ const GuestSelector = ({ value, onChange, errors, className }: GuestSelectorProp
                 <span className="w-6 text-center">{value.adults}</span>
                 <button
                   type="button"
-                  className="p-2 rounded-full text-gray-600 hover:bg-gray-100"
+                  className={`p-2 rounded-full ${
+                    (typeof maxAdults === 'number' && value.adults >= maxAdults)
+                      ? 'text-gray-300 cursor-not-allowed'
+                      : 'text-gray-600 hover:bg-gray-100'
+                  }`}
                   onClick={() => handleAdultsChange(true)}
+                  disabled={typeof maxAdults === 'number' && value.adults >= maxAdults}
                 >
                   <FaPlus size={12} />
                 </button>
@@ -190,8 +204,13 @@ const GuestSelector = ({ value, onChange, errors, className }: GuestSelectorProp
                 <span className="w-6 text-center">{value.children}</span>
                 <button
                   type="button"
-                  className="p-2 rounded-full text-gray-600 hover:bg-gray-100"
+                  className={`p-2 rounded-full ${
+                    (typeof maxChildren === 'number' && value.children >= maxChildren)
+                      ? 'text-gray-300 cursor-not-allowed'
+                      : 'text-gray-600 hover:bg-gray-100'
+                  }`}
                   onClick={() => handleChildrenChange(true)}
+                  disabled={typeof maxChildren === 'number' && value.children >= maxChildren}
                 >
                   <FaPlus size={12} />
                 </button>
@@ -214,7 +233,7 @@ const GuestSelector = ({ value, onChange, errors, className }: GuestSelectorProp
                       >
                         {Array.from({ length: 11 }).map((_, age) => (
                           <option key={age + 7} value={age + 7}>
-                            {age + 7} {t("years")}
+                            {age + 7} {t("age")}
                           </option>
                         ))}
                       </select>

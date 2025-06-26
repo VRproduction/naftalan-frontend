@@ -55,8 +55,9 @@ const SearchForm = ({locations, sanatoriums}: Props) => {
   
   // Filter sanatoriums based on selected location
   const filteredSanatoriums = selectedLocation 
-    ? sanatoriums.filter(s => String(s.location) === selectedLocation)
+    ? sanatoriums.filter(s => String(s.location.id) === selectedLocation)
     : sanatoriums; // Show all sanatoriums when no city is selected
+
 
   // Reset sanatorium when location changes
   useEffect(() => {

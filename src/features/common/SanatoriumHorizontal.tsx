@@ -84,35 +84,50 @@ export default function SanatoriumHorizontal({ sanatorium, index = 0, nights = 1
     visible: { opacity: 1, y: 0 }
   };
 
- 
-  // Simple price handling
-  const basePrice = sanatorium.min_price || 0;
-  const hasDiscount = !!sanatorium.min_price_details?.pricing?.discount;
-  const discountedPrice = sanatorium.min_price_details?.pricing?.discount?.discounted_price || 0;
-  const finalPrice = hasDiscount && discountedPrice > 0 ? discountedPrice : basePrice;
-  const totalPrice = sanatorium.total_discount_price || sanatorium.total_price || sanatorium.min_price_details?.pricing?.discount?.discounted_price || basePrice;
-  // Estimate original total price based on the discount percentage if available
-  const discountPercent = hasDiscount && sanatorium.min_price_details?.pricing?.discount?.type === 'percentage' 
-    ? sanatorium.min_price_details?.pricing?.discount?.value || 0 
-    : 0;
-  const originalTotalPrice = hasDiscount && totalPrice > 0 
-    ? totalPrice * (100 / (100 - discountPercent)) 
-    : totalPrice;
-  const roomName = sanatorium.min_price_details?.room?.name || '';
-  const seasonName = sanatorium.min_price_details?.season?.name || '';
-  const hasPrice = basePrice > 0;
-  const roomCapacity = sanatorium.min_price_details?.room?.max_capacity || 0;
-  const roomSize = sanatorium.min_price_details?.room?.size || 0;
-  const seasonIsCurrent = sanatorium.min_price_details?.season?.is_current || false;
-  const showTotal = totalPrice > finalPrice;
-  const showDiscount = hasDiscount && discountPercent > 0;
+  // Pricing logic - rewritten from scratch
+  const pricing = sanatorium.min_price_details?.pricing;
+  const discount = pricing?.discount;
   
-  // Simple discount formatter
-  const getDiscount = () => {
-    if (!hasDiscount) return null;
+  // Calculate base prices
+  const originalPrice = pricing?.total_price || pricing?.final_price || 0;
+  const discountedPrice = pricing?.total_discount_price || discount?.discounted_price || 0;
+  
+  // Calculate per night prices
+  const perNightOriginalPrice = pricing?.base_price || pricing?.final_price || 0;
+  let perNightDiscountedPrice = perNightOriginalPrice;
+  
+  if (discount && (discount.amount || 0) > 0) {
+    const discountValue = discount?.value || 0;
+    const discountType = discount?.type || 'percentage';
     
-    const discountType = sanatorium.min_price_details?.pricing?.discount?.type || '';
-    const discountValue = sanatorium.min_price_details?.pricing?.discount?.value || 0;
+    if (discountType === 'percentage') {
+      perNightDiscountedPrice = perNightOriginalPrice * (1 - discountValue / 100);
+    } else {
+      perNightDiscountedPrice = Math.max(0, perNightOriginalPrice - discountValue);
+    }
+  }
+  
+  // Determine if there's a valid discount
+  const hasValidDiscount = discount && 
+    (discount.amount || 0) > 0 && 
+    discountedPrice > 0 && 
+    discountedPrice < originalPrice;
+  
+  // Final price to display
+  const displayPrice = hasValidDiscount ? discountedPrice : originalPrice;
+  
+  // Price display flags
+  const hasPrice = originalPrice > 0;
+  const showDiscount = hasValidDiscount;
+  const showTotal = pricing?.total_discount_price && pricing.total_discount_price > displayPrice;
+  const showPerNight = perNightOriginalPrice > 0 &&  pricing?.total_price || 0 > 0;
+  
+  // Discount formatter
+  const getDiscountLabel = () => {
+    if (!hasValidDiscount) return null;
+    
+    const discountType = discount?.type || 'percentage';
+    const discountValue = discount?.value || 0;
     
     if (discountType === 'percentage') {
       return `-${discountValue}%`;
@@ -120,26 +135,10 @@ export default function SanatoriumHorizontal({ sanatorium, index = 0, nights = 1
     return t('discount.special_offer');
   };
   
-  // Simple price label
-  const getPriceLabel = () => {
-    if (!hasPrice) return t('price.contact_for_price');
-    
-    const isPricePerNight = sanatorium.min_price_details?.result?.pricing_method === 'per_night';
-    const isPricePerPerson = sanatorium.min_price_details?.result?.pricing_method === 'per_person';
-    
-    if (isPricePerNight) {
-      return t('price.per_night');
-    }
-    
-    if (isPricePerPerson) {
-      return t('price.per_person');
-    }
-    
-    return t('price.for_stay');
-  };
-
-  // Extract facilities data
-  const facilitiesWithIcons = sanatorium.facilities.filter(f => f.facility.icon);
+  // Room and season info
+  const roomName = sanatorium.min_price_details?.room?.name || '';
+  const seasonName = sanatorium.min_price_details?.season?.name || '';
+  const seasonIsCurrent = sanatorium.min_price_details?.season?.is_current || false;
 
   // Helper to get guest/child/night info as array for icon display
   const getGuestInfoArray = () => {
@@ -315,18 +314,34 @@ export default function SanatoriumHorizontal({ sanatorium, index = 0, nights = 1
           <div className="flex items-center gap-1 mt-1">
             {hasPrice && (
               <>
-                {showDiscount && basePrice > finalPrice && (
-                  <span className="text-xs line-through text-gray-400">{formatPrice(basePrice)}</span>
+                {showDiscount && displayPrice < originalPrice && (
+                  <span className="text-xs line-through text-gray-400">{formatPrice(originalPrice)}</span>
                 )}
-                <span className="text-base font-bold text-blue-700">{formatPrice(finalPrice)}</span>
-                {showTotal && totalPrice > 0 && (
+                <span className="text-base font-bold text-blue-700">{formatPrice(displayPrice)}</span>
+                {showTotal && displayPrice > 0 && (
                   <span className="inline-block bg-blue-600 text-white text-sm font-semibold rounded px-2 py-1 shadow">
-                    {t('price.total')}: {formatPrice(totalPrice)}
+                    {t('price.total')}: {formatPrice(displayPrice)}
                   </span>
                 )}
               </>
             )}
           </div>
+          
+          {/* Per night price display */}
+          {showPerNight && (
+            <div className="flex items-center gap-1 mt-0.5">
+              <span className="text-xs text-gray-500">{t('per_night')}:</span>
+              {showDiscount && perNightDiscountedPrice < perNightOriginalPrice ? (
+                <div className="flex items-center gap-1">
+                  <span className="text-xs line-through text-gray-400">{formatPrice(perNightOriginalPrice)}</span>
+                  <span className="text-sm font-semibold text-green-600">{formatPrice(perNightDiscountedPrice)}</span>
+                </div>
+              ) : (
+                <span className="text-sm font-semibold text-gray-700">{formatPrice(perNightOriginalPrice)}</span>
+              )}
+            </div>
+          )}
+          
           {/* Guest/night info */}
           <div className="flex items-center gap-1 flex-wrap mt-0.5 min-w-0 overflow-x-auto">
             {getGuestInfoArray().map((item, idx) => (
@@ -501,7 +516,7 @@ export default function SanatoriumHorizontal({ sanatorium, index = 0, nights = 1
           <div className="flex flex-wrap items-center gap-2 mb-2">
             {showDiscount && (
               <span className="bg-red-100 text-red-700 text-xs px-2 py-1 rounded-md font-medium">
-                {getDiscount()}
+                {getDiscountLabel()}
               </span>
             )}
             {seasonName && (
@@ -524,18 +539,34 @@ export default function SanatoriumHorizontal({ sanatorium, index = 0, nights = 1
             {hasPrice && (
               <>
                 <div className="flex items-center gap-1">
-                  {showDiscount && discountedPrice > finalPrice && (
-                    <span className="text-xs line-through text-gray-400">{formatPrice(basePrice)}</span>
+                  {showDiscount && displayPrice < originalPrice && (
+                    <span className="text-xs line-through text-gray-400">{formatPrice(originalPrice)}</span>
                   )}
-                  <span className="text-2xl font-bold text-blue-700 leading-tight">{formatPrice(finalPrice)}</span>
+                  <span className="text-2xl font-bold text-blue-700 leading-tight">{formatPrice(displayPrice)}</span>
                 </div>
-                {showTotal && totalPrice > 0 && (
+                {showTotal && displayPrice > 0 && (
                   <span className="inline-block bg-blue-600 text-white text-sm font-semibold rounded px-2 py-1 shadow">
-                    {t('price.total')}: {formatPrice(totalPrice)}
+                    {t('price.total')}: {formatPrice(displayPrice)}
                   </span>
                 )}
               </>
             )}
+            
+            {/* Per night price display */}
+            {showPerNight && (
+              <div className="flex items-center gap-2">
+                <span className="text-xs text-gray-500">{t('per_night')}:</span>
+                {showDiscount && perNightDiscountedPrice < perNightOriginalPrice ? (
+                  <div className="flex items-center gap-1">
+                    <span className="text-xs line-through text-gray-400">{formatPrice(perNightOriginalPrice)}</span>
+                    <span className="text-sm font-semibold text-green-600">{formatPrice(perNightDiscountedPrice)}</span>
+                  </div>
+                ) : (
+                  <span className="text-sm font-semibold text-gray-700">{formatPrice(perNightOriginalPrice)}</span>
+                )}
+              </div>
+            )}
+            
             {roomName && (
               <span className="text-base text-gray-800 mt-0.5 flex items-center font-medium">
                 <RiHotelBedLine className="mr-1 text-blue-500" />

@@ -219,19 +219,20 @@ export default async function RootLayout({
             `}
           </Script>
         )}
-        <Suspense fallback={null}>
-          <RouteProgressBar
-            height={3}
-            color="#3b82f6"
-            showOnShallow={true}
-            className="custom-progress"
-          />
-        </Suspense>
-          <NextIntlClientProvider messages={messages}>
-            <AppInitializer setting={siteSettings}>
-              <MainLayout siteSettings={siteSettings}>{children}</MainLayout>
-            </AppInitializer>
-          </NextIntlClientProvider>
+
+        <NextIntlClientProvider messages={messages}>
+          <Suspense fallback={null}>
+            <RouteProgressBar
+              height={3}
+              color="#3b82f6"
+              showOnShallow={true}
+              className="custom-progress"
+            />
+          </Suspense>
+          <AppInitializer setting={siteSettings}>
+            <MainLayout siteSettings={siteSettings}>{children}</MainLayout>
+          </AppInitializer>
+        </NextIntlClientProvider>
         {/* Cookie policy popup */}
         {siteSettings.cookie_policy_popup && (
           <div

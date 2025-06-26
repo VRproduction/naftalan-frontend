@@ -1,8 +1,14 @@
 import { PaginatedResponse } from "../types/response.type";
-import { City, NaftalanSanatoriumsPage, OtherCitiesSanatoriumsPage, Sanatorium, SanatoriumDetail, SanatoriumListType } from "../types/sanatorium.type";
+import {
+  City,
+  NaftalanSanatoriumsPage,
+  OtherCitiesSanatoriumsPage,
+  Room,
+  Sanatorium,
+  SanatoriumDetail,
+  SanatoriumListType,
+} from "../types/sanatorium.type";
 import api, { SupportedLocale } from "../utils/apiClient";
-
-
 
 export const getSanatoriumsSearch = async (
   locale: SupportedLocale,
@@ -49,15 +55,19 @@ export const getSanatoriumsSearch = async (
       },
     }
   );
-  return response
-};
-
-export const getLocations = async (locale: SupportedLocale) => {
-  const response = await api.get<City []>(`/sanatoriums/locations/`, { locale: locale });
   return response;
 };
 
-export const getSanatorium = async (locale: SupportedLocale, slug: string,
+export const getLocations = async (locale: SupportedLocale) => {
+  const response = await api.get<City[]>(`/sanatoriums/locations/`, {
+    locale: locale,
+  });
+  return response;
+};
+
+export const getSanatorium = async (
+  locale: SupportedLocale,
+  slug: string,
   params?: {
     category?: string;
     page?: string;
@@ -75,8 +85,10 @@ export const getSanatorium = async (locale: SupportedLocale, slug: string,
     max_total_price?: string;
     ratings?: string;
     id?: string;
-  }) => {
-  const response = await api.get<SanatoriumDetail>(`/sanatoriums/${slug}/`, { locale: locale,
+  }
+) => {
+  const response = await api.get<SanatoriumDetail>(`/sanatoriums/${slug}/`, {
+    locale: locale,
     params: {
       category: params?.category || "",
       page: params?.page || "1",
@@ -94,31 +106,44 @@ export const getSanatorium = async (locale: SupportedLocale, slug: string,
       max_total_price: params?.max_total_price || "",
       ratings: params?.ratings || "",
       id: params?.id || "",
-    }, });
+    },
+  });
   return response;
 };
 
-
 export const getNaftalanSanatoriumsPage = async (locale: SupportedLocale) => {
-  const response = await api.get<NaftalanSanatoriumsPage>("/sanatoriums/naftalan-page/", { locale: locale });
+  const response = await api.get<NaftalanSanatoriumsPage>(
+    "/sanatoriums/naftalan-page/",
+    { locale: locale }
+  );
   return response;
 };
 
 export const getNaftalanSanatoriums = async (locale: SupportedLocale) => {
-  const response = await api.get<Sanatorium []>("/sanatoriums/naftalan-sanatoriums/", { locale: locale });
+  const response = await api.get<Sanatorium[]>(
+    "/sanatoriums/naftalan-sanatoriums/",
+    { locale: locale }
+  );
   return response;
 };
 
-export const getOtherCitiesSanatoriumsPage = async (locale: SupportedLocale) => {
-  const response = await api.get<OtherCitiesSanatoriumsPage>("/sanatoriums/other-cities-page/", { locale: locale });
+export const getOtherCitiesSanatoriumsPage = async (
+  locale: SupportedLocale
+) => {
+  const response = await api.get<OtherCitiesSanatoriumsPage>(
+    "/sanatoriums/other-cities-page/",
+    { locale: locale }
+  );
   return response;
 };
 
 export const getOtherCitiesSanatoriums = async (locale: SupportedLocale) => {
-  const response = await api.get<Sanatorium[]>("/sanatoriums/other-cities-sanatoriums/", { locale: locale });
+  const response = await api.get<Sanatorium[]>(
+    "/sanatoriums/other-cities-sanatoriums/",
+    { locale: locale }
+  );
   return response;
 };
-
 
 export const getSanatoriumList = async (
   locale: SupportedLocale,
@@ -126,6 +151,37 @@ export const getSanatoriumList = async (
     location?: string;
   }
 ) => {
-  const response = await api.get<SanatoriumListType[]>(`/sanatoriums/`, { locale: locale, params: params });
+  const response = await api.get<SanatoriumListType[]>(`/sanatoriums/`, {
+    locale: locale,
+    params: params,
+  });
+  return response;
+};
+
+export const getRoomService = async (
+  locale: SupportedLocale,
+  sanatoriumPk: number,
+  roomPk: number,
+  params?: {
+    check_in?: string;
+    check_out?: string;
+    occupancy?: string;
+    children_ages?: string;
+    with_treatment?: 'true' | 'false';
+  }
+) => {
+  const response = await api.get<Room>(
+    `/sanatoriums/${sanatoriumPk}/rooms/${roomPk}/`,
+    {
+      locale: locale,
+      params: {
+        check_in: params?.check_in || "",
+        check_out: params?.check_out || "",
+        occupancy: params?.occupancy || "",
+        children_ages: params?.children_ages || "",
+        with_treatment: params?.with_treatment || "",
+      },
+    }
+  );
   return response;
 };

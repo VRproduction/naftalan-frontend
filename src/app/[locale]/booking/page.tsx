@@ -1,5 +1,5 @@
 import BookingPage from '@/features/booking/BookingPage'
-import { getSanatorium } from '@/lib/services/sanatorium.service';
+import { getRoomService, getSanatorium } from '@/lib/services/sanatorium.service';
 import { SupportedLocale } from '@/lib/utils/apiClient';
 import { notFound } from 'next/navigation';
 import React from 'react'
@@ -16,14 +16,30 @@ interface Props {
 
 const Page = async ({ params, searchParams }: Props) => {
   const { locale } = await params;
-  const { snt } = await searchParams;
+
+  const {
+    check_in,
+    check_out,
+    occupancy,
+    children_ages,
+    sanatoriumPk,
+    roomPk,
+    with_treatment
+  } = await searchParams;
+
 
   try {
-    const [sanatorium] = await Promise.all([
-      getSanatorium(locale, String(snt)),
+    const [room] = await Promise.all([
+      getRoomService(locale, Number(sanatoriumPk), Number(roomPk), {
+        check_in: String(check_in),
+        check_out: String(check_out),
+        occupancy: String(occupancy),
+        children_ages: String(children_ages),  
+        with_treatment: (with_treatment === "true" || with_treatment === "false") ? with_treatment : undefined
+      } )
     ]);
     return (
-      <BookingPage sanatorium={sanatorium} />
+      <BookingPage room={room} />
     )
   } catch (error) {
     return notFound();

@@ -116,7 +116,6 @@ export const PackageOrderModal = ({ isOpen, onClose, pkg }: PackageOrderModalPro
         onClose();
       }, 3000);
     } catch (err) {
-      console.error(err);
       setError(typeof err === 'string' ? err : t('order_error'));
     } finally {
       setIsSubmitting(false);
