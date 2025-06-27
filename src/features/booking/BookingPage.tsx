@@ -1,9 +1,8 @@
 // Ultra-Modern Booking Page with Premium UI/UX
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import Link from "next/link";
 import {
   FaCalendarAlt,
   FaUser,
@@ -51,7 +50,54 @@ const bookingSchema = {
   children: 0,
   childrenAges: [] as number[],
   with_treatment: false,
+  special_requests: "",
 };
+
+// Modern ve animasyonlu Modal Componenti
+function InfoModal({ open, onClose, onAutoRedirect, email, t }: { open: boolean; onClose: () => void; onAutoRedirect: () => void; email?: string; t: any }) {
+  // useEffect(() => {
+  //   if (!open) return;
+  //   const timeout = setTimeout(() => {
+  //     onAutoRedirect();
+  //   }, 5000);
+  //   return () => clearTimeout(timeout);
+  // }, [open, onAutoRedirect]);
+  if (!open) return null;
+  return (
+    <div className="fixed inset-0 z-[2000] flex items-center justify-center bg-gradient-to-br from-blue-200/60 via-white/80 to-purple-200/60 backdrop-blur-sm">
+      <div className="bg-white rounded-2xl shadow-2xl p-8 max-w-md w-full text-center relative animate-fade-in border border-blue-100">
+        <div className="flex justify-center mb-4">
+          <span className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-gradient-to-br from-green-400 to-blue-500 shadow-lg animate-bounce-in">
+            <svg className="w-12 h-12 text-white" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
+              <circle cx="12" cy="12" r="10" stroke="currentColor" strokeOpacity="0.15" strokeWidth="3" fill="currentColor" fillOpacity="0.15" />
+              <path strokeLinecap="round" strokeLinejoin="round" d="M8 12l2.5 2.5L16 9" stroke="currentColor" strokeWidth="2.5" />
+            </svg>
+          </span>
+        </div>
+        <h2 className="text-3xl font-extrabold text-blue-700 mb-2 tracking-tight">{t('success.title')}</h2>
+        <p className="text-gray-700 text-lg mb-6">
+          {email ? t('success.message', { email }) : t('success.message')}
+        </p>
+        <button
+          onClick={onClose}
+          className="w-full py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white text-lg font-bold rounded-xl shadow hover:shadow-xl hover:shadow-blue-500/20 transition-all duration-300"
+        >
+          {t('success.back_to_home')}
+        </button>
+      </div>
+      <style>{`
+        @keyframes bounce-in {
+          0% { transform: scale(0.7); opacity: 0; }
+          60% { transform: scale(1.1); opacity: 1; }
+          100% { transform: scale(1); }
+        }
+        .animate-bounce-in { animation: bounce-in 0.7s cubic-bezier(.68,-0.55,.27,1.55) both; }
+        .animate-fade-in { animation: fade-in 0.4s ease; }
+        @keyframes fade-in { from { opacity: 0; } to { opacity: 1; } }
+      `}</style>
+    </div>
+  );
+}
 
 export default function BookingPage({ room }: Props) {
   const t = useTranslations("booking");
@@ -60,6 +106,7 @@ export default function BookingPage({ room }: Props) {
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [focusedField, setFocusedField] = useState<string | null>(null);
+  const [showInfoModal, setShowInfoModal] = useState(false);
   const searchParams = useSearchParams();
   const router = useRouter();
   const pathname = usePathname();
@@ -87,6 +134,7 @@ export default function BookingPage({ room }: Props) {
       childrenAges: searchParams.get("children_ages")
         ? searchParams.get("children_ages")!.split(",").map(Number)
         : [],
+      special_requests: "",
     },
   });
 
@@ -113,7 +161,7 @@ export default function BookingPage({ room }: Props) {
     setError(null);
     setSuccess(false);
     try {
-      const bookingData: Partial<BookingRequestData> = {
+      const bookingData: BookingRequestData = {
         first_name: data.first_name,
         last_name: data.last_name,
         email: data.email,
@@ -125,9 +173,35 @@ export default function BookingPage({ room }: Props) {
         room_type: room.id,
         sanatorium: room.sanatorium.id,
         with_treatment: data.with_treatment,
+        special_requests: data.special_requests || null,
+        season: room.price_info?.season ?? 1,
+        treatment_option: null,
+        price: room.price_info?.price?.toString() ?? "0",
+        discounted_price: room.price_info?.discount?.discounted_price?.toString() ?? room.price_info?.price?.toString() ?? "0",
+        discount_type: room.price_info?.discount?.discount_type === 'percentage'
+          ? 'percent'
+          : room.price_info?.discount?.discount_type === 'fixed'
+          ? 'amount'
+          : null,
+        discount_value: room.price_info?.discount?.discount_value?.toString() ?? undefined,
+        total_discounted_price: room.price_info?.total_discounted_price?.toString() ?? room.price_info?.total_price?.toString() ?? "0",
+        total_price: room.price_info?.total_price?.toString() ?? "0",
+        currency: room.price_info?.currency?.id ?? 1,
+        guests: [
+          {
+            first_name: data.first_name,
+            last_name: data.last_name,
+            gender: null,
+            date_of_birth: null,
+            age_category: "adult",
+            is_main_guest: true,
+          },
+        ],
+        extra_beds: [],
       };
       await createBooking(bookingData as BookingRequestData);
       setSuccess(true);
+      setShowInfoModal(true);
     } catch (err: any) {
       setError(err?.message || "Booking failed");
     } finally {
@@ -187,6 +261,19 @@ export default function BookingPage({ room }: Props) {
 
   return (
     <div className="min-h-screen pt-5 bg-gradient-to-br from-blue-50 via-white to-purple-50">
+      <InfoModal
+        open={showInfoModal}
+        onClose={() => {
+          setShowInfoModal(false);
+          router.push("/");
+        }}
+        onAutoRedirect={() => {
+          setShowInfoModal(false);
+          router.push("/");
+        }}
+        email={form.email}
+        t={t}
+      />
       <div className="max-w-5xl mx-auto px-4 py-6">
         <motion.div
           initial={{ opacity: 0 }}
@@ -453,6 +540,25 @@ export default function BookingPage({ room }: Props) {
                     </motion.div>
                   );
                 })()}
+
+                {/* Not (Ekstra Açıklama) Alanı */}
+                <div>
+                  <label htmlFor="special_requests" className="block text-sm font-medium text-gray-700 mb-1">
+                    {t("form.note") || "Not (Ekstra Açıklama)"}
+                  </label>
+                  <Controller
+                    control={control}
+                    name="special_requests"
+                    render={({ field }) => (
+                      <textarea
+                        id="special_requests"
+                        className="w-full min-h-[80px] p-2 border rounded-lg bg-gray-50/50 backdrop-blur-sm text-gray-800 text-sm focus:border-blue-500 focus:bg-white transition-all duration-300"
+                        placeholder={t("form.note_placeholder") || "Ekstra not veya açıklama yazabilirsiniz..."}
+                        {...field}
+                      />
+                    )}
+                  />
+                </div>
 
                 {/* Error/Success Messages */}
                 <AnimatePresence>

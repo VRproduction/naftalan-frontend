@@ -507,7 +507,9 @@
       "success": "Бронирование успешно завершено!",
       "error": "Произошла ошибка при бронировании.",
       "book_now": "Забронировать",
-      "without_treatment": "Без лечения"
+      "without_treatment": "Без лечения",
+      "note": "Примечание",
+      "note_placeholder": "Примечание"
     },
 
     "why_choose_us": {

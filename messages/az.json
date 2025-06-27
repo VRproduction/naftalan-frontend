@@ -507,7 +507,9 @@
       "success": "Rezervasiya uğurla tamamlandı!",
       "error": "Rezervasiya zamanı xəta baş verdi.",
       "book_now": "Rezervasiya et",
-      "without_treatment": "Müalicəsiz"
+      "without_treatment": "Müalicəsiz",
+      "note": "Əlavə qeyd",
+      "note_placeholder": "Əlavə qeyd"
     },
 
     "why_choose_us": {

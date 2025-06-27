@@ -112,6 +112,7 @@ export async function apiClient<T>(endpoint: string, options: RequestOptions = {
     const responseData: T = await response.json();
     return  responseData ;
 } catch (error) {
+  console.error(error)
     throw error;
 }
 }

@@ -13,8 +13,13 @@ export interface BookingRequestData {
   special_requests: string | null;
   with_treatment: boolean;
   treatment_option: number | null;
-  total_price: string;
   currency: number;
+  price?: string;
+  discounted_price?: string;
+  discount_type?: "percent" | "amount" | null;
+  discount_value?: string;
+  total_discounted_price?: string;
+  total_price: string;
   guests: {
     first_name: string;
     last_name: string;
