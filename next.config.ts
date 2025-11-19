@@ -24,7 +24,7 @@ const nextConfig: NextConfig = {
       },
       {
         protocol: "https",
-        hostname: "adminnn.kurortnaftalan.com",
+        hostname: "kj4bs3.kurortnaftalan.com",
         pathname: "/**",
       },
     ],
