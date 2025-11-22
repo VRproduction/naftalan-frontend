@@ -88,7 +88,7 @@ const RouteProgressBar: React.FC<ProgressBarProps> = ({
         aria-valuenow={progress}
         aria-valuemin={0}
         aria-valuemax={100}
-        aria-label="Sayfa yükleniyor"
+        aria-label="Yüklənir"
         style={{ height: `${height}px` }}
       >
         <div

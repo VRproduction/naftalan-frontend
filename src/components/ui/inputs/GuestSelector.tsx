@@ -1,13 +1,12 @@
-import { useEffect, useRef, useState } from "react";
+import { useState } from "react";
 import {
   FaUserFriends,
   FaMinus,
   FaPlus,
-  FaChevronDown,
   FaChild,
-  FaBaby,
 } from "react-icons/fa";
-import { motion, AnimatePresence } from "framer-motion";
+import * as Dialog from "@radix-ui/react-dialog";
+import { Cross2Icon } from "@radix-ui/react-icons";
 import { useTranslations } from "next-intl";
 
 export interface GuestSelectorProps {
@@ -25,24 +24,7 @@ export interface GuestSelectorProps {
 
 const GuestSelector = ({ value, onChange, errors, className, maxAdults, maxChildren }: GuestSelectorProps) => {
   const [isOpen, setIsOpen] = useState(false);
-  const dropdownRef = useRef<HTMLDivElement>(null);
   const t = useTranslations("search");
-
-  // Calculate total guests
-
-  // Close dropdown when clicking outside
-  useEffect(() => {
-    function handleClickOutside(event: MouseEvent) {
-      if (
-        dropdownRef.current &&
-        !dropdownRef.current.contains(event.target as Node)
-      ) {
-        setIsOpen(false);
-      }
-    }
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
 
   // Update adults count
   const handleAdultsChange = (increment: boolean) => {
@@ -93,68 +75,76 @@ const GuestSelector = ({ value, onChange, errors, className, maxAdults, maxChild
   const hasError = !!(errors.adults && errors.adults.message);
 
   return (
-    <div className={`relative ${className || ''}`} ref={dropdownRef}>
-      <div
-        className={`
-          w-full flex items-center border-2 rounded-lg py-2.5 pl-10 pr-4 bg-white cursor-pointer 
-          hover:border-blue-400 transition-all duration-200
-          ${isOpen ? "ring-2 ring-blue-200 border-blue-400" : ""}
-          ${hasError ? "border-red-500" : "border-gray-200"}
-          `}
-        onClick={() => setIsOpen(!isOpen)}
-        style={{ minHeight: "48px", position: "relative" }} // Ensure consistent height
-      >
-        {/* Icon absolutely positioned, always present */}
-        <div
-          className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-gray-500 group-hover:text-blue-500 transition-colors"
-          style={{ height: "100%" }}
-        >
-          <FaUserFriends />
-        </div>
-        {/* Main content and chevron, always vertically centered */}
-        <div className="flex flex-1 justify-between items-center min-h-6">
-          <span className="text-gray-800">
-            {value.adults === 0 && value.children === 0
-              ? t("select")
-              : `${value.adults} ${t(value.adults === 1 ? "adult" : "adults")}${
-                  value.children > 0
-                    ? ` • ${value.children} ${t(
-                        value.children === 1 ? "child" : "children"
-                      )}`
-                    : ""
-                }`}
-          </span>
-          <FaChevronDown
-            className={`text-gray-400 transform transition-transform ${
-              isOpen ? "rotate-180" : ""
-            }`}
-          />
-        </div>
-      </div>
-      {/* Error message, but does not affect layout of input above */}
-      {hasError && (
-        <div style={{ minHeight: "22px" }}>
-          <p className="text-red-500 text-sm mt-1">
-            {t(errors.adults.message as string)}
-          </p>
-        </div>
-      )}
-
-      <AnimatePresence>
-        {isOpen && (
-          <motion.div
-            initial={{ opacity: 0, y: 8 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: 8 }}
-            className="absolute z-50 mt-2 w-full bg-white rounded-lg shadow-xl border border-gray-200 p-4"
+    <Dialog.Root open={isOpen} onOpenChange={setIsOpen}>
+      <div className={`relative ${className || ''}`}>
+        <Dialog.Trigger asChild>
+          <div
+            className={`
+            w-full flex items-center border-2 rounded-lg py-2.5 pl-10 pr-4 bg-white cursor-pointer 
+            hover:border-blue-400 transition-all duration-200
+            ${isOpen ? "ring-2 ring-blue-200 border-blue-400" : ""}
+            ${hasError ? "border-red-500" : "border-gray-200"}
+            `}
+            style={{ minHeight: "48px", position: "relative" }}
           >
+            <div
+              className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-gray-500 group-hover:text-blue-500 transition-colors"
+              style={{ height: "100%" }}
+            >
+              <FaUserFriends />
+            </div>
+            <div className="flex flex-1 justify-between items-center min-h-6">
+              <span className="text-gray-800">
+                {value.adults === 0 && value.children === 0
+                  ? t("select")
+                  : `${value.adults} ${t(value.adults === 1 ? "adult" : "adults")}${
+                      value.children > 0
+                        ? ` • ${value.children} ${t(
+                            value.children === 1 ? "child" : "children"
+                          )}`
+                        : ""
+                    }`}
+              </span>
+            </div>
+          </div>
+        </Dialog.Trigger>
+        {hasError && (
+          <div style={{ minHeight: "22px" }}>
+            <p className="text-red-500 text-sm mt-1">
+              {t(errors.adults.message as string)}
+            </p>
+          </div>
+        )}
+      </div>
+
+      <Dialog.Portal>
+        <Dialog.Overlay className="fixed inset-0 bg-black/50 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 z-[9998]" />
+        <Dialog.Content className="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-[9999] w-[calc(100%-2rem)] max-w-md bg-white rounded-xl shadow-2xl data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[state=closed]:slide-out-to-left-1/2 data-[state=closed]:slide-out-to-top-[48%] data-[state=open]:slide-in-from-left-1/2 data-[state=open]:slide-in-from-top-[48%]">
+          {/* Header */}
+          <div className="flex items-center justify-between p-4 border-b border-gray-200">
+            <Dialog.Title className="text-lg font-semibold text-gray-800">
+              {t("select")}
+            </Dialog.Title>
+            <Dialog.Close asChild>
+              <button
+                type="button"
+                className="p-2 hover:bg-gray-100 rounded-full transition-colors"
+                aria-label="Close"
+              >
+                <Cross2Icon className="w-4 h-4 text-gray-500" />
+              </button>
+            </Dialog.Close>
+          </div>
+
+          {/* Content */}
+          <div className="p-4 max-h-[70vh] overflow-y-auto">
             {/* Adults selector */}
-            <div className="flex items-center justify-between py-3 border-b border-gray-100">
+            <div className="flex items-center justify-between py-4 border-b border-gray-100">
               <div>
-                <div className="font-medium">{t("adults")}</div>
+                <div className="font-medium text-gray-800">{t("adults")}</div>
                 <div className="text-sm text-gray-500">{t("age")} 18+</div>
               </div>
-              <div className="flex items-center gap-3">
+              <div className="flex items-center gap-4">
                 <button
                   type="button"
                   className={`p-2 rounded-full ${
@@ -165,9 +155,9 @@ const GuestSelector = ({ value, onChange, errors, className, maxAdults, maxChild
                   onClick={() => handleAdultsChange(false)}
                   disabled={value.adults <= 1}
                 >
-                  <FaMinus size={12} />
+                  <FaMinus size={14} />
                 </button>
-                <span className="w-6 text-center">{value.adults}</span>
+                <span className="w-8 text-center font-medium">{value.adults}</span>
                 <button
                   type="button"
                   className={`p-2 rounded-full ${
@@ -178,17 +168,18 @@ const GuestSelector = ({ value, onChange, errors, className, maxAdults, maxChild
                   onClick={() => handleAdultsChange(true)}
                   disabled={typeof maxAdults === 'number' && value.adults >= maxAdults}
                 >
-                  <FaPlus size={12} />
+                  <FaPlus size={14} />
                 </button>
               </div>
             </div>
+
             {/* Children selector */}
-            <div className="flex items-center justify-between py-3 border-b border-gray-100">
+            <div className="flex items-center justify-between py-4 border-b border-gray-100">
               <div>
-                <div className="font-medium">{t("children")}</div>
+                <div className="font-medium text-gray-800">{t("children")}</div>
                 <div className="text-sm text-gray-500">{t("age")} 7-18</div>
               </div>
-              <div className="flex items-center gap-3">
+              <div className="flex items-center gap-4">
                 <button
                   type="button"
                   className={`p-2 rounded-full ${
@@ -199,9 +190,9 @@ const GuestSelector = ({ value, onChange, errors, className, maxAdults, maxChild
                   onClick={() => handleChildrenChange(false)}
                   disabled={value.children <= 0}
                 >
-                  <FaMinus size={12} />
+                  <FaMinus size={14} />
                 </button>
-                <span className="w-6 text-center">{value.children}</span>
+                <span className="w-8 text-center font-medium">{value.children}</span>
                 <button
                   type="button"
                   className={`p-2 rounded-full ${
@@ -212,24 +203,25 @@ const GuestSelector = ({ value, onChange, errors, className, maxAdults, maxChild
                   onClick={() => handleChildrenChange(true)}
                   disabled={typeof maxChildren === 'number' && value.children >= maxChildren}
                 >
-                  <FaPlus size={12} />
+                  <FaPlus size={14} />
                 </button>
               </div>
             </div>
+
             {/* Children ages */}
             {value.children > 0 && (
-              <div className="mt-3">
-                <div className="font-medium mb-2">{t("children_ages")}</div>
-                <div className="grid grid-cols-2 gap-2">
+              <div className="mt-4">
+                <div className="font-medium mb-3 text-gray-800">{t("children_ages")}</div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   {Array.from({ length: value.children }).map((_, index) => (
                     <div key={index} className="flex items-center gap-2">
-                      <FaChild className="text-blue-400" />
+                      <FaChild className="text-blue-500" />
                       <select
                         value={value.childrenAges?.[index] || 7}
                         onChange={(e) =>
                           handleChildAgeChange(index, parseInt(e.target.value))
                         }
-                        className="flex-1 p-2 border border-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        className="flex-1 p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                       >
                         {Array.from({ length: 11 }).map((_, age) => (
                           <option key={age + 7} value={age + 7}>
@@ -242,19 +234,22 @@ const GuestSelector = ({ value, onChange, errors, className, maxAdults, maxChild
                 </div>
               </div>
             )}
-            <div className="mt-4 flex justify-end">
+          </div>
+
+          {/* Footer */}
+          <div className="p-4 border-t border-gray-200">
+            <Dialog.Close asChild>
               <button
                 type="button"
-                className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
-                onClick={() => setIsOpen(false)}
+                className="w-full px-4 py-3 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors font-medium"
               >
                 {t("apply")}
               </button>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </div>
+            </Dialog.Close>
+          </div>
+        </Dialog.Content>
+      </Dialog.Portal>
+    </Dialog.Root>
   );
 };
 

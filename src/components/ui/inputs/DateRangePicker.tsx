@@ -107,7 +107,6 @@ export default function DateRangePicker({
   const [hoverDate, setHoverDate] = useState<Date | null>(null);
   const [activeSelection, setActiveSelection] = useState<'start' | 'end'>('start');
   
-  const calendarRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLDivElement>(null);
   
   const parsedStartDate = startDate ? parseISO(startDate) : null;
@@ -117,19 +116,6 @@ export default function DateRangePicker({
   const displayValue = parsedStartDate && parsedEndDate 
     ? `${format(parsedStartDate, 'MMM dd, yyyy')} — ${format(parsedEndDate, 'MMM dd, yyyy')}`
     : t('select_dates') || placeholder;
-  
-  // Close calendar when clicking outside
-  useEffect(() => {
-    function handleClickOutside(event: MouseEvent) {
-      if (calendarRef.current && !calendarRef.current.contains(event.target as Node) && 
-          inputRef.current && !inputRef.current.contains(event.target as Node)) {
-        setIsOpen(false);
-      }
-    }
-    
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, []);
 
   // Update second month when first month changes
   useEffect(() => {
@@ -396,13 +382,12 @@ export default function DateRangePicker({
           </div>
         </Dialog.Trigger>
         <Dialog.Portal>
-          <Dialog.Overlay className="fixed inset-0 bg-black/50 z-[9998]" />
+          <Dialog.Overlay className="fixed inset-0 bg-black/50 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 z-[9998]" />
           <Dialog.Content
-            ref={calendarRef}
-            className="fixed inset-0 z-[9999] flex items-center justify-center p-2 sm:p-0"
+            className="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-[9999] w-[calc(100%-2rem)] max-w-md sm:max-w-2xl bg-gradient-to-b from-white via-blue-50 to-white rounded-2xl shadow-2xl border border-gray-100 overflow-hidden data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[state=closed]:slide-out-to-left-1/2 data-[state=closed]:slide-out-to-top-[48%] data-[state=open]:slide-in-from-left-1/2 data-[state=open]:slide-in-from-top-[48%]"
             onOpenAutoFocus={e => e.preventDefault()}
           >
-            <div className="relative w-full max-w-md sm:max-w-2xl bg-gradient-to-b from-white via-blue-50 to-white rounded-2xl shadow-2xl border border-gray-100 overflow-hidden animate-slideUp">
+            <div className="relative w-full">
               {/* Drag handle */}
               <div className="flex justify-center py-2">
                 <div className="w-12 h-1.5 rounded-full bg-gray-200" />
@@ -485,17 +470,18 @@ export default function DateRangePicker({
                     >
                       {t('clear')}
                     </button>
-                    <button
-                      type="button"
-                      className={twMerge(
-                        "w-1/2 py-2 rounded-lg font-semibold text-xs sm:text-sm transition-colors focus:outline-none focus:ring-2 shadow-md",
-                        colorVariants[primaryColor].primary,
-                        colorVariants[primaryColor].ring
-                      )}
-                      onClick={() => setIsOpen(false)}
-                    >
-                      {t('apply')}
-                    </button>
+                    <Dialog.Close asChild>
+                      <button
+                        type="button"
+                        className={twMerge(
+                          "w-1/2 py-2 rounded-lg font-semibold text-xs sm:text-sm transition-colors focus:outline-none focus:ring-2 shadow-md",
+                          colorVariants[primaryColor].primary,
+                          colorVariants[primaryColor].ring
+                        )}
+                      >
+                        {t('apply')}
+                      </button>
+                    </Dialog.Close>
                   </div>
                 </div>
                 
@@ -513,14 +499,15 @@ export default function DateRangePicker({
                 )}
               </div>
               {/* Close button for modal */}
-              <button
-                type="button"
-                className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 bg-white rounded-full p-2 shadow"
-                onClick={() => setIsOpen(false)}
-                aria-label="Close"
-              >
-                <FaTimes className="w-5 h-5" />
-              </button>
+              <Dialog.Close asChild>
+                <button
+                  type="button"
+                  className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 bg-white rounded-full p-2 shadow"
+                  aria-label="Close"
+                >
+                  <FaTimes className="w-5 h-5" />
+                </button>
+              </Dialog.Close>
             </div>
           </Dialog.Content>
         </Dialog.Portal>

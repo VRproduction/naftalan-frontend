@@ -108,6 +108,7 @@ export const getSanatorium = async (
       id: params?.id || "",
     },
   });
+  console.log(response)
   return response;
 };
 

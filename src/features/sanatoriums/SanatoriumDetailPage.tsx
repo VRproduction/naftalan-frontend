@@ -269,7 +269,7 @@ export default function SanatoriumDetailPage({ sanatorium }: PageProps) {
       `}</style>
 
       {/* Main Content */}
-      <div className="container mx-auto px-4 py-4">
+      <div className="container mx-auto px-4 py-4 pb-24 lg:pb-4">
         <div className="grid grid-cols-1 lg:grid-cols-[2.4fr_1fr] gap-6">
           {/* Left Column - Images */}
           <div className="w-full">
@@ -1251,44 +1251,38 @@ export default function SanatoriumDetailPage({ sanatorium }: PageProps) {
                   sanatorium.matched_room_types.length > 0 ? (
                     <div className="space-y-6">
                       {sanatorium.matched_room_types.map((matched, idx) => (
-                        <div key={`matched-room-${idx}`}>
-                          <div className="hidden md:block">
-                            <MatchedRoomHorizontalCard
-                              matched={matched}
-                              sanatorium={sanatorium}
-                              openRoomModal={openRoomModal}
-                              t={t}
-                              formatPrice={formatPrice}
-                              checkIn={
-                                searchParams.get("check_in") || undefined
-                              }
-                              checkOut={
-                                searchParams.get("check_out") || undefined
-                              }
-                              occupancy={
-                                searchParams.get("occupancy")
-                                  ? Number(searchParams.get("occupancy"))
-                                  : undefined
-                              }
-                              children={
-                                searchParams.get("children")
-                                  ? Number(searchParams.get("children"))
-                                  : undefined
-                              }
-                              childrenAges={
-                                searchParams.get("children_ages")
-                                  ? searchParams
-                                      .get("children_ages")!
-                                      .split(",")
-                                      .map(Number)
-                                  : undefined
-                              }
-                            />
-                          </div>
-                          <div className="md:hidden">
-                            {/* ...existing mobile card code here... */}
-                          </div>
-                        </div>
+                        <MatchedRoomHorizontalCard
+                          key={`matched-room-${idx}`}
+                          matched={matched}
+                          sanatorium={sanatorium}
+                          openRoomModal={openRoomModal}
+                          t={t}
+                          formatPrice={formatPrice}
+                          checkIn={
+                            searchParams.get("check_in") || undefined
+                          }
+                          checkOut={
+                            searchParams.get("check_out") || undefined
+                          }
+                          occupancy={
+                            searchParams.get("occupancy")
+                              ? Number(searchParams.get("occupancy"))
+                              : undefined
+                          }
+                          children={
+                            searchParams.get("children")
+                              ? Number(searchParams.get("children"))
+                              : undefined
+                          }
+                          childrenAges={
+                            searchParams.get("children_ages")
+                              ? searchParams
+                                  .get("children_ages")!
+                                  .split(",")
+                                  .map(Number)
+                              : undefined
+                          }
+                        />
                       ))}
                     </div>
                   ) : (
@@ -1303,67 +1297,87 @@ export default function SanatoriumDetailPage({ sanatorium }: PageProps) {
 
           {/* Right Column - Booking Card */}
           <div>
-            <div className="bg-white/90 backdrop-blur rounded-2xl shadow-lg border border-gray-100 overflow-hidden sticky top-24 max-w-md mx-auto lg:mx-0 transition-all">
+            <div className="bg-white/90 backdrop-blur rounded-2xl shadow-lg border border-gray-100 overflow-hidden lg:sticky lg:top-24 max-w-md mx-auto lg:mx-0 transition-all hidden lg:block">
               <div className="p-4 border-b border-gray-50">
                 <h2 className="text-lg font-bold text-gray-900 mb-2 flex items-center gap-2">
                   <span>{t("price_booking")}</span>
                 </h2>
-                <div className="flex items-end gap-2 mb-1 flex-wrap">
-                  <span className="inline-block bg-gradient-to-r from-blue-500 to-blue-700 text-white text-xs font-bold rounded-lg px-3 py-1 shadow tracking-wide">
-                    {t("starting_price")}
-                  </span>
-                  
-                  {/* Price display logic */}
-                  {(() => {
-                    const pricing = sanatorium.min_price_details?.pricing;
-                    const discount = pricing?.discount;
-                    const hasDiscount = discount && (discount.amount || 0) > 0;
-                    
-                    if (hasDiscount) {
-                      const originalPrice = pricing?.total_price || pricing?.final_price || 0;
-                      const discountedPrice = pricing?.total_discount_price || discount?.discounted_price || 0;
-                      const discountValue = discount?.value || 0;
-                      const discountType = discount?.type || 'percentage';
+                {(() => {
+                  const pricing = sanatorium.min_price_details?.pricing;
+                  const finalPrice = pricing?.total_price || pricing?.final_price || 0;
+                  const isPriceAvailable = finalPrice > 0;
+
+                  if (!isPriceAvailable) {
+                    return (
+                      <div className="bg-amber-50 border border-amber-200 rounded-lg p-4 mb-3">
+                        <p className="text-amber-800 text-sm font-medium mb-1">
+                          {t("price_not_available")}
+                        </p>
+                        <p className="text-amber-700 text-xs">
+                          {t("price_not_available_description")}
+                        </p>
+                      </div>
+                    );
+                  }
+
+                  return (
+                    <div className="flex items-end gap-2 mb-1 flex-wrap">
+                      <span className="inline-block bg-gradient-to-r from-blue-500 to-blue-700 text-white text-xs font-bold rounded-lg px-3 py-1 shadow tracking-wide">
+                        {t("starting_price")}
+                      </span>
                       
-                      return (
-                        <>
-                          <span className="text-base font-semibold text-gray-400 line-through">
-                            {formatPrice(originalPrice)}
-                          </span>
-                          <span className="text-2xl font-extrabold text-blue-700 tracking-tight">
-                            {formatPrice(discountedPrice)}
-                          </span>
-                          <span className="ml-1 text-xs font-bold bg-gradient-to-r from-green-400 to-green-600 text-white px-2 py-0.5 rounded shadow flex items-center gap-1">
-                            <svg
-                              className="w-3 h-3"
-                              fill="none"
-                              stroke="currentColor"
-                              strokeWidth="2"
-                              viewBox="0 0 24 24"
-                            >
-                              <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                d="M9 14l2 2 4-4"
-                              />
-                            </svg>
-                            -{discountType === "percentage" 
-                              ? `${discountValue}%` 
-                              : formatPrice(discountValue)
-                            } {t("discount")}
-                          </span>
-                        </>
-                      );
-                    } else {
-                      const finalPrice = pricing?.total_price || pricing?.final_price || 0;
-                      return (
-                        <span className="text-2xl font-extrabold text-blue-700 tracking-tight">
-                          {formatPrice(finalPrice)}
-                        </span>
-                      );
-                    }
-                  })()}
-                </div>
+                      {/* Price display logic */}
+                      {(() => {
+                        const discount = pricing?.discount;
+                        const hasDiscount = discount && (discount.amount || 0) > 0;
+                        
+                        if (hasDiscount) {
+                          const originalPrice = pricing?.total_price || pricing?.final_price || 0;
+                          const discountedPrice = pricing?.total_discount_price || discount?.discounted_price || 0;
+                          const discountValue = discount?.value || 0;
+                          const discountType = discount?.type || 'percentage';
+                          
+                          return (
+                            <>
+                              <span className="text-base font-semibold text-gray-400 line-through">
+                                {formatPrice(originalPrice)}
+                              </span>
+                              <span className="text-2xl font-extrabold text-blue-700 tracking-tight">
+                                {formatPrice(discountedPrice)}
+                              </span>
+                              <span className="ml-1 text-xs font-bold bg-gradient-to-r from-green-400 to-green-600 text-white px-2 py-0.5 rounded shadow flex items-center gap-1">
+                                <svg
+                                  className="w-3 h-3"
+                                  fill="none"
+                                  stroke="currentColor"
+                                  strokeWidth="2"
+                                  viewBox="0 0 24 24"
+                                >
+                                  <path
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    d="M9 14l2 2 4-4"
+                                  />
+                                </svg>
+                                -{discountType === "percentage" 
+                                  ? `${discountValue}%` 
+                                  : formatPrice(discountValue)
+                                } {t("discount")}
+                              </span>
+                            </>
+                          );
+                        } else {
+                          return (
+                            <span className="text-2xl font-extrabold text-blue-700 tracking-tight">
+                              {formatPrice(finalPrice)}
+                            </span>
+                          );
+                        }
+                      })()}
+                    </div>
+                  );
+                })()}
+               
                
                 {/* Nights display */}
                 {checkInDate && checkOutDate && (
@@ -1476,6 +1490,21 @@ export default function SanatoriumDetailPage({ sanatorium }: PageProps) {
               <div className="p-3 flex flex-col gap-2">
                 {/* Calculate booking URL with all parameters */}
                 {(() => {
+                  const pricing = sanatorium.min_price_details?.pricing;
+                  const finalPrice = pricing?.total_price || pricing?.final_price || 0;
+                  const isPriceAvailable = finalPrice > 0;
+
+                  if (!isPriceAvailable) {
+                    return (
+                      <button
+                        disabled
+                        className="block w-full py-2 px-3 bg-gray-300 text-gray-500 text-center font-semibold rounded-lg shadow cursor-not-allowed text-sm"
+                      >
+                        {t("booking_unavailable")}
+                      </button>
+                    );
+                  }
+
                   const params = new URLSearchParams();
                   if (sanatorium.min_price_details?.room?.id)
                     params.set('room_type', sanatorium.min_price_details.room.id.toString());
@@ -1541,6 +1570,98 @@ export default function SanatoriumDetailPage({ sanatorium }: PageProps) {
           </div>
         </section>
       )}
+      {/* Mobile Fixed Bottom Price Card */}
+      <div className="lg:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 shadow-2xl z-50 safe-area-bottom">
+        <div className="container mx-auto px-4 py-3">
+          <div className="flex items-center justify-between gap-3">
+            <div className="flex-1">
+              <div className="flex items-center gap-2 mb-1">
+                <span className="inline-block bg-gradient-to-r from-blue-500 to-blue-700 text-white text-xs font-bold rounded px-2 py-0.5">
+                  {t("starting_price")}
+                </span>
+                {checkInDate && checkOutDate && (
+                  <span className="inline-flex items-center gap-1 bg-indigo-100 text-indigo-700 text-xs font-medium px-2 py-0.5 rounded-full">
+                    <RiMoonClearLine className="text-indigo-500 w-3 h-3" />
+                    {nights} {nights === 1 ? t("night") : t("nights")}
+                  </span>
+                )}
+              </div>
+              <div className="flex items-center gap-2">
+                {(() => {
+                  const pricing = sanatorium.min_price_details?.pricing;
+                  const discount = pricing?.discount;
+                  const hasDiscount = discount && (discount.amount || 0) > 0;
+                  
+                  if (hasDiscount) {
+                    const originalPrice = pricing?.total_price || pricing?.final_price || 0;
+                    const discountedPrice = pricing?.total_discount_price || discount?.discounted_price || 0;
+                    
+                    return (
+                      <>
+                        <span className="text-sm font-semibold text-gray-400 line-through">
+                          {formatPrice(originalPrice)}
+                        </span>
+                        <span className="text-xl font-extrabold text-blue-700">
+                          {formatPrice(discountedPrice)}
+                        </span>
+                      </>
+                    );
+                  } else {
+                    const finalPrice = pricing?.total_price || pricing?.final_price || 0;
+                    return (
+                      <span className="text-xl font-extrabold text-blue-700">
+                        {formatPrice(finalPrice)}
+                      </span>
+                    );
+                  }
+                })()}
+              </div>
+            </div>
+            <div className="flex-shrink-0">
+              {(() => {
+                const pricing = sanatorium.min_price_details?.pricing;
+                const finalPrice = pricing?.total_price || pricing?.final_price || 0;
+                const isPriceAvailable = finalPrice > 0;
+
+                if (!isPriceAvailable) {
+                  return (
+                    <button
+                      disabled
+                      className="py-3 px-6 bg-gray-300 text-gray-500 text-center font-semibold rounded-lg shadow cursor-not-allowed text-sm whitespace-nowrap"
+                    >
+                      {t("booking_unavailable")}
+                    </button>
+                  );
+                }
+
+                const params = new URLSearchParams();
+                if (sanatorium.min_price_details?.room?.id)
+                  params.set('room_type', sanatorium.min_price_details.room.id.toString());
+                params.set('sanatoriumPk', sanatorium.id.toString());
+                if (sanatorium.min_price_details?.room?.id)
+                  params.set('roomPk', sanatorium.min_price_details.room.id.toString());
+                if (typeof sanatorium.min_price_details?.pricing?.with_treatment !== 'undefined')
+                  params.set('with_treatment', sanatorium.min_price_details.pricing.with_treatment.toString());
+                if (searchParams.get("check_in")) params.set('check_in', searchParams.get("check_in")!);
+                if (searchParams.get("check_out")) params.set('check_out', searchParams.get("check_out")!);
+                if (searchParams.get("occupancy")) params.set('occupancy', searchParams.get("occupancy")!);
+                if (searchParams.get("children")) params.set('children', searchParams.get("children")!);
+                if (searchParams.get("children_ages")) params.set('children_ages', searchParams.get("children_ages")!);
+                const bookingUrl = `/booking?${params.toString()}`;
+                return (
+                  <Link
+                    href={bookingUrl}
+                    className="block py-3 px-6 bg-gradient-to-r from-blue-600 to-blue-800 text-white text-center font-semibold rounded-lg shadow-lg hover:from-blue-700 hover:to-blue-900 transition-all text-sm active:scale-95 whitespace-nowrap"
+                  >
+                    {t("book_now")}
+                  </Link>
+                );
+              })()}
+            </div>
+          </div>
+        </div>
+      </div>
+
       {/* Image Modal */}
       <ImageSliderModal
         images={modalImages}

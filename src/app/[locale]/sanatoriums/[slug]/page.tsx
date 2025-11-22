@@ -2,6 +2,7 @@ import SanatoriumDetailPage from "@/features/sanatoriums/SanatoriumDetailPage";
 import { getSanatorium } from "@/lib/services/sanatorium.service";
 import { SupportedLocale } from "@/lib/utils/apiClient";
 import { Metadata } from "next";
+import { notFound } from "next/navigation";
 import React from "react";
 
 interface Props {
@@ -117,24 +118,33 @@ const page = async ({ params, searchParams }: Props) => {
     id
   } = await searchParams;
 
-  const [
-    sanatorium,
-  ] = await Promise.all([
-    getSanatorium(locale, slug, {
-      location: String(city),
-      check_in: String(check_in),
-      check_out: String(check_out),
-      occupancy: String(occupancy),
-      children_ages: String(children_ages),
-      ratings: String(ratings),
-      min_price: String(min_price),
-      max_price: String(max_price),
-      min_total_price: String(min_total_price),
-      max_total_price: String(max_total_price),
-      id: String(id)
-    }),
-  ]);
-  return <SanatoriumDetailPage sanatorium={sanatorium} />;
+  try {
+    const [
+      sanatorium,
+    ] = await Promise.all([
+      getSanatorium(locale, slug, {
+        location: String(city),
+        check_in: String(check_in),
+        check_out: String(check_out),
+        occupancy: String(occupancy),
+        children_ages: String(children_ages),
+        ratings: String(ratings),
+        min_price: String(min_price),
+        max_price: String(max_price),
+        min_total_price: String(min_total_price),
+        max_total_price: String(max_total_price),
+        id: String(id)
+      }),
+    ]);
+    return <SanatoriumDetailPage sanatorium={sanatorium} />;
+  } catch (error: any) {
+    // If API returns 404, show Next.js not-found page
+    if (error?.status === 404) {
+      notFound();
+    }
+    // Re-throw other errors
+    throw error;
+  }
 };
 
 export default page;

@@ -127,7 +127,7 @@ const useCurrencyStore = create<CurrencyState>((set, get) => ({
     const { currentCurrency, isLoading, isInitialized } = get();
     
     if (!isInitialized || isLoading) {
-      return 'Yükleniyor...';
+      return 'Yüklənir...';
     }
     
     const price = typeof priceInAZN === 'string' ? parseFloat(priceInAZN) : priceInAZN;

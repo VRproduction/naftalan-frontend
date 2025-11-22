@@ -28,6 +28,8 @@ import { Room, SanatoriumDetail } from "@/lib/types/sanatorium.type";
 import { useCurrencyStore } from "@/lib/store/useCurrencyStore";
 import { useTranslations } from "next-intl";
 import { useForm, Controller } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
 import DateRangePicker from "@/components/ui/inputs/DateRangePicker";
 import GuestSelector from "@/components/ui/inputs/GuestSelector";
 import { useSearchParams } from "next/navigation";
@@ -38,20 +40,22 @@ interface Props {
   room: Room;
 }
 
-// Add a schema for validation (minimal, like ReservationPage)
-const bookingSchema = {
-  first_name: "",
-  last_name: "",
-  email: "",
-  phone: "",
-  checkIn: "",
-  checkOut: "",
-  adults: 1,
-  children: 0,
-  childrenAges: [] as number[],
-  with_treatment: false,
-  special_requests: "",
-};
+// Zod validation schema
+const bookingValidationSchema = z.object({
+  first_name: z.string().min(2, "validation.first_name_min").max(50, "validation.first_name_max"),
+  last_name: z.string().min(2, "validation.last_name_min").max(50, "validation.last_name_max"),
+  email: z.string().email("validation.email_invalid"),
+  phone: z.string().min(7, "validation.phone_min").max(20, "validation.phone_max"),
+  checkIn: z.string().min(1, "validation.check_in_required"),
+  checkOut: z.string().min(1, "validation.check_out_required"),
+  adults: z.number().min(1, "validation.adults_min"),
+  children: z.number().min(0),
+  childrenAges: z.array(z.number()).optional(),
+  with_treatment: z.boolean(),
+  special_requests: z.string().optional(),
+});
+
+type BookingFormData = z.infer<typeof bookingValidationSchema>;
 
 // Modern ve animasyonlu Modal Componenti
 function InfoModal({ open, onClose, onAutoRedirect, email, t }: { open: boolean; onClose: () => void; onAutoRedirect: () => void; email?: string; t: any }) {
@@ -111,7 +115,7 @@ export default function BookingPage({ room }: Props) {
   const router = useRouter();
   const pathname = usePathname();
 
-  // Use react-hook-form for the form state
+  // Use react-hook-form for the form state with Zod validation
   const {
     control,
     handleSubmit,
@@ -119,9 +123,13 @@ export default function BookingPage({ room }: Props) {
     clearErrors,
     formState: { errors },
     watch,
-  } = useForm({
+  } = useForm<BookingFormData>({
+    resolver: zodResolver(bookingValidationSchema),
     defaultValues: {
-      ...bookingSchema,
+      first_name: "",
+      last_name: "",
+      email: "",
+      phone: "",
       with_treatment: room.price_info?.with_treatment ?? false,
       checkIn: searchParams.get("check_in") || "",
       checkOut: searchParams.get("check_out") || "",
@@ -161,6 +169,12 @@ export default function BookingPage({ room }: Props) {
     setError(null);
     setSuccess(false);
     try {
+      // Helper function to format price to 2 decimal places
+      const formatPriceValue = (value: number | undefined | null): string => {
+        if (!value) return "0";
+        return Number(value).toFixed(2);
+      };
+
       const bookingData: BookingRequestData = {
         first_name: data.first_name,
         last_name: data.last_name,
@@ -176,16 +190,16 @@ export default function BookingPage({ room }: Props) {
         special_requests: data.special_requests || null,
         season: room.price_info?.season ?? 1,
         treatment_option: null,
-        price: room.price_info?.price?.toString() ?? "0",
-        discounted_price: room.price_info?.discount?.discounted_price?.toString() ?? room.price_info?.price?.toString() ?? "0",
+        price: formatPriceValue(room.price_info?.price),
+        discounted_price: formatPriceValue(room.price_info?.discount?.discounted_price ?? room.price_info?.price),
         discount_type: room.price_info?.discount?.discount_type === 'percentage'
           ? 'percent'
           : room.price_info?.discount?.discount_type === 'fixed'
           ? 'amount'
           : null,
         discount_value: room.price_info?.discount?.discount_value?.toString() ?? undefined,
-        total_discounted_price: room.price_info?.total_discounted_price?.toString() ?? room.price_info?.total_price?.toString() ?? "0",
-        total_price: room.price_info?.total_price?.toString() ?? "0",
+        total_discounted_price: formatPriceValue(room.price_info?.total_discounted_price ?? room.price_info?.total_price),
+        total_price: formatPriceValue(room.price_info?.total_price),
         currency: room.price_info?.currency?.id ?? 1,
         guests: [
           {
@@ -217,7 +231,8 @@ export default function BookingPage({ room }: Props) {
     min?: number,
     value?: string,
     onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void,
-    onBlur?: (e: React.FocusEvent<HTMLInputElement>) => void
+    onBlur?: (e: React.FocusEvent<HTMLInputElement>) => void,
+    error?: string
   ) => (
     <motion.div
       className="relative group"
@@ -227,7 +242,7 @@ export default function BookingPage({ room }: Props) {
       <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none z-10">
         <span
           className={`transition-colors duration-200 ${
-            focusedField === name ? "text-blue-600" : "text-gray-400"
+            error ? "text-red-500" : focusedField === name ? "text-blue-600" : "text-gray-400"
           }`}
         >
           {icon}
@@ -243,24 +258,28 @@ export default function BookingPage({ room }: Props) {
           setFocusedField(null);
           if (onBlur) onBlur(e);
         }}
-        required
         min={min}
         className={`w-full pl-10 pr-3 py-2 bg-gray-50/50 backdrop-blur-sm border rounded-lg 
           transition-all duration-300 outline-none text-gray-800 placeholder-gray-400 text-sm
           ${
-            focusedField === name
+            error
+              ? "border-red-500 bg-red-50/50"
+              : focusedField === name
               ? "border-blue-500 bg-white shadow-md shadow-blue-500/10"
               : "border-gray-200 hover:border-gray-300"
           }`}
         placeholder={label}
       />
+      {error && (
+        <p className="text-red-500 text-xs mt-1">{t(error)}</p>
+      )}
     </motion.div>
   );
 
  
 
   return (
-    <div className="min-h-screen pt-5 bg-gradient-to-br from-blue-50 via-white to-purple-50">
+    <div className="min-h-screen pt-5 bg-gradient-to-br from-blue-50 via-white to-purple-50 pb-24 lg:pb-0">
       <InfoModal
         open={showInfoModal}
         onClose={() => {
@@ -275,6 +294,52 @@ export default function BookingPage({ room }: Props) {
         t={t}
       />
       <div className="max-w-5xl mx-auto px-4 py-6">
+        {/* Mobile Room Preview - Compact */}
+        <motion.div
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+          className="lg:hidden mb-4 bg-white/90 backdrop-blur-lg rounded-xl overflow-hidden shadow border border-white/10"
+        >
+          {room.images.length > 0 && (
+            <div className="relative h-48 w-full">
+              <Image
+                fill
+                src={
+                  typeof room.images[0] === "string"
+                    ? room.images[0]
+                    : (room.images[0] as any).image
+                }
+                alt={room.name}
+                className="object-cover"
+              />
+              {room.price_info?.discount &&
+                room.price_info.discount.discounted_price < room.price_info.price && (
+                  <span className="absolute top-3 right-3 bg-pink-500 text-white text-xs font-bold px-3 py-1 rounded-full shadow-lg">
+                    -{room.price_info.discount.discount_value}%
+                  </span>
+                )}
+            </div>
+          )}
+          <div className="p-4">
+            <div className="flex items-start justify-between gap-2 mb-2">
+              <h2 className="text-lg font-bold text-gray-800">{room.name}</h2>
+              <div className="flex items-center gap-1 bg-blue-50 px-2 py-1 rounded-full flex-shrink-0">
+                <FaStar className="text-yellow-500 text-xs" />
+                <span className="text-sm font-semibold text-gray-700">{room.sanatorium.rating}</span>
+              </div>
+            </div>
+            <div className="flex items-center gap-2 text-sm text-gray-600 mb-1">
+              <FaHotel className="text-blue-500 flex-shrink-0" />
+              <span className="font-medium truncate">{room.sanatorium.name}</span>
+            </div>
+            <div className="flex items-center gap-2 text-xs text-gray-500">
+              <FaMapMarkerAlt className="text-blue-500 flex-shrink-0" />
+              <span className="truncate">{room.sanatorium.address}</span>
+            </div>
+          </div>
+        </motion.div>
+
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
@@ -300,7 +365,7 @@ export default function BookingPage({ room }: Props) {
                     <Controller
                       control={control}
                       name="first_name"
-                      render={({ field }) =>
+                      render={({ field, fieldState }) =>
                         renderInput(
                           "first_name",
                           t("first_name"),
@@ -309,14 +374,15 @@ export default function BookingPage({ room }: Props) {
                           undefined,
                           field.value,
                           field.onChange,
-                          field.onBlur
+                          field.onBlur,
+                          fieldState.error?.message
                         )
                       }
                     />
                     <Controller
                       control={control}
                       name="last_name"
-                      render={({ field }) =>
+                      render={({ field, fieldState }) =>
                         renderInput(
                           "last_name",
                           t("last_name"),
@@ -325,7 +391,8 @@ export default function BookingPage({ room }: Props) {
                           undefined,
                           field.value,
                           field.onChange,
-                          field.onBlur
+                          field.onBlur,
+                          fieldState.error?.message
                         )
                       }
                     />
@@ -334,7 +401,7 @@ export default function BookingPage({ room }: Props) {
                     <Controller
                       control={control}
                       name="email"
-                      render={({ field }) =>
+                      render={({ field, fieldState }) =>
                         renderInput(
                           "email",
                           t("email"),
@@ -343,14 +410,15 @@ export default function BookingPage({ room }: Props) {
                           undefined,
                           field.value,
                           field.onChange,
-                          field.onBlur
+                          field.onBlur,
+                          fieldState.error?.message
                         )
                       }
                     />
                     <Controller
                       control={control}
                       name="phone"
-                      render={({ field }) =>
+                      render={({ field, fieldState }) =>
                         renderInput(
                           "phone",
                           t("phone"),
@@ -359,7 +427,8 @@ export default function BookingPage({ room }: Props) {
                           undefined,
                           field.value,
                           field.onChange,
-                          field.onBlur
+                          field.onBlur,
+                          fieldState.error?.message
                         )
                       }
                     />
@@ -584,34 +653,34 @@ export default function BookingPage({ room }: Props) {
                   )}
                 </AnimatePresence>
 
-                {/* Submit Button */}
+                {/* Submit Button - Desktop only */}
                 <motion.button
                   whileHover={{ scale: 1.03 }}
                   whileTap={{ scale: 0.97 }}
                   type="submit"
                   disabled={loading}
-                  className="w-full py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white text-lg font-bold 
+                  className="hidden lg:flex w-full py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white text-lg font-bold 
                     rounded-xl shadow disabled:opacity-60 disabled:cursor-not-allowed
-                    transition-all duration-300 hover:shadow-xl hover:shadow-blue-500/20"
+                    transition-all duration-300 hover:shadow-xl hover:shadow-blue-500/20 items-center justify-center gap-2"
                 >
                   {loading ? (
-                    <div className="flex items-center justify-center gap-2">
+                    <>
                       <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
                       {t("loading")}
-                    </div>
+                    </>
                   ) : (
-                    <div className="flex items-center justify-center gap-2">
+                    <>
                       <FaCheck />
                       {t("book_now")}
-                    </div>
+                    </>
                   )}
                 </motion.button>
               </form>
             </motion.div>
           </div>
 
-          {/* Summary Card - Takes 1 column */}
-          <div className="lg:col-span-2">
+          {/* Summary Card - Desktop: sidebar, Mobile: hidden (info in sticky bar) */}
+          <div className="hidden lg:block lg:col-span-2">
             <motion.div
               initial={{ opacity: 0, x: 20 }}
               animate={{ opacity: 1, x: 0 }}
@@ -683,69 +752,77 @@ export default function BookingPage({ room }: Props) {
                       <FaChild className="text-blue-500" />
                       <span>
                         {form.children} {t("child")} (
-                        {form.childrenAges.join(", ")})
+                        {form.childrenAges?.join(", ") || ""})
                       </span>
                     </div>
                   )}
                 </div>
                 {/* Price Section */}
-                <div className="rounded-2xl shadow-lg border border-blue-100 bg-gradient-to-br from-blue-50 via-white to-purple-50 p-4 pt-8 mt-3 relative overflow-hidden">
+                <div className="rounded-xl shadow-md border border-blue-100 bg-gradient-to-br from-blue-50/50 via-white to-purple-50/50 p-5 mt-3 relative overflow-hidden">
                   {/* Discount badge */}
                   {room.price_info?.discount &&
                     room.price_info.discount.discounted_price <
                       room.price_info.price && (
-                      <span className="absolute top-2 right-2 bg-pink-500 text-white text-[11px] font-bold px-2 py-0.5 rounded-full shadow z-10">
+                      <span className="absolute top-3 right-3 bg-gradient-to-r from-pink-500 to-red-500 text-white text-xs font-bold px-3 py-1 rounded-full shadow-lg">
                         -{room.price_info.discount.discount_value}%
                       </span>
                     )}
-                  {/* Total price and nights row */}
-                  <div className="flex items-center justify-between mb-1">
-                    <div className="flex items-center gap-2">
-                      <FaMoon className="text-blue-400 text-base" />
-                      <span className="text-xs text-gray-600 font-medium">
-                        {room.price_info?.nights}{" "}
-                        {t("night", { count: room.price_info?.nights })}
-                      </span>
-                    </div>
-                    {room.price_info?.total_discounted_price &&
-                    room.price_info.total_discounted_price <
-                      room.price_info.total_price ? (
-                      <span className="flex flex-row items-end justify-end">
-                        <span className="text-xs font-semibold text-gray-400 line-through">
-                          {formatPrice(room.price_info.total_price)}
-                        </span>
-                        <span className="text-3xl font-extrabold text-blue-700 ml-2">
-                          {formatPrice(room.price_info.total_discounted_price)}
-                        </span>
-                      </span>
-                    ) : (
-                      <span className="text-2xl font-extrabold text-blue-700">
-                        {formatPrice(room.price_info?.total_price)}
-                      </span>
-                    )}
-                  </div>
-                  <div className="border-t border-gray-200 my-2"></div>
-                  {/* Nightly price */}
-                  <div className="flex items-center justify-between">
-                    <span className="text-xs text-gray-500">
-                      {t("nightly_price")}
+                  
+                  {/* Nights info */}
+                  <div className="flex items-center gap-2 mb-4">
+                    <FaMoon className="text-blue-500 text-sm" />
+                    <span className="text-sm text-gray-600 font-medium">
+                      {room.price_info?.nights}{" "}
+                      {t("night", { count: room.price_info?.nights })}
                     </span>
+                  </div>
+
+                  {/* Nightly price */}
+                  <div className="mb-3">
+                    <div className="text-xs text-gray-500 mb-1">
+                      {t("nightly_price")}
+                    </div>
                     {room.price_info?.discount &&
                     room.price_info.discount.discounted_price <
                       room.price_info.price ? (
-                      <span className="flex flex-row items-end justify-end">
-                        <span className="text-xs text-gray-400 line-through">
+                      <div className="flex flex-col gap-1">
+                        <span className="text-sm text-gray-400 line-through">
                           {formatPrice(room.price_info.price)}
                         </span>
-                        <span className="text-lg text-blue-600 font-bold ml-2">
+                        <span className="text-xl text-blue-600 font-bold">
                           {formatPrice(
                             room.price_info.discount.discounted_price
                           )}
                         </span>
-                      </span>
+                      </div>
                     ) : (
-                      <span className="text-xs text-gray-700 font-semibold">
+                      <span className="text-xl text-gray-800 font-bold">
                         {formatPrice(room.price_info?.price)}
+                      </span>
+                    )}
+                  </div>
+
+                  <div className="border-t border-gray-200 my-3"></div>
+
+                  {/* Total price */}
+                  <div>
+                    <div className="text-xs text-gray-500 mb-1">
+                      {t("total_price")}
+                    </div>
+                    {room.price_info?.total_discounted_price &&
+                    room.price_info.total_discounted_price <
+                      room.price_info.total_price ? (
+                      <div className="flex flex-col gap-1">
+                        <span className="text-base text-gray-400 line-through">
+                          {formatPrice(room.price_info.total_price)}
+                        </span>
+                        <span className="text-3xl font-extrabold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+                          {formatPrice(room.price_info.total_discounted_price)}
+                        </span>
+                      </div>
+                    ) : (
+                      <span className="text-3xl font-extrabold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+                        {formatPrice(room.price_info?.total_price)}
                       </span>
                     )}
                   </div>
@@ -755,6 +832,71 @@ export default function BookingPage({ room }: Props) {
           </div>
         </motion.div>
       </div>
+
+      {/* Mobile Sticky Bottom Bar with Price & Book Button */}
+      <motion.div
+        initial={{ opacity: 0, y: 100 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4, delay: 0.5 }}
+        className="lg:hidden fixed bottom-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-lg border-t border-gray-200 shadow-2xl"
+      >
+        <div className="max-w-5xl mx-auto px-4 py-3">
+          <div className="flex items-center justify-between gap-4">
+            {/* Price Info */}
+            <div className="flex flex-col relative">
+              <div className="flex items-center gap-2 mb-0.5">
+                <span className="text-[10px] text-gray-500">
+                  {room.price_info?.nights} {t("night", { count: room.price_info?.nights })}
+                </span>
+                {room.price_info?.discount &&
+                  room.price_info.discount.discounted_price < room.price_info.price && (
+                    <span className="bg-gradient-to-r from-pink-500 to-red-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-full">
+                      -{room.price_info.discount.discount_value}%
+                    </span>
+                  )}
+              </div>
+              {room.price_info?.total_discounted_price &&
+              room.price_info.total_discounted_price < room.price_info.total_price ? (
+                <div className="flex flex-col">
+                  <span className="text-xs text-gray-400 line-through">
+                    {formatPrice(room.price_info.total_price)}
+                  </span>
+                  <span className="text-2xl font-extrabold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+                    {formatPrice(room.price_info.total_discounted_price)}
+                  </span>
+                </div>
+              ) : (
+                <span className="text-2xl font-extrabold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+                  {formatPrice(room.price_info?.total_price)}
+                </span>
+              )}
+            </div>
+
+            {/* Book Button */}
+            <motion.button
+              whileTap={{ scale: 0.95 }}
+              type="button"
+              onClick={handleSubmit(onSubmit)}
+              disabled={loading}
+              className="flex-shrink-0 px-6 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white text-base font-bold 
+                rounded-xl shadow-lg disabled:opacity-60 disabled:cursor-not-allowed
+                transition-all duration-300 hover:shadow-xl hover:shadow-blue-500/20"
+            >
+              {loading ? (
+                <div className="flex items-center gap-2">
+                  <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                  <span>{t("loading")}</span>
+                </div>
+              ) : (
+                <div className="flex items-center gap-2">
+                  <FaCheck />
+                  <span>{t("book_now")}</span>
+                </div>
+              )}
+            </motion.button>
+          </div>
+        </div>
+      </motion.div>
     </div>
   );
 }

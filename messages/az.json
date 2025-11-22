@@ -107,7 +107,14 @@
     "name_min_length": "Ad ən azı 2 simvol olmalıdır",
     "email_invalid": "Düzgün e-poçt ünvanı daxil edin",
     "phone_invalid": "Düzgün telefon nömrəsi daxil edin",
-    "message_min_length": "Mesaj ən azı 10 simvol olmalıdır"
+    "message_min_length": "Mesaj ən azı 10 simvol olmalıdır",
+    "first_name_min": "Ad ən azı 2 simvol olmalıdır",
+    "first_name_max": "Ad maksimum 50 simvol ola bilər",
+    "last_name_min": "Soyad ən azı 2 simvol olmalıdır",
+    "last_name_max": "Soyad maksimum 50 simvol ola bilər",
+    "phone_min": "Telefon nömrəsi ən azı 7 rəqəm olmalıdır",
+    "phone_max": "Telefon nömrəsi maksimum 20 rəqəm ola bilər",
+    "adults_min": "Ən azı 1 böyük olmalıdır"
   },
   "cities": {
     "naftalan": "Naftalan",
@@ -413,7 +420,10 @@
     "check_in_required": "Giriş tarixi tələb olunur",
     "check_out_required": "Çıxış tarixi tələb olunur",
     "room_type":"Otaq növü",
-    "per_night":"Gecə başına"
+    "per_night":"Gecə başına",
+    "price_not_available":"Qiymət mövcud deyil",
+    "price_not_available_description":"Seçdiyiniz tarixlər və qonaq sayı üçün qiymət mövcud deyil. Zəhmət olmasa, axtarış parametrlərini dəyişdirin və ya bizimlə əlaqə saxlayın.",
+    "booking_unavailable":"Rezervasiya mümkün deyil"
   },
   "sanatorium": {
     "featured": "Seçilmiş",
@@ -542,7 +552,14 @@
       "check_out_after_check_in": "Çıxış tarixi giriş tarixindən sonra olmalıdır",
       "check_in_not_past": "Giriş tarixi bugünkü tarixdən əvvəl ola bilməz",
       "room_type_required": "Otaq növü seçilməlidir",
-      "terms_required": "Şərtləri qəbul etməlisiniz"
+      "terms_required": "Şərtləri qəbul etməlisiniz",
+      "first_name_min": "Ad ən azı 2 simvol olmalıdır",
+      "first_name_max": "Ad maksimum 50 simvol ola bilər",
+      "last_name_min": "Soyad ən azı 2 simvol olmalıdır",
+      "last_name_max": "Soyad maksimum 50 simvol ola bilər",
+      "phone_min": "Telefon nömrəsi ən azı 7 rəqəm olmalıdır",
+      "phone_max": "Telefon nömrəsi maksimum 20 rəqəm ola bilər",
+      "adults_min": "Ən azı 1 böyük olmalıdır"
     },
     "booking_success": "Rezervasiya uğurla tamamlandı!",
     "loading": "Yüklənir...",
@@ -572,7 +589,8 @@
     "extra_beds": "Əlavə çarpayılar",
     "capacity": "Tutum",
     "area": "Sahə",
-    "nightly_price": "Gecəlik qiymət"
+    "nightly_price": "Gecəlik qiymət",
+    "total_price": "Ümumi qiymət"
   },
   "packages": {
     "day": "Gün",

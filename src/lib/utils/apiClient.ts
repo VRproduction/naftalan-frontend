@@ -100,15 +100,13 @@ export async function apiClient<T>(endpoint: string, options: RequestOptions = {
   if (body && method !== 'GET') {
     fetchOptions.body = JSON.stringify(body);
   }
-
-  
+  console.log(url)
   try {
     const response = await fetch(url.toString(), fetchOptions);
     if (!response.ok) {
         const errorData = await response.json();
         throw { status: response.status, data: errorData };
     }
-
     const responseData: T = await response.json();
     return  responseData ;
 } catch (error) {
