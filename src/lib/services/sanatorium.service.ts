@@ -55,6 +55,7 @@ export const getSanatoriumsSearch = async (
       },
     }
   );
+  console.log(response)
   return response;
 };
 
@@ -108,7 +109,6 @@ export const getSanatorium = async (
       id: params?.id || "",
     },
   });
-  console.log(response)
   return response;
 };
 

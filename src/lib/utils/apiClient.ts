@@ -100,7 +100,6 @@ export async function apiClient<T>(endpoint: string, options: RequestOptions = {
   if (body && method !== 'GET') {
     fetchOptions.body = JSON.stringify(body);
   }
-  console.log(url)
   try {
     const response = await fetch(url.toString(), fetchOptions);
     if (!response.ok) {

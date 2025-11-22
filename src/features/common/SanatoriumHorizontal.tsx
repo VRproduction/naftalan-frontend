@@ -93,7 +93,7 @@ export default function SanatoriumHorizontal({ sanatorium, index = 0, nights = 1
   const discountedPrice = pricing?.total_discount_price || discount?.discounted_price || 0;
   
   // Calculate per night prices
-  const perNightOriginalPrice = pricing?.base_price || pricing?.final_price || 0;
+  const perNightOriginalPrice = pricing?.final_price || 0;
   let perNightDiscountedPrice = perNightOriginalPrice;
   
   if (discount && (discount.amount || 0) > 0) {

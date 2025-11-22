@@ -28,7 +28,7 @@ export default function SanatoriumCard({
   const pricing = sanatorium.min_price_details?.pricing;
   const discount = pricing?.discount;
   
-  // Calculate base prices
+  // Calculate prices using final_price
   const originalPrice = pricing?.total_price || pricing?.final_price || 0;
   const discountedPrice = pricing?.total_discount_price || discount?.discounted_price || 0;
   
