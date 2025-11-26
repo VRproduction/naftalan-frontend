@@ -722,7 +722,7 @@ export default function SanatoriumDetailPage({ sanatorium }: PageProps) {
                     ))}
                   </div>
 
-                  <h3 className="text-lg font-semibold mb-3">
+                  <h3 id="map" className="text-lg font-semibold mb-3 scroll-mt-24">
                     {t("location")}
                   </h3>
                   <div className="bg-gray-100 rounded-lg p-4 mb-6">

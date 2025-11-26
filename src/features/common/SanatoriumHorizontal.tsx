@@ -493,7 +493,12 @@ export default function SanatoriumHorizontal({ sanatorium, index = 0, nights = 1
               <RiMapPin2Line className="mr-1.5 text-blue-600" />
               <span className="inline-block border-b border-dashed border-gray-300 hover:text-blue-600 cursor-pointer">{sanatorium.location.region}, {sanatorium.location.country}</span>
               <span className="mx-2 text-gray-300">•</span>
-              <span className="text-blue-600 hover:text-blue-800 cursor-pointer text-sm font-medium">{t('show_on_map')}</span>
+              <Link 
+                href={`/sanatoriums/${sanatorium.slug}#map`}
+                className="text-blue-600 hover:text-blue-800 cursor-pointer text-sm font-medium"
+              >
+                {t('show_on_map')}
+              </Link>
             </div>
             
             <p className="text-gray-600 mb-4 text-sm line-clamp-2">{sanatorium.short_description}</p>

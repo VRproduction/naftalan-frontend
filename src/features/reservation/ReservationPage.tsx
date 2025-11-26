@@ -140,18 +140,23 @@ export default function ReservationPage({
   const onSubmit = (data: SearchFormValues) => {
     setLoading(true);
     
-    // Build URL parameters including ratings
+    // Build URL parameters
     let url = `/reservation/?city=${data.location}&id=${
       data.sanatorium
     }&check_in=${data.checkIn}&check_out=${data.checkOut}&occupancy=${
       data.adults
     }&children_ages=${
       data.childrenAges ? data.childrenAges.join(",") : ""
-    }&min_total_price=${data.minPrice || MIN_PRICE_DEFAULT}&max_total_price=${
-      data.maxPrice || MAX_PRICE_DEFAULT
     }`;
     
-    // Add ratings if they exist
+    // Only add price filters if date range is selected
+    if (data.checkIn && data.checkOut) {
+      url += `&min_total_price=${data.minPrice || MIN_PRICE_DEFAULT}&max_total_price=${
+        data.maxPrice || MAX_PRICE_DEFAULT
+      }`;
+    }
+    
+    // Always add ratings if they exist (independent of date range)
     if (data.ratings && data.ratings.length > 0) {
       url += `&ratings=${data.ratings.join(",")}`;
     }
@@ -171,11 +176,20 @@ export default function ReservationPage({
     // Get current URL params
     const urlParams = new URLSearchParams(window.location.search);
     
-    // Update price range parameters
-    urlParams.set("min_total_price", String(watch('minPrice')));
-    urlParams.set("max_total_price", String(watch('maxPrice')));
+    // Check if date range is selected
+    const checkIn = watch('checkIn');
+    const checkOut = watch('checkOut');
     
-    // Update ratings parameter
+    // Only apply price filters if date range is selected
+    if (checkIn && checkOut) {
+      urlParams.set("min_total_price", String(watch('minPrice')));
+      urlParams.set("max_total_price", String(watch('maxPrice')));
+    } else {
+      urlParams.delete("min_total_price");
+      urlParams.delete("max_total_price");
+    }
+    
+    // Always apply ratings parameter (independent of date range)
     const ratings = watch('ratings') ?? [];
     if (ratings.length > 0) {
       urlParams.set("ratings", ratings.join(","));
@@ -505,7 +519,8 @@ export default function ReservationPage({
                 </div>
                 
                 <div className="divide-y divide-gray-200">
-                  {/* Price Range Filter */}
+                  {/* Price Range Filter - Only show if dates are selected */}
+                  {watch('checkIn') && watch('checkOut') && (
                   <div className="p-4 space-y-4">
                     <h4 className="text-base font-bold text-gray-800 flex items-center">
                       <FaTags className="mr-2 text-blue-600" />
@@ -638,6 +653,7 @@ export default function ReservationPage({
                       </div>
                     </div>
                   </div>
+                  )}
                   
                   {/* Star rating section */}
                   <div className="p-4 space-y-4">
@@ -708,7 +724,8 @@ export default function ReservationPage({
               </div>
               
               <div className="divide-y divide-gray-200">
-                {/* Price Range Filter */}
+                {/* Price Range Filter - Only show if dates are selected */}
+                {watch('checkIn') && watch('checkOut') && (
                 <div className="p-5 space-y-4">
                   <h4 className="text-sm font-bold text-gray-800 uppercase tracking-wider flex items-center">
                     <FaTags className="mr-2 text-blue-600" />
@@ -841,6 +858,7 @@ export default function ReservationPage({
                     </div>
                   </div>
                 </div>
+                )}
                 
                 {/* Star rating section */}
                 <div className="p-5 space-y-4">
