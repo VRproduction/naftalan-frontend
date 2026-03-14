@@ -325,26 +325,23 @@ export default function ReservationPage({
   
   // Watch location value to filter sanatoriums
   const selectedLocation = watch('location');
+  
+  // Track if location was changed by user (not by URL load)
+  const [locationChangedByUser, setLocationChangedByUser] = useState(false);
 
-  // Reset sanatorium when location changes (but not on initial load)
+  // Reset sanatorium when location changes (but not on initial load or URL load)
   useEffect(() => {
+    // Don't reset during initial load
     if (isInitialLoad) {
-      setIsInitialLoad(false);
       return;
     }
-    setValue('sanatorium', '');
-  }, [selectedLocation, setValue, isInitialLoad]);
-
-  // Set location based on selected sanatorium from URL params
-  useEffect(() => {
-    const sanatoriumId = params.get("id");
-    if (sanatoriumId && sanatoriumsList.length > 0) {
-      const selectedSanatorium = sanatoriumsList.find(s => String(s.id) === sanatoriumId);
-      if (selectedSanatorium && !selectedLocation) {
-        setValue('location', String(selectedSanatorium.location.id));
-      }
+    
+    // Only reset if location was changed by user interaction
+    if (locationChangedByUser) {
+      setValue('sanatorium', '');
+      setLocationChangedByUser(false);
     }
-  }, [params, sanatoriumsList, selectedLocation, setValue]);
+  }, [selectedLocation, setValue, isInitialLoad, locationChangedByUser]);
 
   // Load form values from URL params on component mount and URL changes
   useEffect(() => {
@@ -367,8 +364,24 @@ export default function ReservationPage({
       }
       
       // Load location and sanatorium
-      setValue('location', params.get("city") || "");
-      setValue('sanatorium', params.get("id") || "");
+      const cityParam = params.get("city");
+      const sanatoriumParam = params.get("id");
+      
+      if (cityParam) {
+        setValue('location', cityParam);
+      }
+      
+      if (sanatoriumParam) {
+        setValue('sanatorium', sanatoriumParam);
+        
+        // If sanatorium is set but city is not, find and set the city
+        if (!cityParam && sanatoriumsList.length > 0) {
+          const selectedSanatorium = sanatoriumsList.find(s => String(s.id) === sanatoriumParam);
+          if (selectedSanatorium) {
+            setValue('location', String(selectedSanatorium.location.id));
+          }
+        }
+      }
       
       // Load price filters
       setValue('minPrice', params.get("min_total_price") ? parseInt(params.get("min_total_price")!) : MIN_PRICE_DEFAULT);
@@ -381,8 +394,13 @@ export default function ReservationPage({
       } else {
         setValue('ratings', []);
       }
+      
+      // Mark initial load as complete after a short delay to ensure all values are set
+      setTimeout(() => {
+        setIsInitialLoad(false);
+      }, 100);
     }
-  }, [params, setValue, isInitialLoad]);
+  }, [params, setValue, isInitialLoad, sanatoriumsList]);
 
   return (
     <div className="bg-gray-50 min-h-screen pb-5">
@@ -402,6 +420,10 @@ export default function ReservationPage({
                       onValueChange={(val) => {
                         onChange(val);
                         clearErrors("location");
+                        // Mark that location was changed by user
+                        if (!isInitialLoad) {
+                          setLocationChangedByUser(true);
+                        }
                       }}
                       name={name}
                       className="w-full pl-7 pr-3 min-h-[48px]"
