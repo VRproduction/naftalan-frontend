@@ -96,6 +96,9 @@ export default function ReservationPage({
   // Add local state for price inputs inside ReservationPage
   const [minPriceInput, setMinPriceInput] = useState("");
   const [maxPriceInput, setMaxPriceInput] = useState("");
+  
+  // State to track initial load
+  const [isInitialLoad, setIsInitialLoad] = useState(true);
 
   // Sync local input state with main state when searchParams changes
   useEffect(() => {
@@ -125,11 +128,13 @@ export default function ReservationPage({
     defaultValues: {
       checkIn: params.get("check_in") || "",
       checkOut: params.get("check_out") || "",
-      adults: params.get("occupancy") ? parseInt(params.get("occupancy")!) : 0,
-      children: params.get("children_ages") ? params.get("children_ages")!.split(",").length : 0,
-      childrenAges: params.get("children_ages") ? params.get("children_ages")!.split(",").map((age) => parseInt(age)) : [],
+      adults: params.get("occupancy") ? parseInt(params.get("occupancy")!) : 1, // Default 1 instead of 0
+      children: params.get("children_ages") ? params.get("children_ages")!.split(",").filter(age => age.trim() !== "").length : 0,
+      childrenAges: params.get("children_ages") && params.get("children_ages") !== "" 
+        ? params.get("children_ages")!.split(",").filter(age => age.trim() !== "").map((age) => parseInt(age)) 
+        : [],
       location: params.get("city") || "",
-      sanatorium: params.get("id") || "",
+      sanatorium: params.get("id") || "", // Bu parametr URL-dən gəlir
       minPrice: params.get("min_total_price") ? parseInt(params.get("min_total_price")!) : MIN_PRICE_DEFAULT,
       maxPrice: params.get("max_total_price") ? parseInt(params.get("max_total_price")!) : MAX_PRICE_DEFAULT,
       ratings: params.get("ratings") ? params.get("ratings")!.split(",").map((r) => parseInt(r)) : [],
@@ -140,29 +145,48 @@ export default function ReservationPage({
   const onSubmit = (data: SearchFormValues) => {
     setLoading(true);
     
-    // Build URL parameters
-    let url = `/reservation/?city=${data.location}&id=${
-      data.sanatorium
-    }&check_in=${data.checkIn}&check_out=${data.checkOut}&occupancy=${
-      data.adults
-    }&children_ages=${
-      data.childrenAges ? data.childrenAges.join(",") : ""
-    }`;
+    // Build URL parameters - only add non-empty values
+    const urlParams = new URLSearchParams();
+    
+    // Add city only if it has a value
+    if (data.location && data.location.trim() !== "") {
+      urlParams.set("city", data.location);
+    }
+    
+    // Add sanatorium only if it has a value
+    if (data.sanatorium && data.sanatorium.trim() !== "") {
+      urlParams.set("id", data.sanatorium);
+    }
+    
+    // Add dates
+    if (data.checkIn) urlParams.set("check_in", data.checkIn);
+    if (data.checkOut) urlParams.set("check_out", data.checkOut);
+    
+    // Add occupancy
+    if (data.adults > 0) urlParams.set("occupancy", String(data.adults));
+    
+    // Add children ages only if there are children
+    if (data.childrenAges && data.childrenAges.length > 0) {
+      urlParams.set("children_ages", data.childrenAges.join(","));
+    }
     
     // Only add price filters if date range is selected
     if (data.checkIn && data.checkOut) {
-      url += `&min_total_price=${data.minPrice || MIN_PRICE_DEFAULT}&max_total_price=${
-        data.maxPrice || MAX_PRICE_DEFAULT
-      }`;
+      if (data.minPrice !== MIN_PRICE_DEFAULT) {
+        urlParams.set("min_total_price", String(data.minPrice));
+      }
+      if (data.maxPrice !== MAX_PRICE_DEFAULT) {
+        urlParams.set("max_total_price", String(data.maxPrice));
+      }
     }
     
     // Always add ratings if they exist (independent of date range)
     if (data.ratings && data.ratings.length > 0) {
-      url += `&ratings=${data.ratings.join(",")}`;
+      urlParams.set("ratings", data.ratings.join(","));
     }
     
     // Navigate with search params
-    router.push(url);
+    router.push(`/reservation/?${urlParams.toString()}`);
     
     setTimeout(() => {
       setLoading(false);
@@ -182,8 +206,20 @@ export default function ReservationPage({
     
     // Only apply price filters if date range is selected
     if (checkIn && checkOut) {
-      urlParams.set("min_total_price", String(watch('minPrice')));
-      urlParams.set("max_total_price", String(watch('maxPrice')));
+      const minPrice = watch('minPrice');
+      const maxPrice = watch('maxPrice');
+      
+      if (minPrice !== MIN_PRICE_DEFAULT) {
+        urlParams.set("min_total_price", String(minPrice));
+      } else {
+        urlParams.delete("min_total_price");
+      }
+      
+      if (maxPrice !== MAX_PRICE_DEFAULT) {
+        urlParams.set("max_total_price", String(maxPrice));
+      } else {
+        urlParams.delete("max_total_price");
+      }
     } else {
       urlParams.delete("min_total_price");
       urlParams.delete("max_total_price");
@@ -205,7 +241,7 @@ export default function ReservationPage({
   
   // Use this useEffect to update UI when URL changes (for back/forward navigation)
   useEffect(() => {
-    // Function to load filter params from URL
+    // Function to load filter params from URL (only sidebar filters)
     const loadFiltersFromURL = () => {
       const urlParams = new URLSearchParams(window.location.search);
       const minPrice = urlParams.get("min_total_price");
@@ -217,7 +253,7 @@ export default function ReservationPage({
         ? ratings.split(",").map((r) => parseInt(r))
         : [];
       
-      // Update searchParams with new values from URL
+      // Update only sidebar filter params, not main form fields
       if (minPrice || maxPrice || ratings) {
         setValue("minPrice", minPrice ? parseInt(minPrice) : MIN_PRICE_DEFAULT);
         setValue("maxPrice", maxPrice ? parseInt(maxPrice) : MAX_PRICE_DEFAULT);
@@ -225,8 +261,10 @@ export default function ReservationPage({
       }
     };
 
-    // Load filters on component mount
-    loadFiltersFromURL();
+    // Load filters on component mount (but not on initial load to avoid conflicts)
+    if (!isInitialLoad) {
+      loadFiltersFromURL();
+    }
 
     // Set up event listener for popstate (browser back/forward navigation)
     window.addEventListener("popstate", loadFiltersFromURL);
@@ -235,7 +273,7 @@ export default function ReservationPage({
     return () => {
       window.removeEventListener("popstate", loadFiltersFromURL);
     };
-  }, []); // Empty dependency array - run only on mount/unmount
+  }, [setValue, isInitialLoad]); // Remove empty dependency array
 
   // Sadece sidebar filtrelerini sıfırlayan fonksiyon
   const clearSidebarFilters = () => {
@@ -257,7 +295,7 @@ export default function ReservationPage({
     setValue("sanatorium", "");
     setValue("checkIn", "");
     setValue("checkOut", "");
-    setValue("adults", 0);
+    setValue("adults", 1); // Default 1 instead of 0
     setValue("children", 0);
     setValue("childrenAges", []);
     // Sidebar filtrelerini de sıfırla
@@ -288,10 +326,63 @@ export default function ReservationPage({
   // Watch location value to filter sanatoriums
   const selectedLocation = watch('location');
 
-  // Reset sanatorium when location changes
+  // Reset sanatorium when location changes (but not on initial load)
   useEffect(() => {
+    if (isInitialLoad) {
+      setIsInitialLoad(false);
+      return;
+    }
     setValue('sanatorium', '');
-  }, [selectedLocation, setValue]);
+  }, [selectedLocation, setValue, isInitialLoad]);
+
+  // Set location based on selected sanatorium from URL params
+  useEffect(() => {
+    const sanatoriumId = params.get("id");
+    if (sanatoriumId && sanatoriumsList.length > 0) {
+      const selectedSanatorium = sanatoriumsList.find(s => String(s.id) === sanatoriumId);
+      if (selectedSanatorium && !selectedLocation) {
+        setValue('location', String(selectedSanatorium.location.id));
+      }
+    }
+  }, [params, sanatoriumsList, selectedLocation, setValue]);
+
+  // Load form values from URL params on component mount and URL changes
+  useEffect(() => {
+    // Only load from URL params on initial mount, not on every URL change
+    if (isInitialLoad) {
+      // Load basic form values
+      setValue('checkIn', params.get("check_in") || "");
+      setValue('checkOut', params.get("check_out") || "");
+      setValue('adults', params.get("occupancy") ? parseInt(params.get("occupancy")!) : 1);
+      
+      // Handle children ages properly
+      const childrenAgesParam = params.get("children_ages");
+      if (childrenAgesParam && childrenAgesParam.trim() !== "") {
+        const ages = childrenAgesParam.split(",").filter(age => age.trim() !== "").map(age => parseInt(age));
+        setValue('children', ages.length);
+        setValue('childrenAges', ages);
+      } else {
+        setValue('children', 0);
+        setValue('childrenAges', []);
+      }
+      
+      // Load location and sanatorium
+      setValue('location', params.get("city") || "");
+      setValue('sanatorium', params.get("id") || "");
+      
+      // Load price filters
+      setValue('minPrice', params.get("min_total_price") ? parseInt(params.get("min_total_price")!) : MIN_PRICE_DEFAULT);
+      setValue('maxPrice', params.get("max_total_price") ? parseInt(params.get("max_total_price")!) : MAX_PRICE_DEFAULT);
+      
+      // Load ratings
+      const ratingsParam = params.get("ratings");
+      if (ratingsParam) {
+        setValue('ratings', ratingsParam.split(",").map(r => parseInt(r)));
+      } else {
+        setValue('ratings', []);
+      }
+    }
+  }, [params, setValue, isInitialLoad]);
 
   return (
     <div className="bg-gray-50 min-h-screen pb-5">
@@ -356,8 +447,8 @@ export default function ReservationPage({
                       hasError={!!errors.sanatorium}
                       clearable
                     >
-                      {(watch('location')
-                        ? sanatoriumsList?.filter(s => String(s.location.id) === watch('location'))
+                      {(selectedLocation
+                        ? sanatoriumsList?.filter(s => String(s.location.id) === selectedLocation)
                         : sanatoriumsList
                       )?.map((sanatorium) => (
                         <Select.Item
