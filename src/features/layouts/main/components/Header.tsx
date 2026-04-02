@@ -533,14 +533,24 @@ const Header = ({ siteSettings }: HeaderProps) => {
                               {t('naftalan_history')}
                             </IntlLink>
                             <IntlLink 
-                              href="/about/treatments" 
+                              href="/about/indications" 
                               className={`py-2 px-3 rounded-lg flex items-center transition-colors ${
-                                isActive('/about/treatments') ? 'bg-blue-50 text-blue-600' : 'hover:bg-blue-50 hover:text-blue-500'
+                                isActive('/about/indications') ? 'bg-blue-50 text-blue-600' : 'hover:bg-blue-50 hover:text-blue-500'
                               }`}
                               onClick={() => setMenuOpen(false)}
                             >
                               <FaChevronRight className="mr-2 text-xs text-blue-400" />
-                              {t('treated_conditions')}
+                              {t('indications')}
+                            </IntlLink>
+                            <IntlLink 
+                              href="/about/contraindications" 
+                              className={`py-2 px-3 rounded-lg flex items-center transition-colors ${
+                                isActive('/about/contraindications') ? 'bg-blue-50 text-blue-600' : 'hover:bg-blue-50 hover:text-blue-500'
+                              }`}
+                              onClick={() => setMenuOpen(false)}
+                            >
+                              <FaChevronRight className="mr-2 text-xs text-blue-400" />
+                              {t('contraindications')}
                             </IntlLink>
                           </div>
                         </motion.div>
